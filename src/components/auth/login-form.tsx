@@ -26,7 +26,11 @@ export function LoginForm() {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // In a real app, you'd validate credentials here
-    if (email === "email-admin123@gmail.com" && password === "Admin@123") {
+    // Make email comparison case-insensitive and trim inputs
+    const expectedEmail = "email-admin123@gmail.com";
+    const expectedPassword = "Admin@123";
+
+    if (email.trim().toLowerCase() === expectedEmail.toLowerCase() && password.trim() === expectedPassword) {
       toast({
         title: "Login Successful",
         description: "Welcome to SmartCare Hub!",
@@ -35,7 +39,7 @@ export function LoginForm() {
     } else {
       toast({
         title: "Login Failed",
-        description: "Please enter valid credentials.",
+        description: "Please enter valid credentials. Ensure email and password are correct (password is case-sensitive).",
         variant: "destructive",
       });
       setIsLoading(false);
