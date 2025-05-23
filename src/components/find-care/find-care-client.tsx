@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -25,7 +26,6 @@ export function FindCareClient() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Attempt to get user's current location on component mount
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -39,7 +39,6 @@ export function FindCareClient() {
           console.warn("Error getting location:", err);
           setError("Could not automatically determine your location. Please ensure location services are enabled or search manually (manual search not implemented in demo).");
            toast({ title: "Location Error", description: "Could not get your location. AI recommendations will use a default location.", variant: "default" });
-           // Use a default location if user denies or error occurs, for demo purposes
            setUserLocation({ latitude: 34.0522, longitude: -118.2437 }); // Default to Los Angeles
         }
       );
@@ -71,7 +70,6 @@ export function FindCareClient() {
         recommendationType,
         specialty: recommendationType === "specialist" ? specialty : undefined,
       });
-      // Simulate results if AI returns empty or few, for better demo.
       if (!output.results || output.results.length === 0) {
          const placeholderResults = [
             { name: "Demo General Hospital", address: "123 Health St, Cityville", distance: 2.5, contact: "555-1234" },
@@ -93,6 +91,17 @@ export function FindCareClient() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGetDirections = (destinationAddress: string) => {
+    const destination = encodeURIComponent(destinationAddress);
+    let origin = "";
+    if (userLocation) {
+      origin = `${userLocation.latitude},${userLocation.longitude}`;
+    }
+    
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1${origin ? `&origin=${origin}` : ''}&destination=${destination}&travelmode=driving`;
+    window.open(googleMapsUrl, '_blank');
   };
 
   return (
@@ -200,7 +209,7 @@ export function FindCareClient() {
                     <div className="md:flex-shrink-0">
                       <Image 
                         className="h-48 w-full object-cover md:w-48" 
-                        src={`https://placehold.co/300x200.png?id=${index}`} // Placeholder images
+                        src={`https://placehold.co/300x200.png?id=${index}`} 
                         alt={result.name}
                         width={300}
                         height={200}
@@ -209,7 +218,7 @@ export function FindCareClient() {
                     </div>
                     <div className="p-4 flex-grow">
                       <CardTitle className="text-xl hover:text-primary transition-colors">
-                        <a href="#" onClick={(e) => e.preventDefault() /* Placeholder link */}>{result.name}</a>
+                        <a href="#" onClick={(e) => e.preventDefault()}>{result.name}</a>
                       </CardTitle>
                       <p className="text-sm text-muted-foreground mt-1">{result.address}</p>
                       <div className="mt-2 space-y-1 text-sm">
@@ -223,7 +232,11 @@ export function FindCareClient() {
                         )}
                       </div>
                       <CardFooter className="p-0 pt-3">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleGetDirections(result.address)}
+                        >
                           <Navigation className="mr-2 h-4 w-4" /> Get Directions
                         </Button>
                       </CardFooter>
