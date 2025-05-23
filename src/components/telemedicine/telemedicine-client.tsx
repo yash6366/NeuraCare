@@ -1,49 +1,109 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Video, Phone, Send, MessageCircle } from "lucide-react";
+import { Video, Phone, Send, MessageCircle, Bot } from "lucide-react"; // Added Bot icon
 import { useToast } from "@/hooks/use-toast";
+import { telemedicineChat, type TelemedicineChatInput, type TelemedicineChatOutput } from "@/ai/flows/telemedicine-chat-flow"; // Import the new flow
+import type { ChatHistoryItem } from "@/ai/flows/telemedicine-chat-flow"; // Assuming ChatMessageSchema structure for history
 
+// Define message structure for client-side state
 interface Message {
   id: string;
   text: string;
-  sender: "user" | "bot";
+  sender: "user" | "bot"; // 'bot' will represent the AI model
   timestamp: Date;
 }
+
+// Define chat history item structure for sending to Genkit flow
+interface GenkitChatMessage {
+  role: "user" | "model";
+  parts: Array<{ text: string }>;
+}
+
 
 export function TelemedicineClient() {
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [isConsultationActive, setIsConsultationActive] = useState(false);
+  const [isChatLoading, setIsChatLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSendMessage = () => {
+  // Initialize chat with a welcome message from the AI
+  useEffect(() => {
+    setChatMessages([
+      {
+        id: String(Date.now()),
+        text: "Hello! I'm SmartCare AI Assistant. How can I help you today?",
+        sender: "bot",
+        timestamp: new Date(),
+      },
+    ]);
+  }, []);
+
+  const handleSendMessage = async () => {
     if (!chatInput.trim()) return;
+    setIsChatLoading(true);
+
     const newUserMessage: Message = {
       id: String(Date.now()),
       text: chatInput,
       sender: "user",
       timestamp: new Date(),
     };
+    // Add user message to chat immediately for better UX
     setChatMessages(prev => [...prev, newUserMessage]);
-    setChatInput("");
+    const currentInput = chatInput;
+    setChatInput(""); // Clear input field
 
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponse: Message = {
+    // Prepare chat history for Genkit flow
+    const historyForGenkit: GenkitChatMessage[] = chatMessages.map(msg => ({
+      role: msg.sender === "user" ? "user" : "model",
+      parts: [{ text: msg.text }],
+    }));
+    
+    // Add the latest user message to the history being sent
+    // (The welcome message from bot is already in chatMessages, so it's part of historyForGenkit)
+    const inputForFlow: TelemedicineChatInput = {
+      userMessage: currentInput,
+      chatHistory: historyForGenkit,
+    };
+
+    try {
+      const aiResponse: TelemedicineChatOutput = await telemedicineChat(inputForFlow);
+      const newBotMessage: Message = {
         id: String(Date.now() + 1),
-        text: "Thank you for your message. A healthcare professional will be with you shortly. For urgent matters, please call emergency services.",
+        text: aiResponse.botResponse,
         sender: "bot",
         timestamp: new Date(),
       };
-      setChatMessages(prev => [...prev, botResponse]);
-    }, 1000);
+      setChatMessages(prev => [...prev, newBotMessage]);
+    } catch (error) {
+      console.error("Error calling telemedicine chat flow:", error);
+      toast({
+        title: "AI Chat Error",
+        description: "Sorry, I couldn't connect to the AI assistant right now. Please try again later.",
+        variant: "destructive",
+      });
+      // Optionally, add back the user's message to the input if sending failed
+      // setChatInput(currentInput); 
+      // Or add a system error message to the chat
+       const errorBotMessage: Message = {
+        id: String(Date.now() + 1),
+        text: "I'm having trouble connecting right now. Please try again in a moment.",
+        sender: "bot",
+        timestamp: new Date(),
+      };
+      setChatMessages(prev => [...prev, errorBotMessage]);
+    } finally {
+      setIsChatLoading(false);
+    }
   };
 
   const startConsultation = (type: "video" | "audio") => {
@@ -110,7 +170,7 @@ export function TelemedicineClient() {
       <Card className="lg:col-span-1 shadow-lg flex flex-col">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl">
-            <MessageCircle className="h-7 w-7 text-primary" /> AI Chat Assistant
+            <Bot className="h-7 w-7 text-primary" /> AI Chat Assistant
           </CardTitle>
           <CardDescription>Get quick answers to your health queries.</CardDescription>
         </CardHeader>
@@ -131,7 +191,7 @@ export function TelemedicineClient() {
                     </Avatar>
                   )}
                   <div
-                    className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${
+                    className={`max-w-[75%] rounded-lg px-3 py-2 text-sm shadow-md ${
                       msg.sender === "user"
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted"
@@ -147,9 +207,6 @@ export function TelemedicineClient() {
                   )}
                 </div>
               ))}
-               {chatMessages.length === 0 && (
-                <p className="text-muted-foreground text-center py-10">Type a message to start chatting with the AI assistant.</p>
-              )}
             </div>
           </ScrollArea>
           <div className="p-4 border-t">
@@ -158,10 +215,11 @@ export function TelemedicineClient() {
                 placeholder="Type your message..."
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyPress={(e) => e.key === 'Enter' && !isChatLoading && handleSendMessage()}
+                disabled={isChatLoading}
               />
-              <Button onClick={handleSendMessage} size="icon" aria-label="Send message">
-                <Send className="h-5 w-5" />
+              <Button onClick={handleSendMessage} size="icon" aria-label="Send message" disabled={isChatLoading}>
+                {isChatLoading ? <Activity className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
               </Button>
             </div>
           </div>
@@ -169,4 +227,10 @@ export function TelemedicineClient() {
       </Card>
     </div>
   );
+}
+
+// Helper type for clarity in client, matching Genkit flow's ChatMessageSchema expectation
+export interface ChatHistoryItem {
+  role: 'user' | 'model';
+  parts: Array<{ text: string }>;
 }
