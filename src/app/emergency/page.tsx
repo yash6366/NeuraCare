@@ -7,8 +7,8 @@ export default function EmergencyPage() {
   return (
     <MainLayout>
       <PageTitle 
-        title="Emergency Response" 
-        description="Request immediate medical assistance and track ambulance arrival. For critical emergencies only."
+        title="Emergency SOS Alert" 
+        description="Trigger an SOS alert to emergency services and designated contacts in critical situations."
         icon={AlertTriangle}
       />
       <EmergencyClient />
