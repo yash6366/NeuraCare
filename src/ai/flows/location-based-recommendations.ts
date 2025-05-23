@@ -49,11 +49,11 @@ const locationBasedRecommendationsPrompt = ai.definePrompt({
 
   The user is at latitude: {{latitude}} and longitude: {{longitude}}.
 
-  {% if recommendationType == 'hospital' %}
+  {{#if (eq recommendationType "hospital")}}
   Suggest nearby hospitals.
-  {% else %}
+  {{else}}
   Suggest nearby specialists in the field of {{specialty}}.
-  {% endif %}
+  {{/if}}
 
   Return a JSON object with an array of results. Each result should include the name, address, distance in kilometers from the user, and contact phone number if available.
   `,
@@ -70,3 +70,9 @@ const locationBasedRecommendationsFlow = ai.defineFlow(
     return output!;
   }
 );
+
+// Helper for Handlebars 'eq'
+import Handlebars from 'handlebars';
+Handlebars.registerHelper('eq', function (a, b) {
+  return a === b;
+});
