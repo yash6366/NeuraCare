@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -9,6 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, KeyRound, Mail, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { registerUserWithCredentials } from "@/lib/actions/auth.actions";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 
 export function RegisterForm() {
   const router = useRouter();
@@ -17,6 +21,7 @@ export function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<'patient' | 'doctor' | 'admin'>("patient");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,15 +48,22 @@ export function RegisterForm() {
       return;
     }
 
-    // Simulate API call for registration
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const result = await registerUserWithCredentials({ fullName, email, password, role });
 
-    // In a real app, you'd handle actual registration logic here
-    toast({
-      title: "Registration Successful",
-      description: "Your account has been created. Please log in.",
-    });
-    router.push("/login"); 
+    if (result.success) {
+      toast({
+        title: "Registration Successful",
+        description: result.message || "Your account has been created. Please log in.",
+      });
+      router.push("/login");
+    } else {
+      toast({
+        title: "Registration Failed",
+        description: result.message || "An error occurred. Please try again.",
+        variant: "destructive",
+      });
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -128,6 +140,20 @@ export function RegisterForm() {
                 disabled={isLoading}
               />
             </div>
+          </div>
+           <div className="space-y-2">
+            <Label htmlFor="role">Register as</Label>
+            <Select value={role} onValueChange={(value) => setRole(value as 'patient' | 'doctor' | 'admin')} disabled={isLoading}>
+              <SelectTrigger id="role">
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="patient">Patient</SelectItem>
+                <SelectItem value="doctor">Doctor</SelectItem>
+                {/* Admin registration might be disabled in production or handled differently */}
+                {/* <SelectItem value="admin">Admin</SelectItem> */}
+              </SelectContent>
+            </Select>
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Registering..." : "Create Account"}

@@ -2,30 +2,27 @@
 "use client";
 
 import type { AppUser } from '@/types';
-import { mockUsers } from './mock-data';
+// mockUsers is no longer the source of truth for login. It can be kept for demo/reference or removed.
+// import { mockUsers } from './mock-data'; 
+import { loginUserWithCredentials } from './actions/auth.actions';
+
 
 const USER_STORAGE_KEY = 'smartcare_user';
 
-export const loginUser = (email: string, password: string): AppUser | null => {
-  const foundUser = mockUsers.find(
-    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-  );
+// This function is now a client-side wrapper that calls the server action
+export const loginUser = async (email: string, password: string): Promise<AppUser | null> => {
+  const result = await loginUserWithCredentials({ email, password });
 
-  if (foundUser) {
-    const userToStore: AppUser = {
-      id: foundUser.id,
-      email: foundUser.email,
-      name: foundUser.name,
-      role: foundUser.role as AppUser['role'],
-      ...(foundUser.role === 'doctor' && { specialty: (foundUser as any).specialty }),
-      ...(foundUser.role === 'patient' && { assignedDoctorId: (foundUser as any).assignedDoctorId }),
-    };
+  if (result.success && result.user) {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userToStore));
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(result.user));
     }
-    return userToStore;
+    return result.user;
   }
-  return null;
+  // Optionally, you could throw an error or return a more detailed error object
+  // For now, just returning null on failure to match previous behavior.
+  // The toast message will be handled in the component based on result.message.
+  return null; 
 };
 
 export const logoutUser = (): void => {

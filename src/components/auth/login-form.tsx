@@ -10,38 +10,49 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, User, KeyRound, Hospital } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { loginUser } from "@/lib/auth"; // Updated import
+import { loginUser } from "@/lib/auth"; // This now calls the server action internally
 
 export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin123@gmail.com"); // Default for demo
+  const [password, setPassword] = useState("Admin@123"); // Default for demo
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      const user = await loginUser(email.trim(), password.trim());
 
-    const user = loginUser(email.trim(), password.trim());
-
-    if (user) {
+      if (user) {
+        toast({
+          title: "Login Successful",
+          description: `Welcome back, ${user.name}! Redirecting...`,
+        });
+        // The dashboard page will handle role-based redirection.
+        router.push("/dashboard"); 
+      } else {
+        // The server action handles specific error messages.
+        // For simplicity, we'll show a generic one here if user is null
+        // but specific error message from server action would be better.
+        // This part might need refinement if loginUser returns detailed error from server.
+        toast({
+          title: "Login Failed",
+          description: "Invalid email or password. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
       toast({
-        title: "Login Successful",
-        description: `Welcome back, ${user.name}!`,
-      });
-      router.push("/dashboard"); // Will redirect based on role from /dashboard
-    } else {
-      toast({
-        title: "Login Failed",
-        description: "Invalid email or password. Please try again.",
+        title: "Login Error",
+        description: error.message || "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
@@ -125,10 +136,11 @@ export function LoginForm() {
           .
         </p>
          <div className="text-xs text-muted-foreground mt-4 space-y-1 text-center">
-          <p className="font-semibold">Demo Credentials:</p>
-          <p>Admin: admin123@gmail.com / Admin@123</p>
-          <p>Doctor: doctor.strange@example.com / Doctor@123</p>
-          <p>Patient: patient.doe@example.com / Patient@123</p>
+          <p className="font-semibold">Demo Note:</p>
+          <p>You can now register new users. The credentials below are no longer hardcoded but can be registered if they don't exist.</p>
+          <p>Example Admin: admin123@gmail.com / Admin@123</p>
+          <p>Example Doctor: doctor.strange@example.com / Doctor@123</p>
+          <p>Example Patient: patient.doe@example.com / Patient@123</p>
         </div>
       </CardFooter>
     </Card>
