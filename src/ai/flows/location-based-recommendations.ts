@@ -53,36 +53,64 @@ const findNearbyHealthcareTool = ai.defineTool(
     // const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     // const searchType = input.recommendationType === 'hospital' ? 'hospital' : 'doctor';
     // const keyword = input.recommendationType === 'specialist' ? input.specialty : '';
-    // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${input.latitude},${input.longitude}&radius=5000&type=${searchType}&keyword=${keyword}&key=${apiKey}`;
+    // const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${input.latitude},${input.longitude}&radius=15000&type=${searchType}&keyword=${keyword}&key=${apiKey}`; // Increased radius for more varied mock results
     // const response = await fetch(url);
     // const data = await response.json();
     // Then, parse 'data' and map it to LocationBasedRecommendationsOutputSchema.
 
-    // For now, returning mock data:
-    const mockResults = [
-      {
-        name: `Mock Google Maps ${input.recommendationType === 'hospital' ? 'Hospital' : input.specialty || 'Clinic'} 1`,
-        address: `100 Google Maps Rd, Near Lat ${input.latitude.toFixed(2)}`,
-        distance: 1.5,
-        contact: '555-GMAP-01',
-      },
-      {
-        name: `Mock Google Maps ${input.recommendationType === 'hospital' ? 'General Hospital' : input.specialty || 'Practice'} 2`,
-        address: `200 API Blvd, Near Lon ${input.longitude.toFixed(2)}`,
-        distance: 3.2,
-        contact: '555-GMAP-02',
-      },
-    ];
-    if (input.recommendationType === 'specialist' && !input.specialty) {
+    // For now, returning mock data with slightly randomized distances:
+    const generateRandomDistance = (min: number, max: number) => parseFloat((Math.random() * (max - min) + min).toFixed(1));
+
+    let mockResults = [];
+
+    if (input.recommendationType === 'hospital') {
+      mockResults = [
+        {
+          name: `City General Hospital (Mock)`,
+          address: `100 Health Rd, Near Lat ${input.latitude.toFixed(2)}`,
+          distance: generateRandomDistance(1.0, 5.0),
+          contact: '555-MOCK-H1',
+        },
+        {
+          name: `Community Medical Center (Mock)`,
+          address: `200 Care Blvd, Near Lon ${input.longitude.toFixed(2)}`,
+          distance: generateRandomDistance(5.1, 10.0),
+          contact: '555-MOCK-H2',
+        },
+        {
+          name: `Suburban Health Clinic (Mock)`,
+          address: `300 Wellness Ave, Mocktown`,
+          distance: generateRandomDistance(10.1, 15.0),
+          contact: '555-MOCK-H3',
+        },
+      ];
+    } else if (input.recommendationType === 'specialist') {
+      const specialtyName = input.specialty || 'General';
+      mockResults = [
+        {
+          name: `Mock ${specialtyName} Clinic Alpha`,
+          address: `400 Specialist Ln, Near Lat ${input.latitude.toFixed(2)}`,
+          distance: generateRandomDistance(2.0, 7.0),
+          contact: '555-MOCK-S1',
+        },
+        {
+          name: `Mock ${specialtyName} Practice Beta`,
+          address: `500 Expert St, Near Lon ${input.longitude.toFixed(2)}`,
+          distance: generateRandomDistance(7.1, 12.0),
+          contact: '555-MOCK-S2',
+        },
+      ];
+      if (!input.specialty) { // Add a generic specialist if no specific specialty was asked
         mockResults.push({
-            name: "Mock General Specialist via Google",
-            address: "789 Specialist Ln, GeoCity",
-            distance: 4.0,
-            contact: "555-SPEC-GM"
+            name: "General Specialist Center (Mock)",
+            address: "600 Health Plaza, Mockcity",
+            distance: generateRandomDistance(4.0, 9.0),
+            contact: "555-MOCK-GS"
         });
+      }
     }
 
-    console.log("[findNearbyHealthcareTool] Returning mock results.");
+    console.log("[findNearbyHealthcareTool] Returning mock results with randomized distances.", mockResults);
     return { results: mockResults };
   }
 );
@@ -119,7 +147,7 @@ const locationBasedRecommendationsFlow = ai.defineFlow(
   async (input) => {
     const llmResponse = await locationBasedRecommendationsPrompt(input);
     // The LLM should call the tool, and the tool's output (which matches the flow's output schema)
-    // will be available in llmResponse.output() or via tool requests/responses.
+    // will be available in llmResponse.output or via tool requests/responses.
     // If the tool is called, its output becomes the primary content.
     if (llmResponse.output) {
         return llmResponse.output;
@@ -130,9 +158,3 @@ const locationBasedRecommendationsFlow = ai.defineFlow(
     return { results: [] };
   }
 );
-
-// Handlebars 'eq' helper is no longer needed as the prompt logic changed.
-// import Handlebars from 'handlebars';
-// Handlebars.registerHelper('eq', function (a, b) {
-//   return a === b;
-// });
