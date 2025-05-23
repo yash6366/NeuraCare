@@ -27,7 +27,7 @@ export function LoginForm() {
 
     // In a real app, you'd validate credentials here
     // Make email comparison case-insensitive and trim inputs
-    const expectedEmail = "email-admin123@gmail.com";
+    const expectedEmail = "admin123@gmail.com"; // Corrected email
     const expectedPassword = "Admin@123";
 
     if (email.trim().toLowerCase() === expectedEmail.toLowerCase() && password.trim() === expectedPassword) {
