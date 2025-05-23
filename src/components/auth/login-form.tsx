@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -25,7 +26,7 @@ export function LoginForm() {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // In a real app, you'd validate credentials here
-    if (email && password) {
+    if (email === "email-admin123@gmail.com" && password === "Admin@123") {
       toast({
         title: "Login Successful",
         description: "Welcome to SmartCare Hub!",
