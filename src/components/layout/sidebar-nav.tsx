@@ -14,6 +14,7 @@ import {
   LogOut,
   Stethoscope, // For Doctor
   UserCheck, // For Patient
+  FileText, // For Medical Records
 } from "lucide-react";
 import {
   SidebarMenu,
@@ -31,6 +32,7 @@ const baseMenuItems = [
   { href: "/symptom-checker", label: "Symptom Checker", icon: HeartPulse, roles: ['admin', 'patient'] },
   { href: "/appointments", label: "Appointments", icon: CalendarDays, badge: "3", roles: ['admin', 'doctor', 'patient'] },
   { href: "/telemedicine", label: "Telemedicine", icon: Video, roles: ['admin', 'doctor', 'patient'] },
+  { href: "/medical-records", label: "Medical Records", icon: FileText, roles: ['patient'] },
   { href: "/emergency", label: "Emergency", icon: AlertTriangle, roles: ['admin', 'patient'] }, // Doctors might not need this directly on sidebar
   { href: "/find-care", label: "Find Care", icon: MapPin, roles: ['admin', 'patient'] },
 ];
