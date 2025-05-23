@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, User, KeyRound, Hospital } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { loginUser } from "@/lib/auth"; // Updated import
 
 export function LoginForm() {
   const router = useRouter();
@@ -22,28 +23,25 @@ export function LoginForm() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    // In a real app, you'd validate credentials here
-    // Make email comparison case-insensitive and trim inputs
-    const expectedEmail = "admin123@gmail.com"; // Corrected email
-    const expectedPassword = "Admin@123";
+    const user = loginUser(email.trim(), password.trim());
 
-    if (email.trim().toLowerCase() === expectedEmail.toLowerCase() && password.trim() === expectedPassword) {
+    if (user) {
       toast({
         title: "Login Successful",
-        description: "Welcome to SmartCare Hub!",
+        description: `Welcome back, ${user.name}!`,
       });
-      router.push("/dashboard");
+      router.push("/dashboard"); // Will redirect based on role from /dashboard
     } else {
       toast({
         title: "Login Failed",
-        description: "Please enter valid credentials. Ensure email and password are correct (password is case-sensitive).",
+        description: "Invalid email or password. Please try again.",
         variant: "destructive",
       });
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -126,6 +124,12 @@ export function LoginForm() {
           </a>
           .
         </p>
+         <div className="text-xs text-muted-foreground mt-4 space-y-1 text-center">
+          <p className="font-semibold">Demo Credentials:</p>
+          <p>Admin: admin123@gmail.com / Admin@123</p>
+          <p>Doctor: doctor.strange@example.com / Doctor@123</p>
+          <p>Patient: patient.doe@example.com / Patient@123</p>
+        </div>
       </CardFooter>
     </Card>
   );
