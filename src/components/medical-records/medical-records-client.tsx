@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef, type ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input"; // Though we'll use a styled button for file input
+import { Input } from "@/components/ui/input"; 
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { getCurrentUser, type Patient } from "@/lib/auth";
@@ -20,8 +20,7 @@ interface MedicalRecordFile {
   type: "image" | "pdf" | "other";
   size: number; // in bytes
   uploadedAt: Date;
-  filePreview?: string; // For image Data URI, or placeholder for PDF
-  originalFile?: File; // To store the actual file object temporarily if needed
+  filePreview?: string; // For image or PDF Data URI.
 }
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -39,26 +38,20 @@ export function MedicalRecordsClient() {
     const user = getCurrentUser();
     if (user && user.role === 'patient') {
       setCurrentUser(user as Patient);
-      // Load records from localStorage
       const storedRecordsJson = localStorage.getItem(`medical_records_${user.id}`);
       if (storedRecordsJson) {
         try {
           const storedRecords = JSON.parse(storedRecordsJson) as MedicalRecordFile[];
-          // Ensure dates are parsed correctly
           setMedicalRecords(storedRecords.map(r => ({...r, uploadedAt: new Date(r.uploadedAt)})));
         } catch (e) {
           console.error("Error parsing medical records from localStorage", e);
           setMedicalRecords([]);
         }
       }
-    } else {
-        // Redirect or show message if not a patient or not logged in
-        // For now, just won't load/save records
     }
   }, []);
 
   useEffect(() => {
-    // Save records to localStorage whenever they change
     if (currentUser) {
       localStorage.setItem(`medical_records_${currentUser.id}`, JSON.stringify(medicalRecords));
     }
@@ -74,7 +67,7 @@ export function MedicalRecordsClient() {
           variant: "destructive",
         });
         setSelectedFile(null);
-        if(fileInputRef.current) fileInputRef.current.value = ""; // Clear the input
+        if(fileInputRef.current) fileInputRef.current.value = ""; 
         return;
       }
       setSelectedFile(file);
@@ -102,17 +95,29 @@ export function MedicalRecordsClient() {
 
     const fileType = selectedFile.type.startsWith("image/") ? "image" : selectedFile.type === "application/pdf" ? "pdf" : "other";
     
-    let filePreview: string | undefined = undefined;
-    if (fileType === "image") {
-      filePreview = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(selectedFile);
-      });
-    } else if (fileType === "pdf") {
-        filePreview = "pdf_icon"; // Special placeholder for PDF icon
+    let filePreviewDataUrl: string | undefined = undefined;
+    if (fileType === "image" || fileType === "pdf") {
+      try {
+        filePreviewDataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = () => reject(new Error("Failed to read file."));
+          reader.readAsDataURL(selectedFile);
+        });
+      } catch (error) {
+        console.error("Error reading file for preview:", error);
+        toast({
+          title: "File Read Error",
+          description: "Could not generate a preview for the file.",
+          variant: "destructive",
+        });
+        setIsUploading(false);
+        setUploadProgress(0);
+        if(fileInputRef.current) fileInputRef.current.value = "";
+        setSelectedFile(null);
+        return;
+      }
     }
-
 
     const newRecord: MedicalRecordFile = {
       id: String(Date.now()),
@@ -120,7 +125,7 @@ export function MedicalRecordsClient() {
       type: fileType,
       size: selectedFile.size,
       uploadedAt: new Date(),
-      filePreview,
+      filePreview: filePreviewDataUrl,
     };
 
     setMedicalRecords(prev => [newRecord, ...prev]);
@@ -130,7 +135,7 @@ export function MedicalRecordsClient() {
     });
 
     setSelectedFile(null);
-    if(fileInputRef.current) fileInputRef.current.value = ""; // Clear the input
+    if(fileInputRef.current) fileInputRef.current.value = ""; 
     setIsUploading(false);
     setUploadProgress(0);
   };
@@ -144,14 +149,27 @@ export function MedicalRecordsClient() {
   };
 
   const handleViewRecord = (record: MedicalRecordFile) => {
-    if (record.type === "image" && record.filePreview && !record.filePreview.startsWith("pdf_")) {
-      // For images with data URI, open in new tab
-      const imageWindow = window.open("");
-      imageWindow?.document.write(`<img src="${record.filePreview}" style="max-width:100%; max-height:100vh;" alt="${record.name}">`);
+    if (record.filePreview) {
+      if (record.type === "image") {
+        const imageWindow = window.open("", "_blank");
+        if (imageWindow) {
+          imageWindow.document.write(`<html><head><title>${record.name}</title></head><body style="margin:0; display:flex; justify-content:center; align-items:center; min-height:100vh; background-color:#f0f0f0;"><img src="${record.filePreview}" style="max-width:100%; max-height:100vh;" alt="${record.name}"></body></html>`);
+          imageWindow.document.close(); // Important for some browsers
+        } else {
+          toast({ title: "Popup Blocked", description: "Please allow popups to view the image."});
+        }
+      } else if (record.type === "pdf") {
+        const pdfWindow = window.open(record.filePreview, "_blank"); 
+        if (!pdfWindow) {
+            toast({ title: "Popup Blocked", description: "Please allow popups to view the PDF."});
+        }
+      } else {
+         toast({ title: "Preview Not Supported", description: `Cannot preview this file type (${record.type}) directly.` });
+      }
     } else {
       toast({
-        title: "View Record (Simulated)",
-        description: `Viewing ${record.name}. In a real app, this would open the file.`,
+        title: "No Preview Available",
+        description: `No preview data found for ${record.name}. It might be an unsupported file type or an error occurred during upload.`,
       });
     }
   };
@@ -233,7 +251,7 @@ export function MedicalRecordsClient() {
               {medicalRecords.map(record => (
                 <li key={record.id} className="p-4 border rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-3 flex-grow">
-                    {record.type === "image" && record.filePreview && !record.filePreview.startsWith("pdf_") ? (
+                    {record.type === "image" && record.filePreview ? (
                       <Image
                         src={record.filePreview}
                         alt={record.name}
@@ -245,17 +263,17 @@ export function MedicalRecordsClient() {
                     ) : record.type === "pdf" ? (
                       <FileIcon className="h-10 w-10 text-red-600 flex-shrink-0" />
                     ) : (
-                      <ImageIcon className="h-10 w-10 text-blue-500 flex-shrink-0" />
+                      <FileIcon className="h-10 w-10 text-gray-500 flex-shrink-0" />
                     )}
-                    <div className="flex-grow">
-                      <p className="font-semibold truncate max-w-xs sm:max-w-sm md:max-w-md" title={record.name}>{record.name}</p>
+                    <div className="flex-grow min-w-0"> {/* Added min-w-0 for better truncation */}
+                      <p className="font-semibold truncate" title={record.name}>{record.name}</p>
                       <p className="text-xs text-muted-foreground">
                         {record.type.toUpperCase()} - {(record.size / 1024).toFixed(1)} KB - Uploaded: {format(new Date(record.uploadedAt), "PPP p")}
                       </p>
                     </div>
                   </div>
                   <div className="flex gap-2 mt-2 sm:mt-0 flex-shrink-0">
-                    <Button variant="outline" size="sm" onClick={() => handleViewRecord(record)}>
+                    <Button variant="outline" size="sm" onClick={() => handleViewRecord(record)} disabled={!record.filePreview && record.type !== 'other'}>
                       <Eye className="mr-1 h-4 w-4" /> View
                     </Button>
                     <Button variant="destructive" size="sm" onClick={() => handleDeleteRecord(record.id)}>
@@ -271,3 +289,6 @@ export function MedicalRecordsClient() {
     </div>
   );
 }
+
+
+    
