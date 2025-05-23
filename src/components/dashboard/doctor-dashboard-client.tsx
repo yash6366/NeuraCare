@@ -4,21 +4,25 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentUser, type Doctor as DoctorUser } from "@/lib/auth";
-import { mockPatients, type MockPatientRecord } from "@/lib/mock-data";
+import { getAssignedPatients } from "@/lib/actions/doctor.actions"; // Import the new server action
+import type { Patient } from "@/types"; // Use the Patient type from DB
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CalendarDays, Users, Video, MessageSquarePlus, ArrowRight } from "lucide-react";
+import { CalendarDays, Users, Video, MessageSquarePlus, ArrowRight, Mail } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 export function DoctorDashboardClient() {
   const router = useRouter();
+  const { toast } = useToast();
   const [doctor, setDoctor] = useState<DoctorUser | null>(null);
-  const [myPatients, setMyPatients] = useState<MockPatientRecord[]>([]);
+  const [myPatients, setMyPatients] = useState<Patient[]>([]); // Changed from MockPatientRecord to Patient
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingPatients, setIsLoadingPatients] = useState(false);
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -27,12 +31,28 @@ export function DoctorDashboardClient() {
     } else {
       const currentDoctor = currentUser as DoctorUser;
       setDoctor(currentDoctor);
-      // Filter patients for this doctor
-      const doctorPatients = mockPatients.filter(p => p.assignedDoctorId === currentDoctor.id);
-      setMyPatients(doctorPatients);
-      setIsLoading(false);
+      setIsLoading(false); // Doctor info loaded
+
+      // Fetch assigned patients
+      const fetchPatients = async () => {
+        setIsLoadingPatients(true);
+        const patientsData = await getAssignedPatients(currentDoctor.id);
+        if (patientsData) {
+          setMyPatients(patientsData);
+        } else {
+          toast({
+            title: "Error fetching patients",
+            description: "Could not load your patient list from the database.",
+            variant: "destructive",
+          });
+          setMyPatients([]); // Set to empty array on error
+        }
+        setIsLoadingPatients(false);
+      };
+
+      fetchPatients();
     }
-  }, [router]);
+  }, [router, toast]);
 
   if (isLoading || !doctor) {
     return (
@@ -77,15 +97,20 @@ export function DoctorDashboardClient() {
           <CardTitle className="flex items-center gap-2">
             <Users className="h-6 w-6 text-primary" /> My Patients ({myPatients.length})
           </CardTitle>
-          <CardDescription>Overview of your assigned patients.</CardDescription>
+          <CardDescription>Overview of your assigned patients from the database.</CardDescription>
         </CardHeader>
         <CardContent>
-          {myPatients.length > 0 ? (
+          {isLoadingPatients ? (
+            <div className="flex justify-center items-center py-8">
+              <Skeleton className="h-10 w-1/2" />
+            </div>
+          ) : myPatients.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Date of Birth</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead className="hidden md:table-cell">Date of Birth</TableHead>
                   <TableHead className="hidden md:table-cell">Last Visit</TableHead>
                   <TableHead>Upcoming Appointment</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -101,9 +126,13 @@ export function DoctorDashboardClient() {
                       </Avatar>
                       {patient.name}
                     </TableCell>
-                    <TableCell>{patient.dateOfBirth}</TableCell>
-                    <TableCell className="hidden md:table-cell">{patient.lastVisit || 'N/A'}</TableCell>
-                    <TableCell>{patient.upcomingAppointment ? <Badge variant="default">{patient.upcomingAppointment}</Badge> : <Badge variant="secondary">None</Badge>}</TableCell>
+                    <TableCell>{patient.email}</TableCell>
+                    <TableCell className="hidden md:table-cell">N/A</TableCell> {/* Placeholder for now */}
+                    <TableCell className="hidden md:table-cell">N/A</TableCell> {/* Placeholder for now */}
+                    <TableCell>
+                      {/* Placeholder for upcoming appointment - this data isn't in Patient model yet */}
+                      <Badge variant="secondary">N/A</Badge> 
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm">View Details</Button>
                     </TableCell>
@@ -112,7 +141,7 @@ export function DoctorDashboardClient() {
               </TableBody>
             </Table>
           ) : (
-            <p className="text-muted-foreground text-center py-8">You currently have no patients assigned.</p>
+            <p className="text-muted-foreground text-center py-8">You currently have no patients assigned in the database.</p>
           )}
         </CardContent>
       </Card>
