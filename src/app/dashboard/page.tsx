@@ -1,41 +1,41 @@
 
-"use client"; // Needs to be a client component to access localStorage and use router
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MainLayout } from "@/components/layout/main-layout";
 import { PageTitle } from "@/components/page-title";
 import { FeatureCard } from "@/components/dashboard/feature-card";
-import { getCurrentUser, type AppUser } from "@/lib/auth";
+import { getCurrentUser, type AppUser, type Doctor, type Patient } from "@/lib/auth"; // Adjusted imports
+import { getAllUsers } from "@/lib/actions/admin.actions"; // New server action
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   LayoutDashboard,
   HeartPulse,
   CalendarDays,
   Video,
-  AlertTriangle,
-  MapPin,
-  Users, // For admin view potentially
+  Users,
+  BriefcaseMedical, // For Doctors list
+  UserCog, // For Patients list
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-// Features for the admin/generic dashboard
+
 const adminFeatures = [
-  {
-    title: "User Management (Simulated)",
-    description: "Oversee all users and system settings.",
-    href: "#", // Placeholder
-    icon: Users,
-  },
   {
     title: "Symptom Checker Insights",
     description: "View analytics from the symptom checker.",
-    href: "/symptom-checker", // Can link to existing if relevant for admin
+    href: "/symptom-checker",
     icon: HeartPulse,
   },
   {
     title: "Appointment System Overview",
     description: "Monitor overall appointment statistics.",
-    href: "/appointments", // Can link to existing
+    href: "/appointments",
     icon: CalendarDays,
   },
   {
@@ -48,29 +48,49 @@ const adminFeatures = [
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [allUsers, setAllUsers] = useState<AppUser[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
 
   useEffect(() => {
     const currentUser = getCurrentUser();
     if (!currentUser) {
-      router.replace("/login"); // Redirect to login if no user
+      router.replace("/login");
     } else {
       setUser(currentUser);
-      // Role-based redirection
       if (currentUser.role === "doctor") {
         router.replace("/dashboard/doctor");
       } else if (currentUser.role === "patient") {
         router.replace("/dashboard/patient");
-      } else {
-        // Admin or other roles stay here (or redirect to an admin-specific dashboard if one exists)
+      } else if (currentUser.role === "admin") {
+        // Admin stays here, fetch all users
+        const fetchUsers = async () => {
+          setIsLoadingUsers(true);
+          const usersData = await getAllUsers();
+          if (usersData) {
+            setAllUsers(usersData);
+          } else {
+            toast({
+              title: "Error fetching users",
+              description: "Could not load the user list from the database.",
+              variant: "destructive",
+            });
+            setAllUsers([]);
+          }
+          setIsLoadingUsers(false);
+        };
+        fetchUsers();
         setLoading(false);
+      } else {
+        // Other unexpected roles, also redirect or handle
+        router.replace("/login"); 
       }
     }
-  }, [router]);
+  }, [router, toast]);
 
-  if (loading || !user || (user.role === 'doctor' || user.role === 'patient') ) {
-    // Show loading skeleton or a blank page during redirection or if not admin
+  if (loading || !user || (user.role !== 'admin')) {
     return (
       <MainLayout>
         <div className="space-y-4 p-4">
@@ -81,12 +101,22 @@ export default function DashboardPage() {
             <Skeleton className="h-40 w-full" />
             <Skeleton className="h-40 w-full" />
           </div>
+          <Skeleton className="h-64 w-full mt-6" />
+          <Skeleton className="h-64 w-full mt-6" />
         </div>
       </MainLayout>
     );
   }
+
+  const doctors = allUsers.filter(u => u.role === 'doctor') as Doctor[];
+  const patients = allUsers.filter(u => u.role === 'patient') as Patient[];
   
-  // This content is shown for 'admin' role or if no specific redirect happens
+  const doctorNameMap = doctors.reduce((acc, doctor) => {
+    acc[doctor.id] = doctor.name;
+    return acc;
+  }, {} as Record<string, string>);
+
+
   return (
     <MainLayout>
       <PageTitle 
@@ -94,7 +124,7 @@ export default function DashboardPage() {
         description="System overview and management tools."
         icon={LayoutDashboard}
       />
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-8">
         {adminFeatures.map((feature) => (
           <FeatureCard
             key={feature.title}
@@ -104,6 +134,80 @@ export default function DashboardPage() {
             icon={feature.icon}
           />
         ))}
+      </div>
+
+      <div className="space-y-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><BriefcaseMedical className="h-6 w-6 text-primary" /> Doctors ({doctors.length})</CardTitle>
+            <CardDescription>List of all registered doctors.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoadingUsers ? <Skeleton className="h-20 w-full" /> : doctors.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Specialty</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {doctors.map((doc) => (
+                    <TableRow key={doc.id}>
+                      <TableCell className="font-medium flex items-center gap-2">
+                         <Avatar className="h-8 w-8">
+                           <AvatarImage src={`https://placehold.co/40x40.png?text=${doc.name.charAt(0)}`} alt={doc.name} data-ai-hint="doctor professional" />
+                           <AvatarFallback>{doc.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                         </Avatar>
+                        {doc.name}
+                      </TableCell>
+                      <TableCell>{doc.email}</TableCell>
+                      <TableCell><Badge variant="secondary">{doc.specialty || 'N/A'}</Badge></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : <p className="text-muted-foreground text-center py-4">No doctors registered yet.</p>}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><UserCog className="h-6 w-6 text-primary" /> Patients ({patients.length})</CardTitle>
+            <CardDescription>List of all registered patients.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoadingUsers ? <Skeleton className="h-20 w-full" /> : patients.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Assigned Doctor</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {patients.map((pat) => (
+                    <TableRow key={pat.id}>
+                      <TableCell className="font-medium flex items-center gap-2">
+                         <Avatar className="h-8 w-8">
+                           <AvatarImage src={`https://placehold.co/40x40.png?text=${pat.name.charAt(0)}`} alt={pat.name} data-ai-hint="person silhouette" />
+                           <AvatarFallback>{pat.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                         </Avatar>
+                        {pat.name}
+                      </TableCell>
+                      <TableCell>{pat.email}</TableCell>
+                      <TableCell>
+                        {pat.assignedDoctorId ? (doctorNameMap[pat.assignedDoctorId] || <Badge variant="outline">ID: {pat.assignedDoctorId.substring(0,8)}...</Badge>) : <Badge variant="outline">Unassigned</Badge>}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : <p className="text-muted-foreground text-center py-4">No patients registered yet.</p>}
+          </CardContent>
+        </Card>
       </div>
     </MainLayout>
   );
