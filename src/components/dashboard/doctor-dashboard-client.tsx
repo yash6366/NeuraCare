@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentUser, type Doctor as DoctorUser, type AppUser } from "@/lib/auth";
-import { mockPatients, mockDoctors, type MockPatientRecord } from "@/lib/mock-data";
+import { getCurrentUser, type Doctor as DoctorUser } from "@/lib/auth";
+import { mockPatients, type MockPatientRecord } from "@/lib/mock-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -25,9 +25,10 @@ export function DoctorDashboardClient() {
     if (!currentUser || currentUser.role !== 'doctor') {
       router.replace('/login');
     } else {
-      setDoctor(currentUser as DoctorUser);
+      const currentDoctor = currentUser as DoctorUser;
+      setDoctor(currentDoctor);
       // Filter patients for this doctor
-      const doctorPatients = mockPatients.filter(p => p.assignedDoctorId === currentUser.id);
+      const doctorPatients = mockPatients.filter(p => p.assignedDoctorId === currentDoctor.id);
       setMyPatients(doctorPatients);
       setIsLoading(false);
     }
