@@ -18,6 +18,7 @@ export interface Doctor extends User {
 export interface Patient extends User {
   role: 'patient';
   assignedDoctorId: string | null; // string representation of MongoDB ObjectId or null
+  emergencyContactPhone?: string; // New field for emergency contact
 }
 
 export type AppUser = User | Doctor | Patient;
@@ -39,3 +40,4 @@ export interface MockDoctorRecord {
   email: string; 
   phone?: string;
 }
+

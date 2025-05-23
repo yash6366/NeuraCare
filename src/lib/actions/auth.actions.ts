@@ -10,17 +10,21 @@ export async function registerUserWithCredentials(formData: {
   fullName: string;
   email: string;
   password: string;
-  role?: 'patient' | 'doctor' | 'admin'; // Default to patient if not provided
+  role?: 'patient' | 'doctor' | 'admin';
+  emergencyContactPhone?: string; // Added for patients
 }): Promise<{ success: boolean; message: string; userId?: string }> {
-  const { fullName, email, password, role = 'patient' } = formData;
+  const { fullName, email, password, role = 'patient', emergencyContactPhone } = formData;
 
   if (!fullName || !email || !password) {
-    return { success: false, message: 'All fields are required.' };
+    return { success: false, message: 'Full name, email, and password are required.' };
+  }
+  if (password.length < 6) {
+    return { success: false, message: 'Password must be at least 6 characters long.'};
   }
 
   try {
     const db = await getDb();
-    const usersCollection = db.collection<Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null }>('users');
+    const usersCollection = db.collection<Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null, emergencyContactPhone?: string }>('users');
 
     const existingUser = await usersCollection.findOne({ email: email.toLowerCase() });
     if (existingUser) {
@@ -29,24 +33,24 @@ export async function registerUserWithCredentials(formData: {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const newUser: Omit<User, 'id'> & { passwordHash: string, specialty?: string, assignedDoctorId?: string | null } = {
+    const newUserDocument: Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null, emergencyContactPhone?: string } = {
       name: fullName,
       email: email.toLowerCase(),
       passwordHash,
       role,
     };
     
-    // Add role-specific fields (you might want more sophisticated logic for this)
     if (role === 'doctor') {
-        // For now, new doctors won't have a specialty pre-filled or it could be part of registration form
-        (newUser as Omit<Doctor, 'id'> & { passwordHash: string }).specialty = 'General Practice'; 
+        (newUserDocument as Omit<Doctor, 'id'> & { passwordHash: string }).specialty = 'General Practice'; 
     } else if (role === 'patient') {
-        // New patients won't have an assigned doctor initially
-        (newUser as Omit<Patient, 'id'> & { passwordHash: string }).assignedDoctorId = null;
+        (newUserDocument as Omit<Patient, 'id'> & { passwordHash: string }).assignedDoctorId = null;
+        if (emergencyContactPhone && emergencyContactPhone.trim() !== "") {
+          (newUserDocument as Omit<Patient, 'id'> & { passwordHash: string }).emergencyContactPhone = emergencyContactPhone.trim();
+        }
     }
 
 
-    const result = await usersCollection.insertOne(newUser);
+    const result = await usersCollection.insertOne(newUserDocument);
 
     if (result.insertedId) {
       return { success: true, message: 'Registration successful!', userId: result.insertedId.toString() };
@@ -84,7 +88,6 @@ export async function loginUserWithCredentials(formData: {
       return { success: false, message: 'Invalid email or password.' };
     }
 
-    // Construct the AppUser object
     const appUser: AppUser = {
       id: userDocument._id.toString(),
       email: userDocument.email as string,
@@ -92,16 +95,14 @@ export async function loginUserWithCredentials(formData: {
       role: userDocument.role as AppUser['role'],
     };
 
-    if (appUser.role === 'doctor' && userDocument.specialty) {
-      (appUser as Doctor).specialty = userDocument.specialty as string;
+    if (appUser.role === 'doctor') {
+      (appUser as Doctor).specialty = userDocument.specialty as string || 'N/A';
     }
-    if (appUser.role === 'patient' && userDocument.assignedDoctorId) {
-       // Ensure assignedDoctorId is a string or null. MongoDB might store it as ObjectId.
+    if (appUser.role === 'patient') {
       (appUser as Patient).assignedDoctorId = userDocument.assignedDoctorId instanceof ObjectId 
         ? userDocument.assignedDoctorId.toString() 
-        : userDocument.assignedDoctorId as string | null;
-    } else if (appUser.role === 'patient') {
-      (appUser as Patient).assignedDoctorId = null;
+        : userDocument.assignedDoctorId as string | null || null;
+      (appUser as Patient).emergencyContactPhone = userDocument.emergencyContactPhone as string | undefined;
     }
 
 
@@ -111,3 +112,4 @@ export async function loginUserWithCredentials(formData: {
     return { success: false, message: 'An unexpected error occurred during login.', user: null };
   }
 }
+

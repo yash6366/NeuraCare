@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, KeyRound, Mail, UserPlus } from "lucide-react";
+import { User, KeyRound, Mail, UserPlus, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { registerUserWithCredentials } from "@/lib/actions/auth.actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -22,6 +22,7 @@ export function RegisterForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState<'patient' | 'doctor' | 'admin'>("patient");
+  const [emergencyContactPhone, setEmergencyContactPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +32,7 @@ export function RegisterForm() {
     if (!fullName || !email || !password || !confirmPassword) {
       toast({
         title: "Registration Failed",
-        description: "Please fill in all fields.",
+        description: "Please fill in all required fields.",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -48,7 +49,13 @@ export function RegisterForm() {
       return;
     }
 
-    const result = await registerUserWithCredentials({ fullName, email, password, role });
+    const result = await registerUserWithCredentials({ 
+      fullName, 
+      email, 
+      password, 
+      role,
+      emergencyContactPhone: role === 'patient' ? emergencyContactPhone : undefined 
+    });
 
     if (result.success) {
       toast({
@@ -116,10 +123,11 @@ export function RegisterForm() {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder="•••••••• (min. 6 characters)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
                 className="pl-10"
                 disabled={isLoading}
               />
@@ -154,6 +162,25 @@ export function RegisterForm() {
               </SelectContent>
             </Select>
           </div>
+
+          {role === 'patient' && (
+            <div className="space-y-2">
+              <Label htmlFor="emergencyContactPhone">Emergency Contact Phone (Optional)</Label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  id="emergencyContactPhone"
+                  type="tel"
+                  placeholder="+12345678900"
+                  value={emergencyContactPhone}
+                  onChange={(e) => setEmergencyContactPhone(e.target.value)}
+                  className="pl-10"
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+          )}
+
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Registering..." : "Create Account"}
           </Button>

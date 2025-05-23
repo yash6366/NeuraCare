@@ -2,14 +2,16 @@
 'use server';
 
 import Twilio from 'twilio';
+import { getDb } from '@/lib/mongodb';
+import type { Patient } from '@/types';
+import { ObjectId } from 'mongodb';
 
-// Ensure these environment variables are set in your .env file
-const actualAccountSid = process.env.TWILIO_ACCOUNT_SID_ACTUAL; // Main Account SID (starts with AC)
-const apiKeySid = process.env.TWILIO_API_KEY_SID; // API Key SID (starts with SK)
-const apiKeySecret = process.env.TWILIO_API_KEY_SECRET; // API Key Secret
+const actualAccountSid = process.env.TWILIO_ACCOUNT_SID_ACTUAL;
+const apiKeySid = process.env.TWILIO_API_KEY_SID;
+const apiKeySecret = process.env.TWILIO_API_KEY_SECRET;
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
-const familyContactPhone = process.env.EMERGENCY_CONTACT_PHONE;
-const emergencyServicesPhone = process.env.EMERGENCY_SERVICES_PHONE;
+const fixedEmergencyContactPhone = process.env.EMERGENCY_CONTACT_PHONE; // e.g., 108 or primary family member
+// EMERGENCY_SERVICES_PHONE from .env is no longer directly used here for the second recipient.
 
 interface SmsResponse {
   success: boolean;
@@ -23,35 +25,52 @@ interface LocationData {
 }
 
 export async function sendSosSmsAction(
-  userName: string | undefined,
+  userId: string,
+  userNameFromClient: string | undefined, // User name from client-side auth
   location: LocationData | null
 ): Promise<SmsResponse> {
-  if (!actualAccountSid || !apiKeySid || !apiKeySecret || !twilioPhoneNumber || !familyContactPhone || !emergencyServicesPhone) {
-    let missingVars = [];
-    if (!actualAccountSid) missingVars.push('TWILIO_ACCOUNT_SID_ACTUAL');
-    if (!apiKeySid) missingVars.push('TWILIO_API_KEY_SID');
-    if (!apiKeySecret) missingVars.push('TWILIO_API_KEY_SECRET');
-    if (!twilioPhoneNumber) missingVars.push('TWILIO_PHONE_NUMBER');
-    if (!familyContactPhone) missingVars.push('EMERGENCY_CONTACT_PHONE');
-    if (!emergencyServicesPhone) missingVars.push('EMERGENCY_SERVICES_PHONE');
-    
-    const errorMessage = `Twilio service is not configured correctly. Missing environment variables: ${missingVars.join(', ')}. Please contact support or check your .env file.`;
-    console.error(errorMessage);
-    return {
-      success: false,
-      message: errorMessage,
-    };
-  }
+  
+  let missingEnvVars = [];
+  if (!actualAccountSid) missingEnvVars.push('TWILIO_ACCOUNT_SID_ACTUAL');
+  if (!apiKeySid) missingEnvVars.push('TWILIO_API_KEY_SID');
+  if (!apiKeySecret) missingEnvVars.push('TWILIO_API_KEY_SECRET');
+  if (!twilioPhoneNumber) missingEnvVars.push('TWILIO_PHONE_NUMBER');
+  if (!fixedEmergencyContactPhone) missingEnvVars.push('EMERGENCY_CONTACT_PHONE');
 
-  if (!actualAccountSid.startsWith('AC')) {
+  if (missingEnvVars.length > 0) {
+    const errorMessage = `Twilio service is not configured correctly. Missing environment variables: ${missingEnvVars.join(', ')}. Please contact support or check your .env file.`;
+    console.error(errorMessage);
+    return { success: false, message: errorMessage };
+  }
+  
+  if (actualAccountSid && !actualAccountSid.startsWith('AC')) {
     const errorMessage = 'Invalid TWILIO_ACCOUNT_SID_ACTUAL. It must start with "AC". Please check your .env file.';
     console.error(errorMessage);
     return { success: false, message: errorMessage };
   }
 
+  let patientEmergencyContact: string | undefined | null = null;
+  let senderName = userNameFromClient || 'A SmartCare Hub User';
 
-  const client = Twilio(apiKeySid, apiKeySecret, { accountSid: actualAccountSid });
-  const senderName = userName || 'A SmartCare Hub User';
+  try {
+    if (ObjectId.isValid(userId)) {
+      const db = await getDb();
+      const usersCollection = db.collection('users');
+      const userDoc = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+      if (userDoc) {
+        senderName = userDoc.name as string || senderName; // Prefer name from DB
+        if (userDoc.role === 'patient') {
+          patientEmergencyContact = (userDoc as Omit<Patient, 'id'> & { _id: ObjectId }).emergencyContactPhone;
+        }
+      }
+    }
+  } catch (dbError) {
+    console.error("Error fetching user's emergency contact from DB:", dbError);
+    // Continue without it, but log the error
+  }
+
+  const client = Twilio(apiKeySid!, apiKeySecret!, { accountSid: actualAccountSid! });
   
   let locationInfo = 'Location not available.';
   if (location) {
@@ -60,18 +79,25 @@ export async function sendSosSmsAction(
 
   const messageBody = `SOS Alert from SmartCare Hub: ${senderName} has triggered an emergency alert. ${locationInfo} Please respond immediately.`;
 
-  const recipients = [familyContactPhone, emergencyServicesPhone].filter(Boolean); // Filter out potentially empty string for second recipient
+  const recipients: string[] = [];
+  if (fixedEmergencyContactPhone) {
+    recipients.push(fixedEmergencyContactPhone);
+  }
+  if (patientEmergencyContact) {
+    recipients.push(patientEmergencyContact);
+  }
   
-  if (recipients.length === 0) {
-    return { success: false, message: "No recipient phone numbers configured." };
+  const uniqueRecipients = Array.from(new Set(recipients.filter(Boolean))); // Ensure unique and non-empty
+
+  if (uniqueRecipients.length === 0) {
+    return { success: false, message: "No valid recipient phone numbers configured or found for the user." };
   }
 
-  const smsPromises = recipients.map(recipient => {
-    if (!recipient) return Promise.resolve({ to: 'undefined', status: 'skipped', error: 'Recipient number undefined'}); // Should not happen due to filter
+  const smsPromises = uniqueRecipients.map(recipient => {
     return client.messages
       .create({
         body: messageBody,
-        from: twilioPhoneNumber,
+        from: twilioPhoneNumber!,
         to: recipient,
       })
       .then(message => ({ sid: message.sid, to: recipient, status: 'sent' }))
@@ -87,11 +113,11 @@ export async function sendSosSmsAction(
     const failedSends = results.filter(r => r.status === 'failed');
 
     if (allSuccessful) {
-      return { success: true, message: 'SOS alerts sent successfully to designated contacts.' };
+      return { success: true, message: `SOS alerts sent successfully to ${uniqueRecipients.join(', ')}.` };
     } else {
       return { 
         success: false, 
-        message: `SOS alerts partially sent. Failed to send to: ${failedSends.map(f=>f.to).join(', ')}.`,
+        message: `SOS alerts partially sent. Failed to send to: ${failedSends.map(f=>f.to).join(', ')}. Sent successfully to others.`,
         error: failedSends.map(f => ({to: f.to, error: f.error}))
       };
     }

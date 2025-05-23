@@ -8,7 +8,7 @@ import { AlertTriangle, CheckCircle, Siren, Info, MessageSquare, MapPin } from "
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { sendSosSmsAction } from "@/lib/actions/emergency.actions";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, type AppUser } from "@/lib/auth"; // Ensure AppUser is imported if needed for currentUser typing
 
 interface LocationData {
   latitude: number;
@@ -28,19 +28,17 @@ export function EmergencyClient() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            setUserLocation({
+            const loc = {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
-            });
+            };
+            setUserLocation(loc);
             setLocationError(null);
-            resolve({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
+            resolve(loc);
           },
           (err) => {
             console.warn("Error getting location for SOS:", err);
-            setLocationError("Could not automatically determine your location. SOS will be sent without location.");
+            setLocationError("Could not automatically determine your location. SOS will be sent without location details.");
             toast({
               title: "Location Error",
               description: "Could not get your location. SOS will be sent without it.",
@@ -51,7 +49,7 @@ export function EmergencyClient() {
           { timeout: 10000 } // 10 seconds timeout
         );
       } else {
-        setLocationError("Geolocation is not supported by your browser. SOS will be sent without location.");
+        setLocationError("Geolocation is not supported by your browser. SOS will be sent without location details.");
         toast({
             title: "Location Not Supported",
             description: "Geolocation not supported. SOS will be sent without it.",
@@ -64,25 +62,32 @@ export function EmergencyClient() {
 
   const handleSosActivation = async () => {
     setIsSending(true);
-    setLocationError(null); // Reset location error
+    setLocationError(null); 
     
-    // Attempt to get location first
     const location = await getLocation();
     
-    const currentUser = getCurrentUser();
-    const userName = currentUser?.name;
+    const currentUser: AppUser | null = getCurrentUser();
+    if (!currentUser) {
+        toast({
+            title: "User Not Found",
+            description: "Cannot send SOS. Please log in.",
+            variant: "destructive"
+        });
+        setIsSending(false);
+        return;
+    }
 
-    const result = await sendSosSmsAction(userName, location);
+    const result = await sendSosSmsAction(currentUser.id, currentUser.name, location);
 
     if (result.success) {
       setSosActivated(true);
       toast({
         title: "SOS Alert Sent",
         description: result.message,
-        variant: "default", // Changed from destructive as it's a success
+        variant: "default", 
       });
     } else {
-      setSosActivated(false); // Keep button active if failed
+      setSosActivated(false); 
       toast({
         title: "SOS Alert Failed",
         description: result.message || "Could not send SOS alert. Please try again or call emergency services directly.",
@@ -104,7 +109,7 @@ export function EmergencyClient() {
             Emergency SOS Alert
           </CardTitle>
           <CardDescription>
-            In a critical situation? Press the SOS button to alert emergency services and your contacts via SMS.
+            In a critical situation? Press the SOS button to alert emergency contacts via SMS.
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center space-y-6">
@@ -159,7 +164,7 @@ export function EmergencyClient() {
             <MessageSquare className="h-4 w-4" />
             <AlertTitle>SMS Content</AlertTitle>
             <AlertDescription>
-              Recipients will receive an SMS with your name (if logged in), your approximate location (if enabled and found), and an emergency message.
+              Recipients will receive an SMS with your name, your approximate location (if enabled and found), and an emergency message.
             </AlertDescription>
           </Alert>
         </CardContent>
