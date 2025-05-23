@@ -150,8 +150,7 @@ export function RegisterForm() {
               <SelectContent>
                 <SelectItem value="patient">Patient</SelectItem>
                 <SelectItem value="doctor">Doctor</SelectItem>
-                {/* Admin registration might be disabled in production or handled differently */}
-                {/* <SelectItem value="admin">Admin</SelectItem> */}
+                <SelectItem value="admin">Admin</SelectItem>
               </SelectContent>
             </Select>
           </div>
