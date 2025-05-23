@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { getCurrentUser, type Patient } from "@/lib/auth";
 import { format } from "date-fns";
-import { UploadCloud, ImageIcon, File as FileIcon, Trash2, Eye, FileText, AlertTriangle } from "lucide-react";
+import { UploadCloud, ImageIcon, File as FileIconLucide, Trash2, Eye, FileText, AlertTriangle } from "lucide-react"; // Renamed FileIcon to FileIconLucide
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Image from "next/image";
@@ -154,13 +154,18 @@ export function MedicalRecordsClient() {
         const imageWindow = window.open("", "_blank");
         if (imageWindow) {
           imageWindow.document.write(`<html><head><title>${record.name}</title></head><body style="margin:0; display:flex; justify-content:center; align-items:center; min-height:100vh; background-color:#f0f0f0;"><img src="${record.filePreview}" style="max-width:100%; max-height:100vh;" alt="${record.name}"></body></html>`);
-          imageWindow.document.close(); // Important for some browsers
+          imageWindow.document.close();
         } else {
           toast({ title: "Popup Blocked", description: "Please allow popups to view the image."});
         }
       } else if (record.type === "pdf") {
-        const pdfWindow = window.open(record.filePreview, "_blank"); 
-        if (!pdfWindow) {
+        const pdfWindow = window.open("", "_blank");
+        if (pdfWindow) {
+          pdfWindow.document.write(
+            `<html><head><title>${record.name}</title><style>body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; } iframe { border: none; width: 100%; height: 100%; }</style></head><body><iframe src="${record.filePreview}"></iframe></body></html>`
+          );
+          pdfWindow.document.close();
+        } else {
             toast({ title: "Popup Blocked", description: "Please allow popups to view the PDF."});
         }
       } else {
@@ -261,11 +266,11 @@ export function MedicalRecordsClient() {
                         data-ai-hint="medical document"
                       />
                     ) : record.type === "pdf" ? (
-                      <FileIcon className="h-10 w-10 text-red-600 flex-shrink-0" />
+                      <FileIconLucide className="h-10 w-10 text-red-600 flex-shrink-0" />
                     ) : (
-                      <FileIcon className="h-10 w-10 text-gray-500 flex-shrink-0" />
+                      <FileIconLucide className="h-10 w-10 text-gray-500 flex-shrink-0" />
                     )}
-                    <div className="flex-grow min-w-0"> {/* Added min-w-0 for better truncation */}
+                    <div className="flex-grow min-w-0">
                       <p className="font-semibold truncate" title={record.name}>{record.name}</p>
                       <p className="text-xs text-muted-foreground">
                         {record.type.toUpperCase()} - {(record.size / 1024).toFixed(1)} KB - Uploaded: {format(new Date(record.uploadedAt), "PPP p")}
@@ -289,6 +294,3 @@ export function MedicalRecordsClient() {
     </div>
   );
 }
-
-
-    
