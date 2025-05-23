@@ -60,11 +60,11 @@ export default function DashboardPage() {
       router.replace("/login");
     } else {
       setUser(currentUser);
-      if (currentUser.role === "doctor") {
+      if (currentUser.role && currentUser.role === "doctor") {
         router.replace("/dashboard/doctor");
-      } else if (currentUser.role === "patient") {
+      } else if (currentUser.role && currentUser.role === "patient") {
         router.replace("/dashboard/patient");
-      } else if (currentUser.role === "admin") {
+      } else if (currentUser.role && currentUser.role === "admin") {
         // Admin stays here, fetch all users
         const fetchUsers = async () => {
           setIsLoadingUsers(true);
@@ -85,6 +85,7 @@ export default function DashboardPage() {
         setLoading(false);
       } else {
         // Other unexpected roles, also redirect or handle
+        console.warn("Unexpected user role or missing role:", currentUser?.role);
         router.replace("/login"); 
       }
     }
