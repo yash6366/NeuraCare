@@ -137,7 +137,7 @@ export function LoginForm() {
         </p>
          <div className="text-xs text-muted-foreground mt-4 space-y-1 text-center">
           <p className="font-semibold">Demo Note:</p>
-          <p>You can now register new users. The credentials below are no longer hardcoded but can be registered if they don't exist.</p>
+          <p>To log in, users (including Admins) must first be registered via the 'Register here' link. The example credentials below can be used for registration if they don't already exist in the database.</p>
           <p>Example Admin: admin123@gmail.com / Admin@123</p>
           <p>Example Doctor: doctor.strange@example.com / Doctor@123</p>
           <p>Example Patient: patient.doe@example.com / Patient@123</p>
@@ -146,3 +146,4 @@ export function LoginForm() {
     </Card>
   );
 }
+
