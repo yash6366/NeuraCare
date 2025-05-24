@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -22,20 +23,16 @@ interface Appointment {
   status: "Confirmed" | "Pending" | "Cancelled";
 }
 
-const initialAppointments: Appointment[] = [
-  { id: "1", type: "General Checkup", patientName: "Alice Smith", dateTime: addDays(new Date(), 3), status: "Confirmed" },
-  { id: "2", type: "Dental Cleaning", patientName: "Bob Johnson", dateTime: addDays(new Date(), 7), status: "Confirmed" },
-  { id: "3", type: "Cardiology Consultation", patientName: "Carol Williams", dateTime: addDays(new Date(), 10), status: "Pending" },
-];
+// Moved initialAppointments generation inside useEffect to avoid hydration issues
 
 export function AppointmentsClient() {
-  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
+  const [appointments, setAppointments] = useState<Appointment[]>([]); // Initialize as empty
   const [activeTab, setActiveTab] = useState("upcoming");
 
   // Form state for booking
   const [appointmentType, setAppointmentType] = useState("");
   const [patientName, setPatientName] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined); // Initialize as undefined
   const [selectedTime, setSelectedTime] = useState("09:00");
   const [isBooking, setIsBooking] = useState(false);
 
@@ -44,6 +41,18 @@ export function AppointmentsClient() {
   const [isProcessingVoice, setIsProcessingVoice] = useState(false);
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Generate initial appointments and set selectedDate on client mount
+    const generateInitialAppointments = (): Appointment[] => [
+      { id: "1", type: "General Checkup", patientName: "Alice Smith", dateTime: addDays(new Date(), 3), status: "Confirmed" },
+      { id: "2", type: "Dental Cleaning", patientName: "Bob Johnson", dateTime: addDays(new Date(), 7), status: "Confirmed" },
+      { id: "3", type: "Cardiology Consultation", patientName: "Carol Williams", dateTime: addDays(new Date(), 10), status: "Pending" },
+    ];
+    setAppointments(generateInitialAppointments());
+    setSelectedDate(new Date());
+  }, []); // Empty dependency array ensures this runs once on mount (client-side)
+
 
   const handleBookAppointment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +77,7 @@ export function AppointmentsClient() {
 
     // Simulate API call
     setTimeout(() => {
-      setAppointments(prev => [newAppointment, ...prev]);
+      setAppointments(prev => [newAppointment, ...prev].sort((a, b) => a.dateTime.getTime() - b.dateTime.getTime()));
       toast({ title: "Appointment Requested", description: `Your request for ${appointmentType} has been submitted.` });
       setAppointmentType("");
       setPatientName("");
@@ -116,8 +125,20 @@ export function AppointmentsClient() {
     }
   };
 
-  const upcomingAppointments = appointments.filter(app => app.status !== "Cancelled" && app.dateTime >= new Date());
-  const pastAppointments = appointments.filter(app => app.dateTime < new Date() && app.status !== "Cancelled"); // Or include cancelled ones based on logic
+  const upcomingAppointments = appointments
+    .filter(app => app.status !== "Cancelled" && app.dateTime >= new Date())
+    .sort((a, b) => a.dateTime.getTime() - b.dateTime.getTime());
+  const pastAppointments = appointments
+    .filter(app => app.dateTime < new Date() || app.status === "Cancelled")
+    .sort((a,b) => b.dateTime.getTime() - a.dateTime.getTime());
+
+  if (!selectedDate) { // Render a loading state or null until selectedDate is initialized
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p>Loading appointments...</p>
+      </div>
+    ); 
+  }
 
   return (
     <Tabs defaultValue="upcoming" value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -215,6 +236,7 @@ export function AppointmentsClient() {
                       <Button
                         variant={"outline"}
                         className="w-full justify-start text-left font-normal"
+                        disabled={!selectedDate} // Disable if selectedDate is not yet initialized
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
@@ -280,3 +302,4 @@ function handleVoiceInput() {
   // Placeholder for actual voice input logic
   alert("Voice input simulation: In a real app, this would activate the microphone and use Speech-to-Text.");
 }
+
