@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, KeyRound, Mail, UserPlus, Phone } from "lucide-react";
+import { User, KeyRound, Mail, UserPlus, Phone, ShieldCheck } from "lucide-react"; // Added ShieldCheck for Medical ID
 import { useToast } from "@/hooks/use-toast";
 import { registerUserWithCredentials } from "@/lib/actions/auth.actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -22,8 +22,9 @@ export function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<'patient' | 'doctor'>("patient"); // Default to patient, admin removed
+  const [role, setRole] = useState<'patient' | 'doctor'>("patient");
   const [emergencyContactPhone, setEmergencyContactPhone] = useState("");
+  const [medicalId, setMedicalId] = useState(""); // Added state for Medical ID
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,12 +51,23 @@ export function RegisterForm() {
       return;
     }
 
+    if (role === 'doctor' && !medicalId.trim()) {
+      toast({
+        title: translate('register.toast.failureTitle', 'Registration Failed'),
+        description: translate('register.toast.medicalIdRequired', 'Medical ID is required for doctors.'),
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
     const result = await registerUserWithCredentials({ 
       fullName, 
       email, 
       password, 
       role,
-      emergencyContactPhone: role === 'patient' ? emergencyContactPhone : undefined 
+      emergencyContactPhone: role === 'patient' ? emergencyContactPhone : undefined,
+      medicalId: role === 'doctor' ? medicalId : undefined, // Pass medicalId for doctors
     });
 
     if (result.success) {
@@ -159,10 +171,28 @@ export function RegisterForm() {
               <SelectContent>
                 <SelectItem value="patient">{translate('register.role.patient','Patient')}</SelectItem>
                 <SelectItem value="doctor">{translate('register.role.doctor','Doctor')}</SelectItem>
-                {/* Admin role removed from selectable options */}
               </SelectContent>
             </Select>
           </div>
+
+          {role === 'doctor' && (
+            <div className="space-y-2">
+              <Label htmlFor="medicalId">{translate('register.medicalIdLabel', 'Medical ID')}</Label>
+              <div className="relative">
+                <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  id="medicalId"
+                  type="text"
+                  placeholder={translate('register.medicalIdPlaceholder', 'Your Medical ID Number')}
+                  value={medicalId}
+                  onChange={(e) => setMedicalId(e.target.value)}
+                  required
+                  className="pl-10"
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+          )}
 
           {role === 'patient' && (
             <div className="space-y-2">

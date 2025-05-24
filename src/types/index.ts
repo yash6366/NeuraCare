@@ -15,6 +15,7 @@ export interface User {
 export interface Doctor extends User {
   role: 'doctor';
   specialty: string;
+  medicalId?: string; // Added Medical ID
 }
 
 export interface Patient extends User {

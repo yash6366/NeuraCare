@@ -10,10 +10,11 @@ export async function registerUserWithCredentials(formData: {
   fullName: string;
   email: string;
   password: string;
-  role?: 'patient' | 'doctor' | 'admin';
-  emergencyContactPhone?: string; // Added for patients
+  role?: 'patient' | 'doctor'; // Removed 'admin' role
+  emergencyContactPhone?: string;
+  medicalId?: string; // Added Medical ID
 }): Promise<{ success: boolean; message: string; userId?: string }> {
-  const { fullName, email, password, role = 'patient', emergencyContactPhone } = formData;
+  const { fullName, email, password, role = 'patient', emergencyContactPhone, medicalId } = formData;
 
   if (!fullName || !email || !password) {
     return { success: false, message: 'Full name, email, and password are required.' };
@@ -21,10 +22,14 @@ export async function registerUserWithCredentials(formData: {
   if (password.length < 6) {
     return { success: false, message: 'Password must be at least 6 characters long.'};
   }
+  if (role === 'doctor' && (!medicalId || medicalId.trim() === '')) {
+    return { success: false, message: 'Medical ID is required for doctors.' };
+  }
+
 
   try {
     const db = await getDb();
-    const usersCollection = db.collection<Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null, emergencyContactPhone?: string, phoneNumber?: string, address?: string }>('users');
+    const usersCollection = db.collection<Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null, emergencyContactPhone?: string, phoneNumber?: string, address?: string, medicalId?: string }>('users');
 
     const existingUser = await usersCollection.findOne({ email: email.toLowerCase() });
     if (existingUser) {
@@ -33,17 +38,20 @@ export async function registerUserWithCredentials(formData: {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const newUserDocument: Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null, emergencyContactPhone?: string, phoneNumber?: string, address?: string } = {
+    const newUserDocument: Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null, emergencyContactPhone?: string, phoneNumber?: string, address?: string, medicalId?: string } = {
       name: fullName,
       email: email.toLowerCase(),
       passwordHash,
       role,
-      phoneNumber: '', // Initialize with empty strings
-      address: '',     // Initialize with empty strings
+      phoneNumber: '', 
+      address: '',     
     };
     
     if (role === 'doctor') {
-        (newUserDocument as Omit<Doctor, 'id'> & { passwordHash: string }).specialty = 'General Practice'; 
+        (newUserDocument as Omit<Doctor, 'id'> & { passwordHash: string, medicalId?: string }).specialty = 'General Practice'; 
+        if (medicalId) {
+          (newUserDocument as Omit<Doctor, 'id'> & { passwordHash: string, medicalId?: string }).medicalId = medicalId.trim();
+        }
     } else if (role === 'patient') {
         (newUserDocument as Omit<Patient, 'id'> & { passwordHash: string }).assignedDoctorId = null;
         if (emergencyContactPhone && emergencyContactPhone.trim() !== "") {
@@ -95,12 +103,13 @@ export async function loginUserWithCredentials(formData: {
       email: userDocument.email as string,
       name: userDocument.name as string,
       role: userDocument.role as AppUser['role'],
-      phoneNumber: userDocument.phoneNumber as string || '', // Ensure these are included
-      address: userDocument.address as string || '',       // Ensure these are included
+      phoneNumber: userDocument.phoneNumber as string || '', 
+      address: userDocument.address as string || '',       
     };
 
     if (appUser.role === 'doctor') {
       (appUser as Doctor).specialty = userDocument.specialty as string || 'N/A';
+      (appUser as Doctor).medicalId = userDocument.medicalId as string | undefined; // Add medicalId for doctor
     }
     if (appUser.role === 'patient') {
       (appUser as Patient).assignedDoctorId = userDocument.assignedDoctorId instanceof ObjectId 

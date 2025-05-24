@@ -45,13 +45,16 @@ const enUSTranslations: TranslationSet = {
     'register.roleLabel': 'Register as',
     'register.role.patient': 'Patient',
     'register.role.doctor': 'Doctor',
-    'register.role.admin': 'Admin',
+    // 'register.role.admin': 'Admin', // Admin registration removed from UI
     'register.emergencyContactLabel': 'Emergency Contact Phone (Optional)',
+    'register.medicalIdLabel': 'Medical ID',
+    'register.medicalIdPlaceholder': 'Your Medical ID Number',
     'register.toast.successTitle': 'Registration Successful',
     'register.toast.successDescription': 'Your account has been created. Please log in.',
     'register.toast.failureTitle': 'Registration Failed',
     'register.toast.fillAllFields': 'Please fill in all required fields.',
     'register.toast.passwordsDontMatch': 'Passwords do not match.',
+    'register.toast.medicalIdRequired': 'Medical ID is required for doctors.',
     'register.toast.errorDescription': 'An error occurred. Please try again.',
     'dashboard.admin.title': 'Admin Dashboard - SmartCare Hub',
     'dashboard.admin.description': 'System overview and management tools.',
@@ -414,13 +417,16 @@ const hiINTranslations: TranslationSet = {
   'register.roleLabel': 'के रूप में रजिस्टर करें',
   'register.role.patient': 'मरीज',
   'register.role.doctor': 'चिकित्सक',
-  'register.role.admin': 'प्रशासक',
+  // 'register.role.admin': 'प्रशासक',
   'register.emergencyContactLabel': 'आपातकालीन संपर्क फ़ोन (वैकल्पिक)',
+  'register.medicalIdLabel': 'चिकित्सा आईडी',
+  'register.medicalIdPlaceholder': 'आपका चिकित्सा आईडी नंबर',
   'register.toast.successTitle': 'पंजीकरण सफल',
   'register.toast.successDescription': 'आपका खाता बन गया है। कृपया लॉग इन करें।',
   'register.toast.failureTitle': 'पंजीकरण विफल',
   'register.toast.fillAllFields': 'कृपया सभी आवश्यक फ़ील्ड भरें।',
   'register.toast.passwordsDontMatch': 'पासवर्ड मेल नहीं खाते।',
+  'register.toast.medicalIdRequired': 'डॉक्टरों के लिए चिकित्सा आईडी आवश्यक है।',
   'register.toast.errorDescription': 'एक त्रुटि हुई। कृपया पुन: प्रयास करें।',
   'dashboard.admin.title': 'एडमिन डैशबोर्ड - स्मार्टकेयर हब',
   'dashboard.admin.description': 'सिस्टम अवलोकन और प्रबंधन उपकरण।',
@@ -947,6 +953,9 @@ const knINTranslations: TranslationSet = {
   'telemedicine.selectDoctorPromptDescPatient': 'ನಿಮ್ಮ ಚಾಟ್ ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು ಮೇಲಿನ ಪಟ್ಟಿಯಿಂದ ಒಬ್ಬ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ.',
   'telemedicine.adminChatPromptTitle': 'ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ ಅಥವಾ ಪ್ರಸಾರ ಮಾಡಿ',
   'telemedicine.adminChatPromptDesc': 'ದಯವಿಟ್ಟು ಒಬ್ಬರಿಗೊಬ್ಬರು ಚಾಟ್‌ಗಾಗಿ ಒಬ್ಬ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ, ಅಥವಾ ಎಲ್ಲರಿಗೂ ಸಂದೇಶ ಕಳುಹಿಸಲು "ಎಲ್ಲಾ ವೈದ್ಯರಿಗೆ ಪ್ರಸಾರ ಮಾಡಿ" ಮೋಡ್ ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.',
+  'register.medicalIdLabel': 'ವೈದ್ಯಕೀಯ ಐಡಿ',
+  'register.medicalIdPlaceholder': 'ನಿಮ್ಮ ವೈದ್ಯಕೀಯ ಐಡಿ ಸಂಖ್ಯೆ',
+  'register.toast.medicalIdRequired': 'ವೈದ್ಯರಿಗೆ ವೈದ್ಯಕೀಯ ಐಡಿ ಅಗತ್ಯವಿದೆ.',
 };
 
 const teINTranslations: TranslationSet = {
@@ -1132,6 +1141,9 @@ const teINTranslations: TranslationSet = {
   'telemedicine.selectDoctorPromptDescPatient': 'మీ చాట్ ప్రారంభించడానికి దయచేసి పై జాబితా నుండి ఒక డాక్టర్‌ను ఎంచుకోండి.',
   'telemedicine.adminChatPromptTitle': 'డాక్టర్‌ను ఎంచుకోండి లేదా ప్రసారం చేయండి',
   'telemedicine.adminChatPromptDesc': 'దయచేసి ఒకరితో ఒకరు చాట్ కోసం ఒక డాక్టర్‌ను ఎంచుకోండి, లేదా అందరికీ సందేశం పంపడానికి "అన్ని డాక్టర్లకు ప్రసారం చేయండి" మోడ్‌ను యాక్టివేట్ చేయండి.',
+  'register.medicalIdLabel': 'వైద్య ఐడి',
+  'register.medicalIdPlaceholder': 'మీ వైద్య ఐడి నంబర్',
+  'register.toast.medicalIdRequired': 'వైద్యులకు వైద్య ఐడి అవసరం.',
 };
 
 const taINTranslations: TranslationSet = {
@@ -1317,6 +1329,9 @@ const taINTranslations: TranslationSet = {
   'telemedicine.selectDoctorPromptDescPatient': 'உங்கள் அரட்டையைத் தொடங்க மேலே உள்ள பட்டியலிலிருந்து ஒரு மருத்துவரைத் தேர்ந்தெடுக்கவும்.',
   'telemedicine.adminChatPromptTitle': 'மருத்துவரைத் தேர்ந்தெடுக்கவும் அல்லது ஒளிபரப்பவும்',
   'telemedicine.adminChatPromptDesc': 'தயவுசெய்து ஒருவருக்கொருவர் அரட்டைக்கு ஒரு மருத்துவரைத் தேர்ந்தெடுக்கவும், அல்லது அனைவருக்கும் செய்தி அனுப்ப "அனைத்து மருத்துவர்களுக்கும் ஒளிபரப்பு" பயன்முறையைச் செயல்படுத்தவும்.',
+  'register.medicalIdLabel': 'மருத்துவ அடையாள அட்டை',
+  'register.medicalIdPlaceholder': 'உங்கள் மருத்துவ அடையாள எண்',
+  'register.toast.medicalIdRequired': 'மருத்துவர்களுக்கு மருத்துவ அடையாள அட்டை தேவை.',
 };
 
 const bnINTranslations: TranslationSet = {
@@ -1502,6 +1517,9 @@ const bnINTranslations: TranslationSet = {
   'telemedicine.selectDoctorPromptDescPatient': 'আপনার চ্যাট শুরু করতে অনুগ্রহ করে উপরের তালিকা থেকে একজন ডাক্তার নির্বাচন করুন।',
   'telemedicine.adminChatPromptTitle': 'ডাক্তার নির্বাচন করুন অথবা সম্প্রচার করুন',
   'telemedicine.adminChatPromptDesc': 'অনুগ্রহ করে একের পর এক চ্যাটের জন্য একজন ডাক্তার নির্বাচন করুন, অথবা সবার কাছে বার্তা পাঠাতে "সব ডাক্তারদের কাছে সম্প্রচার করুন" মোড সক্রিয় করুন।',
+  'register.medicalIdLabel': 'মেডিকেল আইডি',
+  'register.medicalIdPlaceholder': 'আপনার মেডিকেল আইডি নম্বর',
+  'register.toast.medicalIdRequired': 'ডাক্তারদের জন্য মেডিকেল আইডি প্রয়োজন।',
 };
 
 const mrINTranslations: TranslationSet = {
@@ -1687,6 +1705,9 @@ const mrINTranslations: TranslationSet = {
   'telemedicine.selectDoctorPromptDescPatient': 'तुमची चॅट सुरू करण्यासाठी कृपया वरील यादीतून एक डॉक्टर निवडा.',
   'telemedicine.adminChatPromptTitle': 'डॉक्टर निवडा किंवा प्रसारित करा',
   'telemedicine.adminChatPromptDesc': 'कृपया वन-टू-वन चॅटसाठी डॉक्टर निवडा, किंवा सर्वांना संदेश पाठवण्यासाठी "सर्व डॉक्टरांना प्रसारित करा" मोड सक्रिय करा.',
+  'register.medicalIdLabel': 'वैद्यकीय आयडी',
+  'register.medicalIdPlaceholder': 'तुमचा वैद्यकीय आयडी क्रमांक',
+  'register.toast.medicalIdRequired': 'डॉक्टरांसाठी वैद्यकीय आयडी आवश्यक आहे.',
 };
 
 const guINTranslations: TranslationSet = {
@@ -1865,13 +1886,16 @@ const guINTranslations: TranslationSet = {
   'telemedicine.adminBroadcastModeActive': 'બ્રોડકાસ્ટ મોડ સક્રિય છે. સંદેશા બધા ડૉક્ટરોને મોકલવામાં આવશે (અનુકૃત).',
   'telemedicine.adminChatWithDoctorGreeting': 'તમે હવે સંચાલક તરીકે ડૉ. {doctorName} સાથે ચેટ કરી રહ્યા છો.',
   'telemedicine.adminBroadcastingTitle': 'બધા ડૉક્ટરોને મોકલી રહ્યું છે',
-  'telemedicine.typeBroadcastPlaceholder': 'તમારો બ્રોડકાસ્ટ સંદેશ લખો...',
+  'telemedicine.typeBroadcastPlaceholder': 'તમારો બ્રોડકા스트 સંદેશ લખો...',
   'telemedicine.broadcastLabel': 'બ્રોડકાસ્ટ',
   'telemedicine.adminBroadcastConfirmation': 'બ્રોડકાસ્ટ સંદેશ બધા ડૉક્ટરોને મોકલવામાં આવ્યો (અનુકૃત): "{messageText}"',
   'telemedicine.selectDoctorPromptTitlePatient': 'એક ડૉક્ટર પસંદ કરો',
   'telemedicine.selectDoctorPromptDescPatient': 'તમારી ચેટ શરૂ કરવા માટે કૃપા કરીને ઉપરની સૂચિમાંથી એક ડૉક્ટર પસંદ કરો.',
   'telemedicine.adminChatPromptTitle': 'ડૉક્ટર પસંદ કરો અથવા બ્રોડકાસ્ટ કરો',
-  'telemedicine.adminChatPromptDesc': 'કૃપા કરીને વન-ટુ-વન ચેટ માટે ડૉક્ટર પસંદ કરો, અથવા બધાને સંદેશ મોકલવા માટે "બધા ડૉક્ટરોને બ્રોડકા스트 કરો" મોડ સક્રિય કરો.',
+  'telemedicine.adminChatPromptDesc': 'કૃપા કરીને વન-ટુ-વન ચેટ માટે ડૉક્ટર પસંદ કરો, અથવા બધાને સંદેશ મોકલવા માટે "બધા ડૉક્ટરોને બ્રોડકાસ્ટ કરો" મોડ સક્રિય કરો.',
+  'register.medicalIdLabel': 'મેડિકલ આઈડી',
+  'register.medicalIdPlaceholder': 'તમારો મેડિકલ આઈડી નંબર',
+  'register.toast.medicalIdRequired': 'ડૉક્ટરો માટે મેડિકલ આઈડી જરૂરી છે.',
 };
 
 const urINTranslations: TranslationSet = {
@@ -2032,7 +2056,7 @@ const urINTranslations: TranslationSet = {
   'doctorDashboard.simulatedAppointments.followUp': 'فالو اپ ملاقات',
   'doctorDashboard.patientDetailsDialog.notes.title': "ڈاکٹر کے نوٹس (نقلی)",
   'doctorDashboard.patientDetailsDialog.notes.label': 'نوٹس',
-  'doctorDashboard.patientDetailsDialog.notes.placeholder': 'اپنے نوٹس یہاں ٹائプ کریں۔۔۔',
+  'doctorDashboard.patientDetailsDialog.notes.placeholder': 'اپنے نوٹس یہاں ٹائپ کریں۔۔۔',
   'doctorDashboard.patientDetailsDialog.notes.saveButton': 'نوٹس محفوظ کریں (نقلی)',
   'doctorDashboard.patientDetailsDialog.medicalRecords.title': 'طبی ریکارڈز',
   'doctorDashboard.patientDetailsDialog.medicalRecords.none': 'اس مریض کے لیے کوئی طبی ریکارڈ نہیں ملا۔',
@@ -2057,6 +2081,9 @@ const urINTranslations: TranslationSet = {
   'telemedicine.selectDoctorPromptDescPatient': 'اپنی چیٹ شروع کرنے کے لیے براہ کرم اوپر دی گئی فہرست سے ایک ڈاکٹر منتخب کریں۔',
   'telemedicine.adminChatPromptTitle': 'ڈاکٹر منتخب کریں یا نشر کریں',
   'telemedicine.adminChatPromptDesc': 'براہ کرم ون آن ون چیٹ کے لیے ایک ڈاکٹر منتخب کریں، یا سب کو پیغام بھیجنے کے لیے "تمام ڈاکٹروں کو نشر کریں" موڈ کو فعال کریں۔',
+  'register.medicalIdLabel': 'میڈیکل آئی ڈی',
+  'register.medicalIdPlaceholder': 'آپ کا میڈیکل آئی ڈی نمبر',
+  'register.toast.medicalIdRequired': 'ڈاکٹروں کے لیے میڈیکل آئی ڈی درکار ہے۔',
 };
 
 export const translationsData: Record<LanguageCode, TranslationSet> = {
