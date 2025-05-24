@@ -40,15 +40,12 @@ export function SymptomCheckerClient() {
         let transcribedText = event.results[0][0].transcript;
         console.log(translate('symptomChecker.dwaniSTTInfo', "Using browser STT. (Dwani AI STT would be used here for regional languages)"), "Transcribed text:", transcribedText);
         
-        // Simulate Dwani AI translation for internal processing
-        if (language !== "en-US") { // Or whatever your core AI processing language is
+        if (language !== "en-US") { 
           console.log(translate('symptomChecker.dwaniTranslateInfo', "Conceptual: Dwani AI would translate this to English for core AI processing:"), transcribedText);
         }
         
         setSymptoms(transcribedText);
         setIsListening(false);
-        // Optionally auto-submit after voice input:
-        // handleSubmit(new Event('submit') as unknown as React.FormEvent); 
       };
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error("Speech recognition error", event.error);
@@ -86,19 +83,17 @@ export function SymptomCheckerClient() {
       utterance.lang = lang;
     }
     
-    // Ensure previous speech is stopped before starting new
     window.speechSynthesis.cancel(); 
     window.speechSynthesis.speak(utterance);
   };
   
   useEffect(() => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-      // Ensure voices are loaded
       const loadVoices = () => {
         window.speechSynthesis.getVoices();
       };
-      loadVoices(); // Initial call
-      window.speechSynthesis.onvoiceschanged = loadVoices; // Reload if voices change
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
     }
   }, []);
 
@@ -141,7 +136,7 @@ export function SymptomCheckerClient() {
     setIsLoading(true);
     setError(null);
     setResults(null);
-    if (typeof window !== 'undefined' && window.speechSynthesis) { // Stop any previous speech
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
     }
 
@@ -151,12 +146,13 @@ export function SymptomCheckerClient() {
       if (output && autoPlayResultsSpeech) {
         speakResults(output);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Symptom checker AI error:", err);
-      setError(translate('symptomChecker.error.aiError', "An error occurred while analyzing symptoms. Please try again."));
+      const specificErrorMessage = err.message ? `Details: ${err.message}` : "Please check the server console for more details.";
+      setError(`${translate('symptomChecker.error.aiError', "An error occurred while analyzing symptoms. Please try again.")} ${specificErrorMessage}`);
       toast({
         title: translate('symptomChecker.toast.aiErrorTitle', "AI Error"),
-        description: translate('symptomChecker.toast.aiErrorDescription', "Could not process symptoms. The AI service might be temporarily unavailable."),
+        description: `${translate('symptomChecker.toast.aiErrorDescription', "Could not process symptoms. The AI service might be temporarily unavailable.")} ${specificErrorMessage}`,
         variant: "destructive",
       });
     } finally {
@@ -353,5 +349,3 @@ export function SymptomCheckerClient() {
     </div>
   );
 }
-
-    
