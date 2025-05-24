@@ -9,20 +9,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { UserCircle, Briefcase, Phone, Home } from "lucide-react";
+import { UserCircle, BriefcaseMedical, Phone, Home, Mail, Save } from "lucide-react"; // Added Mail, Save
 import { useLanguage } from "@/contexts/language-context"; 
-import { getCurrentUser, type AppUser, type Patient, type Doctor } from "@/lib/auth"; // Updated imports
+import { getCurrentUser, updateCurrentUserInLocalStorage, type AppUser, type Patient, type Doctor } from "@/lib/auth"; 
+import { updateUserProfile } from "@/lib/actions/user.actions"; // New server action
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast"; // For notifications
 
 export default function ProfilePage() {
   const { translate } = useLanguage(); 
+  const { toast } = useToast();
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Form state - these would be updated by user input
+  // Form state for editable fields
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(""); // Display only
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
 
@@ -30,21 +34,42 @@ export default function ProfilePage() {
     const currentUser = getCurrentUser();
     setUser(currentUser);
     if (currentUser) {
-      setFullName(currentUser.name);
-      setEmail(currentUser.email);
-      // Placeholder data for phone and address, as they are not stored in AppUser currently
-      setPhoneNumber((currentUser as Patient)?.emergencyContactPhone || translate('profile.phonePlaceholder', 'e.g., +1 123-456-7890'));
-      setAddress(translate('profile.addressPlaceholder', 'e.g., 123 Health St, MedCity'));
+      setFullName(currentUser.name || "");
+      setEmail(currentUser.email || "");
+      setPhoneNumber(currentUser.phoneNumber || "");
+      setAddress(currentUser.address || "");
     }
     setLoading(false);
-  }, [translate]);
+  }, []);
 
-  const handleSaveChanges = () => {
-    // In a real app, this would save changes to the backend
-    // For this prototype, we can update the state or show a toast
-    // Example: user.name = fullName; user.email = email; etc.
-    // localStorage.setItem('smartcare_user', JSON.stringify(user)); // If updating local storage
-    alert(translate('profile.saveChangesAlert', 'Changes saved (simulated)!'));
+  const handleSaveChanges = async () => {
+    if (!user) return;
+    setIsSaving(true);
+
+    const result = await updateUserProfile(user.id, {
+      name: fullName,
+      phoneNumber,
+      address,
+    });
+
+    if (result.success && result.updatedUser) {
+      setUser(result.updatedUser); // Update local state with data from server
+      updateCurrentUserInLocalStorage(result.updatedUser); // Update localStorage
+      setFullName(result.updatedUser.name || "");
+      setPhoneNumber(result.updatedUser.phoneNumber || "");
+      setAddress(result.updatedUser.address || "");
+      toast({
+        title: translate('profile.toast.successTitle', 'Profile Updated'),
+        description: translate('profile.toast.successDescription', 'Your profile has been successfully updated.'),
+      });
+    } else {
+      toast({
+        title: translate('profile.toast.errorTitle', 'Update Failed'),
+        description: result.message || translate('profile.toast.errorDescription', 'Could not update your profile. Please try again.'),
+        variant: "destructive",
+      });
+    }
+    setIsSaving(false);
   };
 
   if (loading) {
@@ -106,9 +131,9 @@ export default function ProfilePage() {
             <AvatarImage src={`https://placehold.co/100x100.png?text=${user.name.charAt(0)}`} alt={translate('profile.avatarAlt', 'User Avatar')} data-ai-hint="user avatar" />
             <AvatarFallback>{user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
-          <CardTitle className="text-2xl">{user.name}</CardTitle>
+          <CardTitle className="text-2xl">{fullName || user.name}</CardTitle>
           <CardDescription className="flex items-center justify-center gap-2">
-            <Briefcase className="h-4 w-4 text-muted-foreground" /> 
+            <BriefcaseMedical className="h-4 w-4 text-muted-foreground" /> 
             <Badge variant={user.role === 'admin' ? 'destructive' : user.role === 'doctor' ? 'secondary' : 'default'}>
               {translate(`profile.role.${user.role}`, userRoleDisplay)}
             </Badge>
@@ -121,11 +146,14 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label htmlFor="fullName">{translate('profile.fullNameLabel', 'Full Name')}</Label>
-              <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+              <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} disabled={isSaving} />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="email">{translate('profile.emailLabel', 'Email Address')}</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Label htmlFor="email">
+                <Mail className="inline h-4 w-4 mr-1 text-muted-foreground"/>
+                {translate('profile.emailLabel', 'Email Address')}
+              </Label>
+              <Input id="email" type="email" value={email} readOnly disabled className="bg-muted/50 cursor-not-allowed" />
             </div>
           </div>
           <div className="space-y-1">
@@ -133,7 +161,7 @@ export default function ProfilePage() {
               <Phone className="inline h-4 w-4 mr-1 text-muted-foreground"/>
               {translate('profile.phoneLabel', 'Phone Number')}
             </Label>
-            <Input id="phone" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} placeholder={translate('profile.phonePlaceholder', 'e.g., +1 123-456-7890')} />
+            <Input id="phone" type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} placeholder={translate('profile.phonePlaceholder', 'e.g., +1 123-456-7890')} disabled={isSaving} />
             {user.role === 'patient' && (user as Patient).emergencyContactPhone && 
               <p className="text-xs text-muted-foreground">{translate('profile.emergencyContactNote', 'This is your emergency contact number.')}</p>
             }
@@ -143,10 +171,22 @@ export default function ProfilePage() {
               <Home className="inline h-4 w-4 mr-1 text-muted-foreground"/>
               {translate('profile.addressLabel', 'Address')}
             </Label>
-            <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder={translate('profile.addressPlaceholder', 'e.g., 123 Health St, MedCity')} />
+            <Input id="address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder={translate('profile.addressPlaceholder', 'e.g., 123 Health St, MedCity')} disabled={isSaving}/>
           </div>
           <div className="flex justify-end pt-4">
-            <Button onClick={handleSaveChanges}>{translate('profile.saveButton', 'Save Changes')}</Button>
+            <Button onClick={handleSaveChanges} disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <Save className="mr-2 h-4 w-4 animate-spin" />
+                  {translate('profile.savingButton', 'Saving...')}
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  {translate('profile.saveButton', 'Save Changes')}
+                </>
+              )}
+            </Button>
           </div>
         </CardContent>
       </Card>

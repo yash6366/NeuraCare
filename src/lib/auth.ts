@@ -36,7 +36,13 @@ export const getCurrentUser = (): AppUser | null => {
     const userJson = localStorage.getItem(USER_STORAGE_KEY);
     if (userJson) {
       try {
-        return JSON.parse(userJson) as AppUser;
+        const user = JSON.parse(userJson) as AppUser;
+        // Ensure new fields are present, default if not (for users logged in before fields were added)
+        return {
+          ...user,
+          phoneNumber: user.phoneNumber || '',
+          address: user.address || '',
+        };
       } catch (e) {
         console.error("Error parsing user from localStorage", e);
         localStorage.removeItem(USER_STORAGE_KEY); // Clear corrupted data
@@ -45,4 +51,10 @@ export const getCurrentUser = (): AppUser | null => {
     }
   }
   return null;
+};
+
+export const updateCurrentUserInLocalStorage = (updatedUser: AppUser): void => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+  }
 };

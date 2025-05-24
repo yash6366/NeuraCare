@@ -24,7 +24,7 @@ export async function registerUserWithCredentials(formData: {
 
   try {
     const db = await getDb();
-    const usersCollection = db.collection<Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null, emergencyContactPhone?: string }>('users');
+    const usersCollection = db.collection<Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null, emergencyContactPhone?: string, phoneNumber?: string, address?: string }>('users');
 
     const existingUser = await usersCollection.findOne({ email: email.toLowerCase() });
     if (existingUser) {
@@ -33,11 +33,13 @@ export async function registerUserWithCredentials(formData: {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const newUserDocument: Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null, emergencyContactPhone?: string } = {
+    const newUserDocument: Omit<User, 'id'> & { _id?: ObjectId, passwordHash: string, specialty?: string, assignedDoctorId?: string | null, emergencyContactPhone?: string, phoneNumber?: string, address?: string } = {
       name: fullName,
       email: email.toLowerCase(),
       passwordHash,
       role,
+      phoneNumber: '', // Initialize with empty strings
+      address: '',     // Initialize with empty strings
     };
     
     if (role === 'doctor') {
@@ -93,6 +95,8 @@ export async function loginUserWithCredentials(formData: {
       email: userDocument.email as string,
       name: userDocument.name as string,
       role: userDocument.role as AppUser['role'],
+      phoneNumber: userDocument.phoneNumber as string || '', // Ensure these are included
+      address: userDocument.address as string || '',       // Ensure these are included
     };
 
     if (appUser.role === 'doctor') {
@@ -112,4 +116,3 @@ export async function loginUserWithCredentials(formData: {
     return { success: false, message: 'An unexpected error occurred during login.', user: null };
   }
 }
-

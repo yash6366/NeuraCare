@@ -67,6 +67,7 @@ const enUSTranslations: TranslationSet = {
     'profile.title': 'User Profile',
     'profile.description': 'Manage your personal information and preferences.',
     'profile.saveButton': 'Save Changes',
+    'profile.savingButton': 'Saving...',
     'profile.fullNameLabel': 'Full Name',
     'profile.emailLabel': 'Email Address',
     'profile.phoneLabel': 'Phone Number',
@@ -82,6 +83,10 @@ const enUSTranslations: TranslationSet = {
     'profile.saveChangesAlert': 'Changes saved (simulated)!',
     'profile.error.userNotFoundTitle': 'User Not Found',
     'profile.error.userNotFoundDescription': 'Please log in to view your profile.',
+    'profile.toast.successTitle': 'Profile Updated',
+    'profile.toast.successDescription': 'Your profile has been successfully updated.',
+    'profile.toast.errorTitle': 'Update Failed',
+    'profile.toast.errorDescription': 'Could not update your profile. Please try again.',
     'appointments.title': 'Manage Appointments',
     'appointments.description': 'Book new appointments, view upcoming schedules, and manage your bookings with ease.',
     'symptomChecker.title': 'AI Symptom Checker',
@@ -307,6 +312,7 @@ const hiINTranslations: TranslationSet = {
   'profile.title': 'उपयोगकर्ता प्रोफ़ाइल',
   'profile.description': 'अपनी व्यक्तिगत जानकारी और प्राथमिकताएं प्रबंधित करें।',
   'profile.saveButton': 'बदलाव सहेजें',
+  'profile.savingButton': 'सहेजा जा रहा है...',
   'profile.fullNameLabel': 'पूरा नाम',
   'profile.emailLabel': 'ईमेल पता',
   'profile.phoneLabel': 'फ़ोन नंबर',
@@ -322,6 +328,10 @@ const hiINTranslations: TranslationSet = {
   'profile.saveChangesAlert': 'बदलाव सहेजे गए (नकली)!',
   'profile.error.userNotFoundTitle': 'उपयोगकर्ता नहीं मिला',
   'profile.error.userNotFoundDescription': 'कृपया अपनी प्रोफ़ाइल देखने के लिए लॉग इन करें।',
+  'profile.toast.successTitle': 'प्रोफ़ाइल अपडेट की गई',
+  'profile.toast.successDescription': 'आपकी प्रोफ़ाइल सफलतापूर्वक अपडेट कर दी गई है।',
+  'profile.toast.errorTitle': 'अपडेट विफल',
+  'profile.toast.errorDescription': 'आपकी प्रोफ़ाइल अपडेट नहीं की जा सकी। कृपया पुन: प्रयास करें।',
   'appointments.title': 'नियुक्तियों का प्रबंधन करें',
   'appointments.description': 'नई नियुक्तियां बुक करें, आगामी कार्यक्रम देखें, और आसानी से अपनी बुकिंग प्रबंधित करें।',
   'symptomChecker.title': 'एआई लक्षण परीक्षक',
@@ -559,6 +569,11 @@ const knINTranslations: TranslationSet = {
   'symptomChecker.savedReport.confidence': "ಆತ್ಮವಿಶ್ವಾಸ",
   'symptomChecker.savedReport.explanation': "ವಿವರಣೆ",
   'symptomChecker.savedReport.fileNamePrefix': "ರೋಗಲಕ್ಷಣ ವಿಶ್ಲೇಷಣೆ",
+  'profile.toast.successTitle': 'ಪ್ರೊಫೈಲ್ ನವೀಕರಿಸಲಾಗಿದೆ',
+  'profile.toast.successDescription': 'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ.',
+  'profile.toast.errorTitle': 'ನವೀಕರಣ ವಿಫಲವಾಗಿದೆ',
+  'profile.toast.errorDescription': 'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ನವೀಕರಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+  'profile.savingButton': 'ಉಳಿಸಲಾಗುತ್ತಿದೆ...',
 };
 
 const teINTranslations: TranslationSet = {
@@ -615,6 +630,11 @@ const teINTranslations: TranslationSet = {
   'symptomChecker.savedReport.confidence': "ఆత్మవిశ్వాసం",
   'symptomChecker.savedReport.explanation': "వివరణ",
   'symptomChecker.savedReport.fileNamePrefix': "లక్షణ విశ్లేషణ",
+  'profile.toast.successTitle': 'ప్రొఫైల్ నవీకరించబడింది',
+  'profile.toast.successDescription': 'మీ ప్రొఫైల్ విజయవంతంగా నవీకరించబడింది.',
+  'profile.toast.errorTitle': 'నవీకరణ విఫలమైంది',
+  'profile.toast.errorDescription': 'మీ ప్రొఫైల్‌ను నవీకరించడం సాధ్యం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.',
+  'profile.savingButton': 'సేవ్ చేస్తోంది...',
 };
 
 const taINTranslations: TranslationSet = {
@@ -671,6 +691,11 @@ const taINTranslations: TranslationSet = {
   'symptomChecker.savedReport.confidence': "நம்பிக்கை",
   'symptomChecker.savedReport.explanation': "விளக்கம்",
   'symptomChecker.savedReport.fileNamePrefix': "அறிகுறி பகுப்பாய்வு",
+  'profile.toast.successTitle': 'சுயவிவரம் புதுப்பிக்கப்பட்டது',
+  'profile.toast.successDescription': 'உங்கள் சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.',
+  'profile.toast.errorTitle': 'புதுப்பிப்பு தோல்வியடைந்தது',
+  'profile.toast.errorDescription': 'உங்கள் சுயவிவரத்தைப் புதுப்பிக்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.',
+  'profile.savingButton': 'சேமிக்கப்படுகிறது...',
 };
 
 const bnINTranslations: TranslationSet = {
@@ -727,6 +752,11 @@ const bnINTranslations: TranslationSet = {
   'symptomChecker.savedReport.confidence': "আত্মবিশ্বাস",
   'symptomChecker.savedReport.explanation': "ব্যাখ্যা",
   'symptomChecker.savedReport.fileNamePrefix': "উপসর্গ বিশ্লেষণ",
+  'profile.toast.successTitle': 'প্রোফাইল আপডেট করা হয়েছে',
+  'profile.toast.successDescription': 'আপনার প্রোফাইল সফলভাবে আপডেট করা হয়েছে।',
+  'profile.toast.errorTitle': 'আপডেট ব্যর্থ হয়েছে',
+  'profile.toast.errorDescription': 'আপনার প্রোফাইল আপডেট করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।',
+  'profile.savingButton': 'সংরক্ষণ করা হচ্ছে...',
 };
 
 const mrINTranslations: TranslationSet = {
@@ -783,6 +813,11 @@ const mrINTranslations: TranslationSet = {
   'symptomChecker.savedReport.confidence': "आत्मविश्वास",
   'symptomChecker.savedReport.explanation': "स्पष्टीकरण",
   'symptomChecker.savedReport.fileNamePrefix': "लक्षण विश्लेषण",
+  'profile.toast.successTitle': 'प्रोफाइल अद्यतनित केले',
+  'profile.toast.successDescription': 'तुमचे प्रोफाइल यशस्वीरित्या अद्यतनित केले आहे.',
+  'profile.toast.errorTitle': 'अद्यतन अयशस्वी',
+  'profile.toast.errorDescription': 'तुमचे प्रोफाइल अद्यतनित करू शकलो नाही. कृपया पुन्हा प्रयत्न करा.',
+  'profile.savingButton': 'जतन करत आहे...',
 };
 
 const guINTranslations: TranslationSet = {
@@ -839,6 +874,11 @@ const guINTranslations: TranslationSet = {
   'symptomChecker.savedReport.confidence': "આત્મવિશ્વાસ",
   'symptomChecker.savedReport.explanation': "સમજૂતી",
   'symptomChecker.savedReport.fileNamePrefix': "લક્ષણ વિશ્લેષણ",
+  'profile.toast.successTitle': 'પ્રોફાઇલ અપડેટ થઈ',
+  'profile.toast.successDescription': 'તમારી પ્રોફાઇલ સફળતાપૂર્વક અપડેટ થઈ ગઈ છે.',
+  'profile.toast.errorTitle': 'અપડેટ નિષ્ફળ',
+  'profile.toast.errorDescription': 'તમારી પ્રોફાઇલ અપડેટ કરી શકાઈ નથી. કૃપા કરીને ફરી પ્રયાસ કરો.',
+  'profile.savingButton': 'સાચવી રહ્યું છે...',
 };
 
 const urINTranslations: TranslationSet = {
@@ -895,6 +935,11 @@ const urINTranslations: TranslationSet = {
   'symptomChecker.savedReport.confidence': "اعتماد",
   'symptomChecker.savedReport.explanation': "وضاحت",
   'symptomChecker.savedReport.fileNamePrefix': "علامت تجزیہ",
+  'profile.toast.successTitle': 'پروفائل اپ ڈیٹ ہو گیا',
+  'profile.toast.successDescription': 'آپ کا پروفائل کامیابی سے اپ ڈیٹ ہو گیا ہے۔',
+  'profile.toast.errorTitle': 'اپ ڈیٹ ناکام',
+  'profile.toast.errorDescription': 'آپ کا پروفائل اپ ڈیٹ نہیں کیا جا سکا۔ براہ کرم دوبارہ کوشش کریں۔',
+  'profile.savingButton': 'محفوظ کیا جا رہا ہے...',
 };
 
 export const translationsData: Record<LanguageCode, TranslationSet> = {
@@ -908,4 +953,3 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
   'gu-IN': guINTranslations,
   'ur-IN': urINTranslations,
 };
-

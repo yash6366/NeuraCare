@@ -7,6 +7,8 @@ export interface User {
   email: string;
   name: string;
   role: 'admin' | 'doctor' | 'patient';
+  phoneNumber?: string; // General phone number
+  address?: string;
   // passwordHash should not be part of client-side AppUser type
 }
 
@@ -18,7 +20,7 @@ export interface Doctor extends User {
 export interface Patient extends User {
   role: 'patient';
   assignedDoctorId: string | null; // string representation of MongoDB ObjectId or null
-  emergencyContactPhone?: string; // New field for emergency contact
+  emergencyContactPhone?: string; // Specific emergency contact
 }
 
 export type AppUser = User | Doctor | Patient;
