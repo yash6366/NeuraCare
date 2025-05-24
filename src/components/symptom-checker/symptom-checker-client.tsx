@@ -1,26 +1,136 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Mic, Send, Lightbulb, FileText, Activity, Pill, Leaf, HomeIcon } from "lucide-react"; // Added Pill, Leaf, HomeIcon
+import { Mic, Send, Lightbulb, FileText, Activity, Pill, Leaf, HomeIcon, Volume2, VolumeX } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { voiceSymptomChecker, type VoiceSymptomCheckerOutput } from "@/ai/flows/voice-symptom-checker";
 import { useToast } from "@/hooks/use-toast";
-import { useLanguage } from "@/contexts/language-context"; // For language selection
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"; // For suggestions
+import { useLanguage } from "@/contexts/language-context";
+import type { LanguageCode } from "@/contexts/language-context";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export function SymptomCheckerClient() {
   const [symptoms, setSymptoms] = useState("");
-  const { language, translate } = useLanguage(); // Using global language context
+  const { language, translate } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<VoiceSymptomCheckerOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+
+  const [isListening, setIsListening] = useState(false);
+  const [autoPlayResultsSpeech, setAutoPlayResultsSpeech] = useState(true);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
+      recognitionInstance.lang = language;
+
+      recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
+        let transcribedText = event.results[0][0].transcript;
+        console.log(translate('symptomChecker.dwaniSTTInfo', "Using browser STT. (Dwani AI STT would be used here for regional languages)"), "Transcribed text:", transcribedText);
+        
+        // Simulate Dwani AI translation for internal processing
+        if (language !== "en-US") { // Or whatever your core AI processing language is
+          console.log(translate('symptomChecker.dwaniTranslateInfo', "Conceptual: Dwani AI would translate this to English for core AI processing:"), transcribedText);
+        }
+        
+        setSymptoms(transcribedText);
+        setIsListening(false);
+        // Optionally auto-submit after voice input:
+        // handleSubmit(new Event('submit') as unknown as React.FormEvent); 
+      };
+      recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
+        console.error("Speech recognition error", event.error);
+        toast({ title: translate('symptomChecker.voiceErrorTitle', 'Voice Input Error'), description: event.error as string, variant: "destructive" });
+        setIsListening(false);
+      };
+      recognitionInstance.onend = () => {
+        setIsListening(false);
+      };
+      recognitionRef.current = recognitionInstance;
+    } else {
+      console.warn("SpeechRecognition API not supported.");
+    }
+
+    return () => {
+      recognitionRef.current?.abort();
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language, toast, translate]);
+
+  const playTextAsSpeech = (text: string, lang: LanguageCode) => {
+    if (!autoPlayResultsSpeech || typeof window === 'undefined' || !window.speechSynthesis || !text) return;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    let targetVoice = window.speechSynthesis.getVoices().find(voice => voice.lang === lang);
+    if (!targetVoice) {
+      targetVoice = window.speechSynthesis.getVoices().find(voice => voice.lang.startsWith(lang.split('-')[0]));
+    }
+    if (targetVoice) {
+      utterance.voice = targetVoice;
+    } else {
+      utterance.lang = lang;
+    }
+    
+    // Ensure previous speech is stopped before starting new
+    window.speechSynthesis.cancel(); 
+    window.speechSynthesis.speak(utterance);
+  };
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      // Ensure voices are loaded
+      const loadVoices = () => {
+        window.speechSynthesis.getVoices();
+      };
+      loadVoices(); // Initial call
+      window.speechSynthesis.onvoiceschanged = loadVoices; // Reload if voices change
+    }
+  }, []);
+
+  const speakResults = (analysisResults: VoiceSymptomCheckerOutput) => {
+    if (!autoPlayResultsSpeech || !analysisResults) return;
+
+    let fullTextToSpeak = "";
+
+    if (analysisResults.analysis && analysisResults.analysis.length > 0) {
+      fullTextToSpeak += translate('symptomChecker.tts.analysisIntro', "Based on your symptoms, here are some potential insights: ");
+      analysisResults.analysis.forEach(item => {
+        fullTextToSpeak += `${item.conditionName}. ${translate('symptomChecker.tts.confidence', "Confidence")}: ${(item.confidence * 100).toFixed(0)}%. ${item.explanation}. `;
+        if (item.allopathicSuggestions && item.allopathicSuggestions.length > 0) {
+          fullTextToSpeak += `${translate('symptomChecker.allopathicSuggestionsLabel', "Allopathic Suggestions")}: ${item.allopathicSuggestions.join(', ')}. `;
+        }
+        if (item.ayurvedicSuggestions && item.ayurvedicSuggestions.length > 0) {
+          fullTextToSpeak += `${translate('symptomChecker.ayurvedicSuggestionsLabel', "Ayurvedic Suggestions")}: ${item.ayurvedicSuggestions.join(', ')}. `;
+        }
+        if (item.homeRemedies && item.homeRemedies.length > 0) {
+          fullTextToSpeak += `${translate('symptomChecker.homeRemediesLabel', "Home Remedies")}: ${item.homeRemedies.join(', ')}. `;
+        }
+      });
+    } else {
+        fullTextToSpeak += translate('symptomChecker.tts.noSpecificConditions', "No specific conditions were identified, or I couldn't process the request. ");
+    }
+
+    if (analysisResults.disclaimer) {
+      fullTextToSpeak += `${translate('symptomChecker.disclaimerTitle', "Important Disclaimer")}: ${analysisResults.disclaimer}`;
+    }
+    
+    playTextAsSpeech(fullTextToSpeak, language);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,11 +141,16 @@ export function SymptomCheckerClient() {
     setIsLoading(true);
     setError(null);
     setResults(null);
+    if (typeof window !== 'undefined' && window.speechSynthesis) { // Stop any previous speech
+        window.speechSynthesis.cancel();
+    }
 
     try {
-      // Pass the globally selected language to the AI flow
-      const output = await voiceSymptomChecker({ symptoms, language: language.split('-')[0] }); // Pass base language e.g. 'en'
+      const output = await voiceSymptomChecker({ symptoms, language: language.split('-')[0] });
       setResults(output);
+      if (output && autoPlayResultsSpeech) {
+        speakResults(output);
+      }
     } catch (err) {
       console.error("Symptom checker AI error:", err);
       setError(translate('symptomChecker.error.aiError', "An error occurred while analyzing symptoms. Please try again."));
@@ -50,11 +165,20 @@ export function SymptomCheckerClient() {
   };
   
   const handleVoiceInput = () => {
-    toast({
-      title: translate('symptomChecker.toast.voiceInputTitle', "Voice Input"),
-      description: translate('symptomChecker.toast.voiceInputDescription', "Voice input is simulated for symptom checker. Please type your symptoms for now."),
-    });
-    // Example: setSymptoms("I have a fever and a cough, and I feel very tired.");
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.lang = language; 
+        recognitionRef.current.start();
+        setIsListening(true);
+        toast({ title: translate('symptomChecker.speakNow', 'Speak now...') });
+      } catch (e) {
+        console.error("Error starting speech recognition:", e);
+        toast({ title: translate('symptomChecker.voiceErrorTitle', 'Voice Input Error'), description: (e as Error).message || 'Could not start voice input.', variant: "destructive" });
+        setIsListening(false);
+      }
+    } else {
+      toast({ title: translate('symptomChecker.voiceNotSupported', 'Voice input not supported by your browser.'), variant: "destructive" });
+    }
   };
 
 
@@ -76,15 +200,14 @@ export function SymptomCheckerClient() {
               <Label htmlFor="symptoms">{translate('symptomChecker.symptomsLabel', "Your Symptoms")}</Label>
               <Textarea
                 id="symptoms"
-                placeholder={translate('symptomChecker.symptomsPlaceholder', "e.g., 'I have a headache and a sore throat...'")}
+                placeholder={isListening ? translate('symptomChecker.listening', 'Listening...') : translate('symptomChecker.symptomsPlaceholder', "e.g., 'I have a headache and a sore throat...'")}
                 value={symptoms}
                 onChange={(e) => setSymptoms(e.target.value)}
                 rows={6}
                 className="text-base"
-                disabled={isLoading}
+                disabled={isLoading || isListening}
               />
             </div>
-            {/* Language selection is now global, no need for a local input here */}
             {error && (
               <Alert variant="destructive">
                 <Activity className="h-4 w-4" />
@@ -93,13 +216,26 @@ export function SymptomCheckerClient() {
               </Alert>
             )}
             <div className="flex flex-col sm:flex-row gap-2">
-               <Button type="button" variant="outline" onClick={handleVoiceInput} disabled={isLoading} className="flex-1">
-                <Mic className="mr-2 h-5 w-5" /> {translate('symptomChecker.useVoiceButton', "Use Voice (Simulated)")}
+               <Button type="button" variant="outline" onClick={handleVoiceInput} disabled={isLoading || isListening} className="flex-1">
+                <Mic className={`mr-2 h-5 w-5 ${isListening ? 'text-destructive animate-pulse' : ''}`} /> 
+                {isListening ? translate('symptomChecker.listening', 'Listening...') : translate('symptomChecker.useVoiceButton', "Use Voice")}
               </Button>
-              <Button type="submit" disabled={isLoading} className="flex-1">
-                <Send className="mr-2 h-5 w-5" />
+              <Button type="submit" disabled={isLoading || isListening || !symptoms.trim()} className="flex-1">
+                {isLoading ? <Activity className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
                 {isLoading ? translate('symptomChecker.analyzingButton', "Analyzing...") : translate('symptomChecker.checkSymptomsButton', "Check Symptoms")}
               </Button>
+            </div>
+             <div className="flex items-center space-x-2 pt-2 justify-end">
+              <Switch
+                id="autoplay-results-speech"
+                checked={autoPlayResultsSpeech}
+                onCheckedChange={setAutoPlayResultsSpeech}
+                aria-label={translate('symptomChecker.autoPlayResultsSpeech', 'Auto-play results speech')}
+              />
+              <Label htmlFor="autoplay-results-speech" className="text-sm text-muted-foreground">
+                {translate('symptomChecker.autoPlayResultsSpeechLabel', 'Speak Results')}
+              </Label>
+              {autoPlayResultsSpeech ? <Volume2 className="h-5 w-5 text-primary" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}
             </div>
           </form>
         </CardContent>
@@ -120,7 +256,7 @@ export function SymptomCheckerClient() {
             <div className="flex flex-col items-center justify-center space-y-3 p-8">
               <Activity className="h-12 w-12 animate-spin text-primary" />
               <p className="text-muted-foreground">{translate('symptomChecker.aiThinking', "AI is thinking...")}</p>
-              <Progress value={50} className="w-full" /> {/* Consider making progress dynamic if possible */}
+              <Progress value={50} className="w-full" />
             </div>
           )}
           {!isLoading && !results && !error && (
@@ -141,7 +277,7 @@ export function SymptomCheckerClient() {
                   <CardContent className="space-y-3">
                     <p className="text-sm"><strong className="font-medium">{translate('symptomChecker.explanationLabel', "Explanation:")}</strong> {item.explanation}</p>
                     
-                    <Accordion type="single" collapsible className="w-full">
+                    <Accordion type="single" collapsible className="w-full" defaultValue="allopathic">
                       {item.allopathicSuggestions && item.allopathicSuggestions.length > 0 && (
                         <AccordionItem value={`allopathic-${index}`}>
                           <AccordionTrigger className="text-base hover:no-underline">
@@ -217,3 +353,5 @@ export function SymptomCheckerClient() {
     </div>
   );
 }
+
+    
