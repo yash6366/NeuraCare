@@ -24,9 +24,9 @@ const SuggestedConditionSchema = z.object({
   conditionName: z.string().describe('The name of the possible medical condition.'),
   confidence: z.number().min(0).max(1).describe('The confidence level for this condition (0-1).'),
   explanation: z.string().describe('A detailed explanation of the condition, elaborating on why it might be relevant based on the provided symptoms. This should be in the specified language.'),
-  allopathicSuggestions: z.array(z.string()).describe('An array of 2-3 distinct and actionable allopathic (modern medicine) suggestions or advice. These are general suggestions, not prescriptions. Focus on general approaches, types of treatments, or when to see a doctor. Provide in the specified language.'),
-  ayurvedicSuggestions: z.array(z.string()).describe('An array of 2-3 distinct and actionable Ayurvedic remedies or lifestyle advice. These are general suggestions, not prescriptions. Provide in the specified language.'),
-  homeRemedies: z.array(z.string()).describe('An array of 2-3 distinct and actionable home remedies or self-care tips. These are general suggestions, not medical advice. Provide in the specified language.'),
+  allopathicSuggestions: z.array(z.string()).optional().describe('An array of 2-3 distinct and actionable allopathic (modern medicine) suggestions or advice. These are general suggestions, not prescriptions. Focus on general approaches, types of treatments, or when to see a doctor. Provide in the specified language.'),
+  ayurvedicSuggestions: z.array(z.string()).optional().describe('An array of 2-3 distinct and actionable Ayurvedic remedies or lifestyle advice. These are general suggestions, not prescriptions. Provide in the specified language.'),
+  homeRemedies: z.array(z.string()).optional().describe('An array of 2-3 distinct and actionable home remedies or self-care tips. These are general suggestions, not medical advice. Provide in the specified language.'),
 });
 
 const VoiceSymptomCheckerOutputSchema = z.object({
@@ -84,7 +84,7 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     const output = llmResponse.output;
 
     // Fallback if AI response is totally unparseable or critical parts like disclaimer are missing.
-    // An empty 'analysis' array is now considered a valid response if the AI couldn't identify specific conditions.
+    // An empty 'analysis' array is now considered a valid response if the AI couldn't identify specific conditions but provides a disclaimer.
     if (!output || !output.disclaimer) { 
       const lang = input.language || 'English';
       let errorDisclaimer = "";
@@ -120,5 +120,7 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     return output;
   }
 );
+
+    
 
     
