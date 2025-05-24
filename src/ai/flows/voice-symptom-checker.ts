@@ -51,6 +51,8 @@ The patient describes their symptoms as: "{{{symptoms}}}"
 Carefully consider all details in the provided symptoms, such as severity, duration, and co-occurring symptoms, when formulating your analysis.
 The patient's preferred language for response is: {{#if language}}{{{language}}}{{else}}English{{/if}}.
 
+For very common or general symptoms (e.g., 'hair fall', 'mild fatigue', 'occasional headache'), if no specific serious medical condition is strongly indicated, please still attempt to provide general information regarding potential common causes, relevant lifestyle factors, and general advice on when to see a doctor. This information can be part of the 'explanation' for a generally-named condition like 'General Symptom Inquiry for [symptom]' or 'Symptom Analysis: [symptom]'. Aim to include at least one entry in the 'analysis' array if possible, even for such general inquiries.
+
 Based on these symptoms, please provide the following:
 1.  An array named 'analysis' where each element represents a possible medical condition. Each element should be an object with the following fields:
     *   'conditionName': The name of the possible medical condition.
@@ -59,7 +61,7 @@ Based on these symptoms, please provide the following:
     *   'allopathicSuggestions': An array of 2-3 distinct and actionable allopathic (modern medicine) suggestions or advice. Do NOT prescribe specific medications or dosages. Focus on general approaches, types of treatments, or when to see a doctor. If specific suggestions are not readily available, provide general advice for this category.
     *   'ayurvedicSuggestions': An array of 2-3 distinct and actionable Ayurvedic remedies or lifestyle advice. These are general suggestions, not prescriptions. If specific suggestions are not readily available, provide general advice for this category.
     *   'homeRemedies': An array of 2-3 distinct and actionable common home remedies or self-care tips. These are general suggestions, not medical advice. If specific suggestions are not readily available, provide general advice for this category.
-    Even if confidence is low for any identified condition, please attempt to include it in the 'analysis' array. If absolutely no specific condition can be hypothesized, this 'analysis' array can be empty, but you should still attempt to provide some general insights if possible.
+    Even if confidence is low for any identified condition, please attempt to include it in the 'analysis' array.
 2.  A 'disclaimer' string: This should be a clear statement emphasizing that this information is not a medical diagnosis, not a substitute for professional medical advice, and that the user should consult a qualified healthcare professional for any health concerns or before making any decisions related to their health. This disclaimer is mandatory.
 
 When providing suggestions (allopathic, Ayurvedic, home remedies), ensure they are general, actionable, and not prescriptive. For example, instead of "Take 500mg Paracetamol", suggest "Over-the-counter pain relievers may help with fever or pain. Consider consulting a pharmacist for appropriate options."
@@ -70,7 +72,7 @@ Structure your entire response as a single JSON object adhering to the defined o
 All text in your response, including condition names, explanations, suggestions, and the disclaimer, MUST be in the specified language: ${input.language || 'English'}.
 `,
   config: {
-    temperature: 0.75, // Temperature for default Gemini model
+    temperature: 0.7, // Adjusted temperature slightly for potentially more focused output
   },
 });
 
@@ -84,6 +86,7 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     const llmResponse = await prompt(input);    
     const output = llmResponse.output;
 
+    // Fallback if the AI response is malformed or crucial parts are missing
     if (!output || !output.disclaimer) { 
       const lang = input.language || 'English';
       let errorDisclaimer = "";
@@ -93,7 +96,7 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
       if (lang === 'hi-IN') {
         errorDisclaimer = "क्षमा करें, AI आपके लक्षणों का ठीक से विश्लेषण नहीं कर सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक फॉलबैक (त्रुटि) प्रतिक्रिया है।";
         errorConditionName = "AI प्रसंस्करण त्रुटि";
-        errorExplanation = "AI दिए गए लक्षणों को संसाधित नहीं कर सका या अपेक्षित संरचित प्रतिक्रिया नहीं दे सका। यह एक API समस्या या अप्रत्याशित AI आउटपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।";
+        errorExplanation = "AI दिए गए लक्षणों को संसाधित नहीं कर सका या अपेक्षित संरचित प्रतिक्रिया नहीं दे सका। यह एक API समस्या या अप्रत्याश setembro AI आउटपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।";
       } else {
         errorDisclaimer = "Sorry, the AI could not properly analyze your symptoms. Please consult a healthcare professional. This is a fallback (error) response.";
         errorConditionName = "AI Processing Error";
@@ -101,7 +104,7 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
       }
       
       // Enhanced logging for debugging
-      console.warn(`[voiceSymptomCheckerFlow] Fallback triggered. Language: ${lang}. Input symptoms: ${input.symptoms}. Raw LLM response text: ${llmResponse.text}. Parsed LLM output object: ${JSON.stringify(llmResponse.output, null, 2)}`);
+      console.warn(`[voiceSymptomCheckerFlow] Fallback triggered due to missing output or disclaimer. Language: ${lang}. Input symptoms: "${input.symptoms}". Raw LLM response text: ${llmResponse.text}. Parsed LLM output object: ${JSON.stringify(llmResponse.output, null, 2)}`);
 
       return {
         analysis: [{ 
@@ -114,6 +117,10 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
         }],
         disclaimer: errorDisclaimer,
       };
+    }
+    // Log if AI returns a valid structure but an empty analysis array
+    if (output.analysis && output.analysis.length === 0) {
+        console.log(`[voiceSymptomCheckerFlow] AI returned a valid response with a disclaimer but an empty analysis array for symptoms: "${input.symptoms}" in language: ${input.language || 'English'}. LLM response text: ${llmResponse.text}`);
     }
     return output;
   }
