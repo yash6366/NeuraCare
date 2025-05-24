@@ -37,7 +37,18 @@ export interface MockDoctorRecord {
   id: string; // This would be the AppUser.id
   name: string;
   specialty: string;
-  email: string; 
+  email: string;
   phone?: string;
 }
 
+// Type for medical records stored and retrieved from the database (client-facing)
+export interface MedicalRecordClientType {
+  id: string; // MongoDB _id as string
+  patientId: string; // patient's user ID as string
+  name: string; // Original file name
+  fileTypeDetail: string; // Full MIME type from DB (e.g., "image/png", "application/pdf")
+  type: "image" | "pdf" | "other"; // Simplified type for client UI logic
+  size: number; // in bytes
+  uploadedAt: Date;
+  filePreview: string; // Base64 data URI for preview/viewing
+}
