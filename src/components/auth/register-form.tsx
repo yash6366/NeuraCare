@@ -12,12 +12,12 @@ import { User, KeyRound, Mail, UserPlus, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { registerUserWithCredentials } from "@/lib/actions/auth.actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useLanguage } from "@/contexts/language-context"; // Added
+import { useLanguage } from "@/contexts/language-context"; 
 
 export function RegisterForm() {
   const router = useRouter();
   const { toast } = useToast();
-  const { translate } = useLanguage(); // Added
+  const { translate } = useLanguage(); 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,8 +32,8 @@ export function RegisterForm() {
 
     if (!fullName || !email || !password || !confirmPassword) {
       toast({
-        title: "Registration Failed",
-        description: "Please fill in all required fields.",
+        title: translate('register.toast.failureTitle', 'Registration Failed'),
+        description: translate('register.toast.fillAllFields', 'Please fill in all required fields.'),
         variant: "destructive",
       });
       setIsLoading(false);
@@ -42,8 +42,8 @@ export function RegisterForm() {
 
     if (password !== confirmPassword) {
       toast({
-        title: "Registration Failed",
-        description: "Passwords do not match.",
+        title: translate('register.toast.failureTitle', 'Registration Failed'),
+        description: translate('register.toast.passwordsDontMatch', 'Passwords do not match.'),
         variant: "destructive",
       });
       setIsLoading(false);
@@ -60,14 +60,14 @@ export function RegisterForm() {
 
     if (result.success) {
       toast({
-        title: "Registration Successful",
-        description: result.message || "Your account has been created. Please log in.",
+        title: translate('register.toast.successTitle', 'Registration Successful'),
+        description: result.message || translate('register.toast.successDescription', 'Your account has been created. Please log in.'),
       });
       router.push("/login");
     } else {
       toast({
-        title: "Registration Failed",
-        description: result.message || "An error occurred. Please try again.",
+        title: translate('register.toast.failureTitle', 'Registration Failed'),
+        description: result.message || translate('register.toast.errorDescription', 'An error occurred. Please try again.'),
         variant: "destructive",
       });
     }
@@ -183,7 +183,7 @@ export function RegisterForm() {
           )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Registering..." : translate('register.button', 'Create Account')}
+            {isLoading ? translate('register.buttonLoading', 'Registering...') : translate('register.button', 'Create Account')}
           </Button>
         </form>
       </CardContent>
@@ -209,5 +209,3 @@ export function RegisterForm() {
     </Card>
   );
 }
-
-    

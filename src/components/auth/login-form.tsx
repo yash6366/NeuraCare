@@ -11,12 +11,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Eye, User, KeyRound, Hospital } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { loginUser } from "@/lib/auth"; 
-import { useLanguage } from "@/contexts/language-context"; // Added
+import { useLanguage } from "@/contexts/language-context"; 
 
 export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
-  const { translate } = useLanguage(); // Added
+  const { translate } = useLanguage(); 
   const [email, setEmail] = useState("admin123@gmail.com"); 
   const [password, setPassword] = useState("Admin@123"); 
   const [isLoading, setIsLoading] = useState(false);
@@ -30,21 +30,21 @@ export function LoginForm() {
 
       if (user) {
         toast({
-          title: "Login Successful", // Consider translating toast messages too
-          description: `Welcome back, ${user.name}! Redirecting...`,
+          title: translate('login.toast.successTitle', 'Login Successful'),
+          description: translate('login.toast.successDescription', 'Welcome back, {userName}! Redirecting...').replace('{userName}', user.name),
         });
         router.push("/dashboard"); 
       } else {
         toast({
-          title: "Login Failed",
-          description: "Invalid email or password. Please try again.",
+          title: translate('login.toast.failureTitle', 'Login Failed'),
+          description: translate('login.toast.failureDescription', 'Invalid email or password. Please try again.'),
           variant: "destructive",
         });
       }
     } catch (error: any) {
       toast({
-        title: "Login Error",
-        description: error.message || "An unexpected error occurred. Please try again.",
+        title: translate('login.toast.errorTitle', 'Login Error'),
+        description: error.message || translate('login.toast.errorDescription', 'An unexpected error occurred. Please try again.'),
         variant: "destructive",
       });
     } finally {
@@ -96,7 +96,7 @@ export function LoginForm() {
             </div>
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Logging in..." : translate('login.button', 'Login')}
+            {isLoading ? translate('login.buttonLoading', 'Logging in...') : translate('login.button', 'Login')}
           </Button>
         </form>
       </CardContent>
@@ -143,5 +143,3 @@ export function LoginForm() {
     </Card>
   );
 }
-
-    

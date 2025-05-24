@@ -4,17 +4,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentUser, type Patient as PatientUser } from "@/lib/auth";
-import { mockDoctors, type MockDoctorRecord } from "@/lib/mock-data"; // Keep for doctor info if needed, or fetch from DB
+import { mockDoctors, type MockDoctorRecord } from "@/lib/mock-data"; 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { HeartPulse, CalendarDays, Video, MapPin, Stethoscope, Phone, Mail, ArrowRight, MessageSquare, Send, Bot } from "lucide-react"; // Added Bot
+import { HeartPulse, CalendarDays, Video, MapPin, Stethoscope, Phone, Mail, ArrowRight, Bot } from "lucide-react"; 
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { useLanguage } from "@/contexts/language-context"; // Added
+import { useLanguage } from "@/contexts/language-context"; 
 
 interface ChatMessage {
   id: string;
@@ -26,13 +24,10 @@ interface ChatMessage {
 export function PatientDashboardClient() {
   const router = useRouter();
   const { toast } = useToast();
-  const { translate } = useLanguage(); // Added
+  const { translate } = useLanguage(); 
   const [patient, setPatient] = useState<PatientUser | null>(null);
-  const [assignedDoctor, setAssignedDoctor] = useState<MockDoctorRecord | null>(null); // Consider fetching doctor details from DB
+  const [assignedDoctor, setAssignedDoctor] = useState<MockDoctorRecord | null>(null); 
   const [isLoading, setIsLoading] = useState(true);
-
-  const [doctorChatMessages, setDoctorChatMessages] = useState<ChatMessage[]>([]);
-  const [doctorChatInput, setDoctorChatInput] = useState("");
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -42,47 +37,12 @@ export function PatientDashboardClient() {
       const currentPatient = currentUser as PatientUser;
       setPatient(currentPatient);
       if (currentPatient.assignedDoctorId) {
-        // In a real app, fetch doctor details by ID from the database
         const doctor = mockDoctors.find(d => d.id === currentPatient.assignedDoctorId) || null;
         setAssignedDoctor(doctor);
-        if (doctor) {
-          setDoctorChatMessages([
-            {
-              id: String(Date.now()),
-              text: `Hello ${currentPatient.name}, I'm Dr. ${doctor.name.split(' ').pop()}. How can I help you today? (This chat is simulated)`,
-              sender: "doctor",
-              timestamp: new Date(),
-            }
-          ]);
-        }
       }
       setIsLoading(false);
     }
   }, [router]);
-
-  const handleSendDoctorMessage = () => {
-    if (!doctorChatInput.trim() || !assignedDoctor || !patient) return;
-    const newMessage: ChatMessage = {
-      id: String(Date.now()),
-      text: doctorChatInput,
-      sender: "patient",
-      timestamp: new Date(),
-    };
-    setDoctorChatMessages(prev => [...prev, newMessage]);
-    setDoctorChatInput("");
-
-    setTimeout(() => {
-      const replyText = `Thanks for your message, ${patient.name}. I've received it. (Simulated reply from Dr. ${assignedDoctor.name.split(' ').pop()})`;
-      const botResponse: ChatMessage = {
-        id: String(Date.now() + 1),
-        text: replyText,
-        sender: "doctor",
-        timestamp: new Date(),
-      };
-      setDoctorChatMessages(prev => [...prev, botResponse]);
-    }, 1500);
-  };
-
 
   if (isLoading || !patient) {
     return (
@@ -93,22 +53,21 @@ export function PatientDashboardClient() {
           <Skeleton className="h-48 w-full" />
         </div>
         <Skeleton className="h-40 w-full md:w-1/2" />
-        <Skeleton className="h-64 w-full md:w-1/2" />
       </div>
     );
   }
   
   const patientFeatures = [
     { titleKey: "symptomChecker.title", descriptionKey: "symptomChecker.description", href: "/symptom-checker", icon: HeartPulse },
-    { titleKey: "aiChatAssistant.title", descriptionKey: "aiChatAssistant.descriptionShort", href: "/ai-chat-assistant", icon: Bot }, // Added AI Chat Assistant
+    { titleKey: "aiChatAssistant.title", descriptionKey: "aiChatAssistant.descriptionShort", href: "/ai-chat-assistant", icon: Bot },
     { titleKey: "appointments.title", descriptionKey: "appointments.description", href: "/appointments", icon: CalendarDays },
-    { titleKey: "telemedicine.title", descriptionKey: "telemedicine.description", href: "/telemedicine", icon: Video }, // Consider renaming if Telemedicine page is now just Doctor Chat
+    { titleKey: "telemedicine.title", descriptionKey: "telemedicine.description", href: "/telemedicine", icon: Video }, 
     { titleKey: "findCare.title", descriptionKey: "findCare.description", href: "/find-care", icon: MapPin },
   ];
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"> {/* Adjusted for more cards */}
+      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {patientFeatures.map((feature) => (
           <Card key={feature.titleKey} className="shadow-md hover:shadow-lg transition-shadow flex flex-col">
             <CardHeader className="flex flex-row items-center gap-3 pb-2">
@@ -122,7 +81,7 @@ export function PatientDashboardClient() {
             </CardContent>
             <CardFooter>
               <Button variant="outline" className="w-full" asChild>
-                <Link href={feature.href}>Access <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                <Link href={feature.href}>{translate('patientDashboard.accessFeatureButton', 'Access')} <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
             </CardFooter>
           </Card>
@@ -172,10 +131,6 @@ export function PatientDashboardClient() {
               <CardContent><p className="text-muted-foreground">{translate('patientDashboard.noDoctorDescription', 'You do not have an assigned doctor. You can use the "Find Care" feature to search for one.')}</p></CardContent>
           </Card>
         )}
-
-        {/* The direct chat with doctor from this dashboard is now moved to the Telemedicine page */}
-        {/* If you want a quick link to Telemedicine chat, it's handled by the feature card above */}
-
       </div>
     </div>
   );

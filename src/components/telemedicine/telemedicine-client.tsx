@@ -7,14 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Mic, UserCircle, MessageSquare, Languages, Activity } from "lucide-react"; 
+import { Send, UserCircle, MessageSquare, Activity } from "lucide-react"; 
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/language-context";
 import { getAllUsers } from "@/lib/actions/admin.actions"; 
-import type { Doctor as DoctorType, AppUser, Patient as PatientUserType } from "@/types"; 
+import type { Doctor as DoctorType, Patient as PatientUserType } from "@/types"; 
 import { getCurrentUser } from "@/lib/auth";
 
 interface Message {
@@ -30,7 +30,7 @@ export function TelemedicineClient() {
   const [isDoctorChatLoading, setIsDoctorChatLoading] = useState(false); 
 
   const { toast } = useToast();
-  const { language, translate, supportedLanguages } = useLanguage();
+  const { translate } = useLanguage();
   const [currentUser, setCurrentUser] = useState<PatientUserType | null>(null);
   const doctorChatScrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -39,14 +39,21 @@ export function TelemedicineClient() {
   const [isLoadingDoctors, setIsLoadingDoctors] = useState(true);
 
   useEffect(() => {
-    setCurrentUser(getCurrentUser() as PatientUserType | null);
+    const user = getCurrentUser();
+    if (user?.role === 'patient') {
+      setCurrentUser(user as PatientUserType);
+    } else {
+      // Handle cases where user is not a patient or not logged in,
+      // potentially redirecting or showing an error message.
+      // For now, this component might not be fully functional for non-patients.
+    }
     
     const fetchDoctors = async () => {
       setIsLoadingDoctors(true);
       try {
         const users = await getAllUsers();
         if (users) {
-          const doctors = users.filter(user => user.role === 'doctor') as DoctorType[];
+          const doctors = users.filter(u => u.role === 'doctor') as DoctorType[];
           setAvailableDoctors(doctors);
         } else {
           setAvailableDoctors([]);
@@ -61,10 +68,9 @@ export function TelemedicineClient() {
     };
     fetchDoctors();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, translate]); 
+  }, [translate]); 
 
   useEffect(() => {
-    // Scroll to bottom for doctor chat
     if (doctorChatScrollAreaRef.current) {
         const scrollableViewport = doctorChatScrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
         if (scrollableViewport) {
@@ -74,7 +80,7 @@ export function TelemedicineClient() {
   }, [doctorChatMessages]);
 
   const handleSendDoctorMessage = async () => {
-    if (!doctorChatInput.trim() || !selectedDoctor) return;
+    if (!doctorChatInput.trim() || !selectedDoctor || !currentUser) return;
     setIsDoctorChatLoading(true);
 
     const newUserMessage: Message = {
@@ -84,12 +90,17 @@ export function TelemedicineClient() {
       timestamp: new Date(),
     };
     setDoctorChatMessages(prev => [...prev, newUserMessage]);
-    const patientName = currentUser?.name || "Patient";
     setDoctorChatInput("");
 
-    // Simulate doctor's reply
     setTimeout(() => {
-      const replyText = translate('telemedicine.simulatedDoctorReply', `Hello ${patientName}, this is a simulated reply from Dr. ${selectedDoctor.name.split(' ').pop()}. I have received your message: "${newUserMessage.text}"`);
+      const replyText = translate(
+        'telemedicine.simulatedDoctorReply', 
+        'Hello {patientName}, this is a simulated reply from Dr. {doctorName}. I have received your message: "{messageText}"'
+      )
+      .replace('{patientName}', currentUser.name)
+      .replace('{doctorName}', selectedDoctor.name.split(' ').pop() || 'Doctor')
+      .replace('{messageText}', newUserMessage.text);
+
       const doctorResponse: Message = {
         id: String(Date.now() + 1),
         text: replyText,
@@ -97,7 +108,6 @@ export function TelemedicineClient() {
         timestamp: new Date(),
       };
       setDoctorChatMessages(prev => [...prev, doctorResponse]);
-      // Note: TTS for doctor chat could be added here if desired, using a similar playTextAsSpeech function
       setIsDoctorChatLoading(false);
     }, 1500);
   };
@@ -106,8 +116,11 @@ export function TelemedicineClient() {
     const doctor = availableDoctors.find(d => d.id === doctorId);
     setSelectedDoctor(doctor || null);
     setDoctorChatMessages([]); 
-    if (doctor) {
-      const greetingText = translate('telemedicine.doctorChatGreeting', `You are now chatting with Dr. ${doctor.name}. How can I help you?`);
+    if (doctor && currentUser) {
+      const greetingText = translate(
+        'telemedicine.doctorChatGreeting', 
+        'You are now chatting with Dr. {doctorName}. How can I help you?'
+      ).replace('{doctorName}', doctor.name);
       const greetingMessage: Message = {
         id: String(Date.now()),
         text: greetingText,
@@ -115,13 +128,26 @@ export function TelemedicineClient() {
         timestamp: new Date()
       };
       setDoctorChatMessages([greetingMessage]);
-      // Note: TTS for doctor chat could be added here if desired
     }
   };
 
+  if (!currentUser) {
+     return (
+        <Card className="lg:col-span-1 shadow-lg">
+            <CardHeader>
+                <CardTitle>{translate('telemedicine.accessDeniedTitle', 'Access Denied')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p>{translate('telemedicine.accessDeniedDescription', 'You must be logged in as a patient to use this feature.')}</p>
+            </CardContent>
+        </Card>
+     )
+  }
+
+
   return (
-    <div className="grid lg:grid-cols-1 gap-8"> {/* Simplified to single column as AI chat is moved */}
-      <Card className="lg:col-span-1 shadow-lg"> {/* Changed from lg:col-span-2 */}
+    <div className="grid lg:grid-cols-1 gap-8"> 
+      <Card className="lg:col-span-1 shadow-lg"> 
         <CardHeader>
           <CardTitle className="text-2xl flex items-center gap-2">
             <MessageSquare className="h-7 w-7 text-primary" /> {translate('telemedicine.chatWithDoctorTitle')}
@@ -171,7 +197,7 @@ export function TelemedicineClient() {
                         <AvatarImage src={`https://placehold.co/40x40.png?text=${selectedDoctor.name.charAt(0)}`} alt={selectedDoctor.name} data-ai-hint="doctor professional" />
                         <AvatarFallback>{selectedDoctor.name.substring(0,1).toUpperCase()}</AvatarFallback>
                       </Avatar>
-                    Chatting with Dr. {selectedDoctor.name}
+                    {translate('telemedicine.chattingWith', 'Chatting with Dr. {doctorName}').replace('{doctorName}', selectedDoctor.name)}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex-grow flex flex-col p-0">
