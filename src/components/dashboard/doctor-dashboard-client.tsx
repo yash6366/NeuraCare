@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { getCurrentUser, type Doctor as DoctorUser } from "@/lib/auth";
 import { getAssignedPatients } from "@/lib/actions/doctor.actions";
 import type { Patient, MedicalRecordClientType } from "@/types";
-import { getMedicalRecordsForPatientByDoctor } from "@/lib/actions/medical.actions"; // New import
+import { getMedicalRecordsForPatientByDoctor } from "@/lib/actions/medical.actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -22,25 +22,38 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CalendarDays, Users, Video, MessageSquarePlus, ArrowRight, FileText, Eye, Activity, BriefcaseMedical } from "lucide-react"; // Added FileText, Eye, Activity
+import { CalendarDays, Users, Video, MessageSquarePlus, ArrowRight, FileText, Eye, Activity, BriefcaseMedical, Notebook, Clock } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import Image from "next/image"; // For image previews in dialog
-import { format } from "date-fns"; // For formatting dates
+import Image from "next/image";
+import { format, addDays, addWeeks } from "date-fns";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { useLanguage } from "@/contexts/language-context";
+
+interface SimulatedAppointment {
+  id: string;
+  description: string;
+  dateTime: Date;
+}
 
 export function DoctorDashboardClient() {
   const router = useRouter();
   const { toast } = useToast();
+  const { translate } = useLanguage();
   const [doctor, setDoctor] = useState<DoctorUser | null>(null);
   const [myPatients, setMyPatients] = useState<Patient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingPatients, setIsLoadingPatients] = useState(false);
 
   const [selectedPatientRecords, setSelectedPatientRecords] = useState<MedicalRecordClientType[] | null>(null);
-  const [isRecordsDialogOpen, setIsRecordsDialogOpen] = useState(false);
-  const [isLoadingRecordsDialog, setIsLoadingRecordsDialog] = useState(false);
-  const [selectedPatientForRecords, setSelectedPatientForRecords] = useState<Patient | null>(null);
+  const [simulatedAppointments, setSimulatedAppointments] = useState<SimulatedAppointment[]>([]);
+  const [doctorNotes, setDoctorNotes] = useState("");
+  const [isPatientDetailsDialogOpen, setIsPatientDetailsDialogOpen] = useState(false);
+  const [isLoadingPatientDetails, setIsLoadingPatientDetails] = useState(false);
+  const [selectedPatientForDetails, setSelectedPatientForDetails] = useState<Patient | null>(null);
 
 
   useEffect(() => {
@@ -59,8 +72,8 @@ export function DoctorDashboardClient() {
           setMyPatients(patientsData);
         } else {
           toast({
-            title: "Error fetching patients",
-            description: "Could not load your patient list from the database.",
+            title: translate('doctorDashboard.toast.errorFetchingPatients.title', "Error fetching patients"),
+            description: translate('doctorDashboard.toast.errorFetchingPatients.description', "Could not load your patient list from the database."),
             variant: "destructive",
           });
           setMyPatients([]);
@@ -69,48 +82,67 @@ export function DoctorDashboardClient() {
       };
       fetchPatients();
     }
-  }, [router, toast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router, toast, translate]);
 
-  const handleViewPatientRecords = async (patient: Patient) => {
+  const generateSimulatedAppointments = (patientName: string): SimulatedAppointment[] => {
+    // Simple mock appointments, could be randomized
+    const now = new Date();
+    return [
+      { id: 'appt1', description: `${translate('doctorDashboard.simulatedAppointments.checkup', "General Checkup")} for ${patientName}`, dateTime: addDays(now, 7) },
+      { id: 'appt2', description: `${translate('doctorDashboard.simulatedAppointments.followUp', "Follow-up Visit")} for ${patientName}`, dateTime: addWeeks(now, 3) },
+    ];
+  };
+
+  const handleViewPatientDetails = async (patient: Patient) => {
     if (!doctor) return;
-    setSelectedPatientForRecords(patient);
-    setIsRecordsDialogOpen(true);
-    setIsLoadingRecordsDialog(true);
+    setSelectedPatientForDetails(patient);
+    setIsPatientDetailsDialogOpen(true);
+    setIsLoadingPatientDetails(true);
     setSelectedPatientRecords(null);
+    setDoctorNotes(""); // Reset notes
+    setSimulatedAppointments(generateSimulatedAppointments(patient.name));
+
 
     const records = await getMedicalRecordsForPatientByDoctor(patient.id, doctor.id);
     if (records) {
       setSelectedPatientRecords(records);
     } else {
       toast({
-        title: "Error Fetching Records",
-        description: `Could not load medical records for ${patient.name}.`,
+        title: translate('doctorDashboard.toast.errorFetchingRecords.title', "Error Fetching Records"),
+        description: translate('doctorDashboard.toast.errorFetchingRecords.description', "Could not load medical records for {patientName}.").replace('{patientName}', patient.name),
         variant: "destructive",
       });
       setSelectedPatientRecords([]);
     }
-    setIsLoadingRecordsDialog(false);
+    setIsLoadingPatientDetails(false);
   };
 
   const handleViewRecordFile = (record: MedicalRecordClientType) => {
-    // This logic is similar to MedicalRecordsClient
     if (record.filePreview) {
       if (record.type === "image") {
         const imageWindow = window.open("", "_blank");
         if (imageWindow) {
           imageWindow.document.write(`<html><head><title>${record.name}</title></head><body style="margin:0; display:flex; justify-content:center; align-items:center; min-height:100vh; background-color:#f0f0f0;"><img src="${record.filePreview}" style="max-width:100%; max-height:100vh;" alt="${record.name}"></body></html>`);
-        } else { toast({ title: "Popup Blocked"}); }
+        } else { toast({ title: translate('doctorDashboard.toast.popupBlocked.title', "Popup Blocked")}); }
       } else if (record.type === "pdf") {
         const pdfWindow = window.open("", "_blank");
         if (pdfWindow) {
           pdfWindow.document.write(`<html><head><title>${record.name}</title><style>body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; } iframe { border: none; width: 100%; height: 100%; }</style></head><body><iframe src="${record.filePreview}"></iframe></body></html>`);
-        } else { toast({ title: "Popup Blocked"}); }
+        } else { toast({ title: translate('doctorDashboard.toast.popupBlocked.title', "Popup Blocked")}); }
       } else {
-         toast({ title: "Preview Not Supported"});
+         toast({ title: translate('doctorDashboard.toast.previewNotSupported.title', "Preview Not Supported")});
       }
     } else {
-      toast({ title: "No Preview Available" });
+      toast({ title: translate('doctorDashboard.toast.noPreviewAvailable.title', "No Preview Available") });
     }
+  };
+
+  const handleSaveNotes = () => {
+    toast({
+        title: translate('doctorDashboard.toast.notesSaved.title', "Notes Saved (Simulated)"),
+        description: translate('doctorDashboard.toast.notesSaved.description', "In a real application, these notes would be saved to the database."),
+    });
   };
 
 
@@ -128,24 +160,23 @@ export function DoctorDashboardClient() {
   }
 
   const quickAccessFeatures = [
-    { title: "My Appointments", description: "View and manage your schedule.", href: "/appointments", icon: CalendarDays },
-    { title: "Start Telemedicine Chat", description: "Initiate text consultations.", href: "/telemedicine", icon: MessageSquarePlus },
-    // { title: "Patient Messages", description: "Respond to patient inquiries.", href: "#", icon: MessageSquarePlus },
+    { titleKey: "doctorDashboard.quickAccess.myAppointments.title", descriptionKey: "doctorDashboard.quickAccess.myAppointments.description", href: "/appointments", icon: CalendarDays },
+    { titleKey: "doctorDashboard.quickAccess.telemedicine.title", descriptionKey: "doctorDashboard.quickAccess.telemedicine.description", href: "/telemedicine", icon: MessageSquarePlus },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2"> {/* Adjusted grid cols for 2 features */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
         {quickAccessFeatures.map(feature => (
-           <Card key={feature.title} className="shadow-md hover:shadow-lg transition-shadow">
+           <Card key={feature.titleKey} className="shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-medium">{feature.title}</CardTitle>
+              <CardTitle className="text-lg font-medium">{translate(feature.titleKey)}</CardTitle>
               <feature.icon className="h-5 w-5 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">{feature.description}</p>
+              <p className="text-sm text-muted-foreground">{translate(feature.descriptionKey)}</p>
               <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
-                <Link href={feature.href}>Access <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                <Link href={feature.href}>{translate('doctorDashboard.quickAccess.accessButton', "Access")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
             </CardContent>
           </Card>
@@ -155,9 +186,9 @@ export function DoctorDashboardClient() {
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-6 w-6 text-primary" /> My Patients ({myPatients.length})
+            <Users className="h-6 w-6 text-primary" /> {translate('doctorDashboard.myPatients.title', "My Patients")} ({myPatients.length})
           </CardTitle>
-          <CardDescription>Overview of your assigned patients. Click to view their medical records.</CardDescription>
+          <CardDescription>{translate('doctorDashboard.myPatients.description', "Overview of your assigned patients. Click to view their details.")}</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoadingPatients ? (
@@ -168,10 +199,10 @@ export function DoctorDashboardClient() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead className="hidden md:table-cell">Contact</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{translate('doctorDashboard.table.name', "Name")}</TableHead>
+                  <TableHead>{translate('doctorDashboard.table.email', "Email")}</TableHead>
+                  <TableHead className="hidden md:table-cell">{translate('doctorDashboard.table.contact', "Contact")}</TableHead>
+                  <TableHead className="text-right">{translate('doctorDashboard.table.actions', "Actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -188,10 +219,10 @@ export function DoctorDashboardClient() {
                     <TableCell className="hidden md:table-cell">{patient.emergencyContactPhone || "N/A"}</TableCell>
                     <TableCell className="text-right space-x-2">
                        <Button variant="outline" size="sm" onClick={() => router.push('/telemedicine')}>
-                        <MessageSquarePlus className="mr-1 h-4 w-4" /> Chat
+                        <MessageSquarePlus className="mr-1 h-4 w-4" /> {translate('doctorDashboard.actions.chat', "Chat")}
                       </Button>
-                      <Button variant="default" size="sm" onClick={() => handleViewPatientRecords(patient)}>
-                        <FileText className="mr-1 h-4 w-4" /> View Records
+                      <Button variant="default" size="sm" onClick={() => handleViewPatientDetails(patient)}>
+                        <FileText className="mr-1 h-4 w-4" /> {translate('doctorDashboard.actions.viewDetails', "View Details")}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -199,62 +230,127 @@ export function DoctorDashboardClient() {
               </TableBody>
             </Table>
           ) : (
-            <p className="text-muted-foreground text-center py-8">You currently have no patients assigned.</p>
+            <p className="text-muted-foreground text-center py-8">{translate('doctorDashboard.myPatients.noPatients', "You currently have no patients assigned.")}</p>
           )}
         </CardContent>
       </Card>
 
-      {selectedPatientForRecords && (
-        <Dialog open={isRecordsDialogOpen} onOpenChange={setIsRecordsDialogOpen}>
-          <DialogContent className="sm:max-w-3xl">
+      {selectedPatientForDetails && (
+        <Dialog open={isPatientDetailsDialogOpen} onOpenChange={setIsPatientDetailsDialogOpen}>
+          <DialogContent className="sm:max-w-3xl md:max-w-4xl lg:max-w-5xl max-h-[90vh] flex flex-col">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
+              <DialogTitle className="flex items-center gap-2 text-xl">
                 <BriefcaseMedical className="h-6 w-6 text-primary" />
-                Medical Records for {selectedPatientForRecords.name}
+                {translate('doctorDashboard.patientDetailsDialog.title', "Patient Details: {patientName}").replace('{patientName}', selectedPatientForDetails.name)}
               </DialogTitle>
               <DialogDescription>
-                Viewing records for {selectedPatientForRecords.email}.
+                {translate('doctorDashboard.patientDetailsDialog.description', "Viewing details for {patientEmail}.").replace('{patientEmail}', selectedPatientForDetails.email)}
               </DialogDescription>
             </DialogHeader>
-            <ScrollArea className="max-h-[60vh] p-1">
-              {isLoadingRecordsDialog ? (
+            
+            <ScrollArea className="flex-grow p-1 -mx-1 overflow-y-auto">
+              {isLoadingPatientDetails ? (
                 <div className="flex justify-center items-center py-10">
                   <Activity className="h-8 w-8 animate-spin text-primary" />
-                   <p className="ml-2 text-muted-foreground">Loading records...</p>
+                   <p className="ml-2 text-muted-foreground">{translate('doctorDashboard.patientDetailsDialog.loading', "Loading patient details...")}</p>
                 </div>
-              ) : selectedPatientRecords && selectedPatientRecords.length > 0 ? (
-                <ul className="space-y-3 py-2 pr-3">
-                  {selectedPatientRecords.map(record => (
-                    <li key={record.id} className="p-3 border rounded-md flex items-center justify-between gap-3 hover:shadow-sm">
-                      <div className="flex items-center gap-2.5 flex-grow min-w-0">
-                        {record.type === "image" && record.filePreview ? (
-                          <Image src={record.filePreview} alt={record.name} width={40} height={40} className="rounded object-cover h-10 w-10" data-ai-hint="medical report"/>
-                        ) : record.type === "pdf" ? (
-                          <FileText className="h-8 w-8 text-red-500 flex-shrink-0" />
-                        ) : (
-                          <FileText className="h-8 w-8 text-gray-400 flex-shrink-0" />
-                        )}
-                        <div className="flex-grow min-w-0">
-                          <p className="font-medium text-sm truncate" title={record.name}>{record.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {record.fileTypeDetail.toUpperCase()} - {(record.size / 1024).toFixed(1)} KB - {format(new Date(record.uploadedAt), "PPp")}
-                          </p>
-                        </div>
-                      </div>
-                      <Button variant="ghost" size="sm" onClick={() => handleViewRecordFile(record)} disabled={!record.filePreview && record.type !== 'other'}>
-                        <Eye className="mr-1 h-4 w-4" /> View
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
               ) : (
-                <p className="text-muted-foreground text-center py-8">No medical records found for this patient.</p>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
+                  {/* Section 1: Simulated Upcoming Appointments & Notes */}
+                  <div className="space-y-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                          <Clock className="h-5 w-5 text-blue-600" />
+                          {translate('doctorDashboard.patientDetailsDialog.upcomingAppointments.title', "Simulated Upcoming Appointments")}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {simulatedAppointments.length > 0 ? (
+                          <ul className="space-y-2 text-sm">
+                            {simulatedAppointments.map(appt => (
+                              <li key={appt.id} className="p-2 border rounded-md bg-blue-500/5">
+                                <p className="font-medium text-blue-700">{appt.description}</p>
+                                <p className="text-xs text-muted-foreground">{format(appt.dateTime, "PPpp")}</p>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-muted-foreground text-sm">{translate('doctorDashboard.patientDetailsDialog.upcomingAppointments.none', "No upcoming appointments simulated.")}</p>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-lg">
+                           <Notebook className="h-5 w-5 text-green-600" />
+                           {translate('doctorDashboard.patientDetailsDialog.notes.title', "Doctor's Notes (Simulated)")}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        <Label htmlFor="doctor-notes" className="sr-only">{translate('doctorDashboard.patientDetailsDialog.notes.label', "Notes")}</Label>
+                        <Textarea
+                          id="doctor-notes"
+                          value={doctorNotes}
+                          onChange={(e) => setDoctorNotes(e.target.value)}
+                          placeholder={translate('doctorDashboard.patientDetailsDialog.notes.placeholder', "Type your notes here...")}
+                          rows={5}
+                          className="text-sm"
+                        />
+                        <Button onClick={handleSaveNotes} size="sm" variant="secondary" className="mt-2">
+                          {translate('doctorDashboard.patientDetailsDialog.notes.saveButton', "Save Notes (Simulated)")}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Section 2: Medical Records */}
+                  <Card className="lg:row-span-2">
+                    <CardHeader>
+                       <CardTitle className="flex items-center gap-2 text-lg">
+                         <FileText className="h-5 w-5 text-red-600" />
+                         {translate('doctorDashboard.patientDetailsDialog.medicalRecords.title', "Medical Records")}
+                       </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {selectedPatientRecords && selectedPatientRecords.length > 0 ? (
+                        <ul className="space-y-3 py-2 pr-3">
+                          {selectedPatientRecords.map(record => (
+                            <li key={record.id} className="p-3 border rounded-md flex items-center justify-between gap-3 hover:shadow-sm">
+                              <div className="flex items-center gap-2.5 flex-grow min-w-0">
+                                {record.type === "image" && record.filePreview ? (
+                                  <Image src={record.filePreview} alt={record.name} width={40} height={40} className="rounded object-cover h-10 w-10" data-ai-hint="medical scan"/>
+                                ) : record.type === "pdf" ? (
+                                  <FileText className="h-8 w-8 text-red-500 flex-shrink-0" />
+                                ) : (
+                                  <FileText className="h-8 w-8 text-gray-400 flex-shrink-0" />
+                                )}
+                                <div className="flex-grow min-w-0">
+                                  <p className="font-medium text-sm truncate" title={record.name}>{record.name}</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {record.fileTypeDetail.toUpperCase()} - {(record.size / 1024).toFixed(1)} KB - {format(new Date(record.uploadedAt), "PPp")}
+                                  </p>
+                                </div>
+                              </div>
+                              <Button variant="ghost" size="sm" onClick={() => handleViewRecordFile(record)} disabled={!record.filePreview && record.type !== 'other'}>
+                                <Eye className="mr-1 h-4 w-4" /> {translate('doctorDashboard.actions.view', "View")}
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-muted-foreground text-center py-8 text-sm">{translate('doctorDashboard.patientDetailsDialog.medicalRecords.none', "No medical records found for this patient.")}</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
               )}
             </ScrollArea>
-            <DialogFooter className="sm:justify-end">
+            <DialogFooter className="sm:justify-end pt-4 border-t">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
-                  Close
+                  {translate('doctorDashboard.patientDetailsDialog.closeButton', "Close")}
                 </Button>
               </DialogClose>
             </DialogFooter>
