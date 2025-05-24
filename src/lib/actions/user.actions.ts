@@ -71,12 +71,9 @@ export async function updateUserProfile(
     } else {
       return { success: false, message: 'User not found or update failed.' };
     }
-  } catch (error)
-``````typescript
- {
+  } catch (error) {
     console.error('Error updating user profile:', error);
     // Check for specific MongoDB errors, e.g., duplicate key for email if we were updating it
     return { success: false, message: 'An unexpected error occurred while updating profile.' };
   }
 }
-```
