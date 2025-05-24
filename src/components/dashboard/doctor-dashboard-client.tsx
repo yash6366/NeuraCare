@@ -22,21 +22,23 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CalendarDays, Users, Video, MessageSquarePlus, ArrowRight, FileText, Eye, Activity, BriefcaseMedical, Notebook, Clock } from "lucide-react";
+import { CalendarDays, Users, Video, MessageSquarePlus, ArrowRight, FileText, Eye, Activity, BriefcaseMedical, Notebook, Clock, ListTodo } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
-import { format, addDays, addWeeks } from "date-fns";
+import { format, addDays, addWeeks, addHours } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/language-context";
 
-interface SimulatedAppointment {
+interface SimulatedAppointmentForDoctor {
   id: string;
-  description: string;
+  patientName: string;
+  appointmentType: string;
   dateTime: Date;
+  status: "Confirmed" | "Pending";
 }
 
 export function DoctorDashboardClient() {
@@ -49,12 +51,13 @@ export function DoctorDashboardClient() {
   const [isLoadingPatients, setIsLoadingPatients] = useState(false);
 
   const [selectedPatientRecords, setSelectedPatientRecords] = useState<MedicalRecordClientType[] | null>(null);
-  const [simulatedAppointments, setSimulatedAppointments] = useState<SimulatedAppointment[]>([]);
+  const [simulatedAppointments, setSimulatedAppointments] = useState<SimulatedAppointmentForDoctor[]>([]);
   const [doctorNotes, setDoctorNotes] = useState("");
   const [isPatientDetailsDialogOpen, setIsPatientDetailsDialogOpen] = useState(false);
   const [isLoadingPatientDetails, setIsLoadingPatientDetails] = useState(false);
   const [selectedPatientForDetails, setSelectedPatientForDetails] = useState<Patient | null>(null);
-
+  
+  const [myUpcomingAppointments, setMyUpcomingAppointments] = useState<SimulatedAppointmentForDoctor[]>([]);
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -81,16 +84,25 @@ export function DoctorDashboardClient() {
         setIsLoadingPatients(false);
       };
       fetchPatients();
+
+      // Simulate fetching doctor's appointments
+      // In a real app, this would be an API call to fetch appointments for currentDoctor.id
+      const now = new Date();
+      const simulatedDoctorAppointments: SimulatedAppointmentForDoctor[] = [
+        { id: 'docAppt1', patientName: 'Alice Smith', appointmentType: translate('appointments.mock.generalCheckup', "General Checkup"), dateTime: addHours(addDays(now, 1), 2), status: 'Confirmed' },
+        { id: 'docAppt2', patientName: 'Bob Johnson', appointmentType: translate('appointments.mock.dentalCleaning', "Dental Cleaning"), dateTime: addHours(addDays(now, 2), 4), status: 'Pending' },
+        { id: 'docAppt3', patientName: 'Carol Williams', appointmentType: translate('appointments.mock.cardiology', "Cardiology Consultation"), dateTime: addHours(addDays(now, 3), 1), status: 'Confirmed' },
+      ];
+      setMyUpcomingAppointments(simulatedDoctorAppointments);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, toast, translate]);
 
-  const generateSimulatedAppointments = (patientName: string): SimulatedAppointment[] => {
-    // Simple mock appointments, could be randomized
+  const generateSimulatedAppointmentsForPatientDialog = (patientName: string): SimulatedAppointmentForDoctor[] => {
     const now = new Date();
     return [
-      { id: 'appt1', description: `${translate('doctorDashboard.simulatedAppointments.checkup', "General Checkup")} for ${patientName}`, dateTime: addDays(now, 7) },
-      { id: 'appt2', description: `${translate('doctorDashboard.simulatedAppointments.followUp', "Follow-up Visit")} for ${patientName}`, dateTime: addWeeks(now, 3) },
+      { id: 'appt1', patientName: patientName, appointmentType: translate('doctorDashboard.simulatedAppointments.checkup', "General Checkup"), dateTime: addDays(now, 7), status: 'Confirmed' },
+      { id: 'appt2', patientName: patientName, appointmentType: translate('doctorDashboard.simulatedAppointments.followUp', "Follow-up Visit"), dateTime: addWeeks(now, 3), status: 'Confirmed' },
     ];
   };
 
@@ -100,8 +112,8 @@ export function DoctorDashboardClient() {
     setIsPatientDetailsDialogOpen(true);
     setIsLoadingPatientDetails(true);
     setSelectedPatientRecords(null);
-    setDoctorNotes(""); // Reset notes
-    setSimulatedAppointments(generateSimulatedAppointments(patient.name));
+    setDoctorNotes(""); 
+    setSimulatedAppointments(generateSimulatedAppointmentsForPatientDialog(patient.name));
 
 
     const records = await getMedicalRecordsForPatientByDoctor(patient.id, doctor.id);
@@ -186,6 +198,45 @@ export function DoctorDashboardClient() {
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
+            <ListTodo className="h-6 w-6 text-primary" /> {translate('doctorDashboard.upcomingAppointments.title', "My Upcoming Appointments")}
+          </CardTitle>
+          <CardDescription>
+            {translate('doctorDashboard.upcomingAppointments.description', "Your scheduled appointments. (Simulated data - would be fetched from DB in a full app)")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {myUpcomingAppointments.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{translate('doctorDashboard.appointmentsTable.patientName', "Patient Name")}</TableHead>
+                  <TableHead>{translate('doctorDashboard.appointmentsTable.type', "Type")}</TableHead>
+                  <TableHead>{translate('doctorDashboard.appointmentsTable.dateTime', "Date & Time")}</TableHead>
+                  <TableHead>{translate('doctorDashboard.appointmentsTable.status', "Status")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {myUpcomingAppointments.map((appt) => (
+                  <TableRow key={appt.id}>
+                    <TableCell className="font-medium">{appt.patientName}</TableCell>
+                    <TableCell>{appt.appointmentType}</TableCell>
+                    <TableCell>{format(appt.dateTime, "PPpp")}</TableCell>
+                    <TableCell>
+                      <Badge variant={appt.status === "Confirmed" ? "default" : "secondary"}>{appt.status}</Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p className="text-muted-foreground text-center py-8">{translate('doctorDashboard.upcomingAppointments.none', "No upcoming appointments scheduled.")}</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
             <Users className="h-6 w-6 text-primary" /> {translate('doctorDashboard.myPatients.title', "My Patients")} ({myPatients.length})
           </CardTitle>
           <CardDescription>{translate('doctorDashboard.myPatients.description', "Overview of your assigned patients. Click to view their details.")}</CardDescription>
@@ -193,7 +244,8 @@ export function DoctorDashboardClient() {
         <CardContent>
           {isLoadingPatients ? (
             <div className="flex justify-center items-center py-8">
-              <Skeleton className="h-10 w-1/2" />
+                <Activity className="h-8 w-8 animate-spin text-primary" />
+                <p className="ml-2 text-muted-foreground">{translate('doctorDashboard.myPatients.loading', "Loading patients...")}</p>
             </div>
           ) : myPatients.length > 0 ? (
             <Table>
@@ -262,7 +314,7 @@ export function DoctorDashboardClient() {
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-lg">
                           <Clock className="h-5 w-5 text-blue-600" />
-                          {translate('doctorDashboard.patientDetailsDialog.upcomingAppointments.title', "Simulated Upcoming Appointments")}
+                          {translate('doctorDashboard.patientDetailsDialog.patientAppointments.title', "Patient's Upcoming Appointments (Simulated)")}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -270,7 +322,7 @@ export function DoctorDashboardClient() {
                           <ul className="space-y-2 text-sm">
                             {simulatedAppointments.map(appt => (
                               <li key={appt.id} className="p-2 border rounded-md bg-blue-500/5">
-                                <p className="font-medium text-blue-700">{appt.description}</p>
+                                <p className="font-medium text-blue-700">{appt.appointmentType}</p>
                                 <p className="text-xs text-muted-foreground">{format(appt.dateTime, "PPpp")}</p>
                               </li>
                             ))}
@@ -360,3 +412,4 @@ export function DoctorDashboardClient() {
     </div>
   );
 }
+
