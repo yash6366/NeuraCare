@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en"> {/* Default lang, will be updated by LanguageProvider */}
+    <html lang="en">{/* Default lang, will be updated by LanguageProvider */}
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <LanguageProvider> {/* Added LanguageProvider */}
           {children}
@@ -36,5 +36,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    
