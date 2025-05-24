@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A voice-enabled symptom checker AI agent that suggests possible conditions
@@ -29,7 +30,7 @@ const SuggestedConditionSchema = z.object({
 });
 
 const VoiceSymptomCheckerOutputSchema = z.object({
-  analysis: z.array(SuggestedConditionSchema).describe('An array of possible medical conditions with detailed explanations and diverse suggestions.'),
+  analysis: z.array(SuggestedConditionSchema).describe('An array of possible medical conditions with detailed explanations and diverse suggestions. This array can be empty if no specific conditions are identified by the AI.'),
   disclaimer: z.string().describe('A general disclaimer that this is not medical advice and a professional should be consulted. This should be in the specified language.'),
 });
 export type VoiceSymptomCheckerOutput = z.infer<typeof VoiceSymptomCheckerOutputSchema>;
@@ -55,9 +56,10 @@ Based on these symptoms, please provide the following:
     *   'confidence': A numerical confidence score between 0.0 and 1.0 for this condition.
     *   'explanation': A detailed explanation of the condition, elaborating on why it might be relevant based on the provided symptoms.
     *   'allopathicSuggestions': An array of 2-3 distinct and actionable allopathic (modern medicine) suggestions or advice. Do NOT prescribe specific medications or dosages. Focus on general approaches, types of treatments, or when to see a doctor. If specific suggestions are not readily available, provide general advice for this category.
-    *   'ayurvedicSuggestions': An array of 2-3 distinct and actionable Ayurvedic remedies or lifestyle advice. If specific suggestions are not readily available, provide general advice for this category.
-    *   'homeRemedies': An array of 2-3 distinct and actionable common home remedies or self-care tips. If specific suggestions are not readily available, provide general advice for this category.
-2.  A 'disclaimer' string: This should be a clear statement emphasizing that this information is not a medical diagnosis, not a substitute for professional medical advice, and that the user should consult a qualified healthcare professional for any health concerns or before making any decisions related to their health.
+    *   'ayurvedicSuggestions': An array of 2-3 distinct and actionable Ayurvedic remedies or lifestyle advice. These are general suggestions, not prescriptions. If specific suggestions are not readily available, provide general advice for this category.
+    *   'homeRemedies': An array of 2-3 distinct and actionable common home remedies or self-care tips. These are general suggestions, not medical advice. If specific suggestions are not readily available, provide general advice for this category.
+    If no specific conditions are identified, this 'analysis' array should be empty.
+2.  A 'disclaimer' string: This should be a clear statement emphasizing that this information is not a medical diagnosis, not a substitute for professional medical advice, and that the user should consult a qualified healthcare professional for any health concerns or before making any decisions related to their health. This disclaimer is mandatory.
 
 When providing suggestions (allopathic, Ayurvedic, home remedies), ensure they are general, actionable, and not prescriptive. For example, instead of "Take 500mg Paracetamol", suggest "Over-the-counter pain relievers may help with fever or pain. Consider consulting a pharmacist for appropriate options."
 
@@ -81,26 +83,28 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     const llmResponse = await prompt(input);    
     const output = llmResponse.output;
 
-    if (!output || !output.analysis || !output.disclaimer || output.analysis.length === 0) { 
+    // Fallback if AI response is totally unparseable or critical parts like disclaimer are missing.
+    // An empty 'analysis' array is now considered a valid response if the AI couldn't identify specific conditions.
+    if (!output || !output.disclaimer) { 
       const lang = input.language || 'English';
       let errorDisclaimer = "";
-      let errorConditionName = "";
-      let errorExplanation = "";
+      let errorConditionName = ""; // This will be part of a single error entry
+      let errorExplanation = ""; // Explains the fallback
 
       if (lang === 'hi-IN') {
-        errorDisclaimer = "क्षमा करें, मुझे आपके लक्षणों का विश्लेषण करने में समस्या आ रही है या AI कोई विशिष्ट सुझाव नहीं दे सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक फॉलबैक प्रतिक्रिया है।";
-        errorConditionName = "विश्लेषण में त्रुटि या अपर्याप्त डेटा";
-        errorExplanation = "AI लक्षणों को संसाधित नहीं कर सका या पर्याप्त विशिष्ट सुझाव उत्पन्न नहीं कर सका। यह API समस्या या जटिल इनपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या वाक्यांश बदलें।";
+        errorDisclaimer = "क्षमा करें, AI आपके लक्षणों का ठीक से विश्लेषण नहीं कर सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक फॉलबैक (त्रुटि) प्रतिक्रिया है।";
+        errorConditionName = "AI प्रसंस्करण त्रुटि";
+        errorExplanation = "AI दिए गए लक्षणों को संसाधित नहीं कर सका या अपेक्षित संरचित प्रतिक्रिया नहीं दे सका। यह एक API समस्या या अप्रत्याशित AI आउटपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।";
       } else {
-        errorDisclaimer = "Sorry, I encountered an issue analyzing your symptoms, or the AI could not provide specific suggestions. Please consult a healthcare professional. This is a fallback response.";
-        errorConditionName = "Error in Analysis or Insufficient Data";
-        errorExplanation = "The AI could not process the symptoms or generate sufficiently specific suggestions. This might be due to an API issue, complex input, or the model not returning the expected structure. Please try again or rephrase.";
+        errorDisclaimer = "Sorry, the AI could not properly analyze your symptoms. Please consult a healthcare professional. This is a fallback (error) response.";
+        errorConditionName = "AI Processing Error";
+        errorExplanation = "The AI could not process the provided symptoms or did not return the expected structured response. This might be due to an API issue or an unexpected AI output. Please try again or clarify your symptoms.";
       }
       
-      console.warn(`[voiceSymptomCheckerFlow] Fallback triggered for language: ${lang}. Input symptoms: ${input.symptoms}. LLM output was: ${JSON.stringify(llmResponse.output, null, 2)}`);
+      console.warn(`[voiceSymptomCheckerFlow] Fallback triggered. Language: ${lang}. Input symptoms: ${input.symptoms}. Raw LLM output object: ${JSON.stringify(llmResponse.output, null, 2)}. Raw LLM response text: ${llmResponse.text}`);
 
       return {
-        analysis: [{
+        analysis: [{ // Provide a single, clearly marked error entry
             conditionName: errorConditionName,
             confidence: 0,
             explanation: errorExplanation,
@@ -111,7 +115,10 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
         disclaimer: errorDisclaimer,
       };
     }
+    // If output and output.disclaimer are present, return the AI's response, 
+    // even if output.analysis is an empty array (meaning AI found no conditions).
     return output;
   }
 );
 
+    
