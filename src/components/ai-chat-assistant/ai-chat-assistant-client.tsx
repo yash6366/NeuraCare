@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot as BotIcon, Mic, Volume2, VolumeX, Activity, ImagePlus, Paperclip, FileText, Search, HelpCircle, StopCircle, FileType, BookText, MessageCircleQuestion } from "lucide-react";
+import { Send, Bot as BotIcon, Mic, Volume2, VolumeX, Activity, ImagePlus, Paperclip, FileText, Search, HelpCircle, StopCircle, FileType, BookText, MessageCircleQuestion, Languages } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
@@ -144,16 +144,23 @@ export function AiChatAssistantClient() {
 
   const playTextAsSpeech = (text: string, lang: LanguageCode) => {
     if (!autoPlayBotSpeech || typeof window === 'undefined' || !window.speechSynthesis || !text) return;
+    
     const utterance = new SpeechSynthesisUtterance(text);
-    let targetVoice = window.speechSynthesis.getVoices().find(voice => voice.lang === lang);
+    const voices = window.speechSynthesis.getVoices();
+    let targetVoice = voices.find(voice => voice.lang === lang);
+    
     if (!targetVoice) {
-      targetVoice = window.speechSynthesis.getVoices().find(voice => voice.lang.startsWith(lang.split('-')[0]));
+      targetVoice = voices.find(voice => voice.lang.startsWith(lang.split('-')[0]));
     }
+
     if (targetVoice) {
       utterance.voice = targetVoice;
+      console.log(`TTS AiChatAssistant: Using voice "${targetVoice.name}" for language "${targetVoice.lang}" to speak: "${text.substring(0, 50)}..."`);
     } else {
-      utterance.lang = lang; 
+      utterance.lang = lang;
+      console.log(`TTS AiChatAssistant: No specific voice found for "${lang}". Using browser default for this language to speak: "${text.substring(0,50)}...". Available voices:`, voices.map(v => ({name: v.name, lang: v.lang})));
     }
+    
     window.speechSynthesis.cancel(); 
     window.speechSynthesis.speak(utterance);
   };
@@ -573,6 +580,11 @@ export function AiChatAssistantClient() {
               <CardDescription>{translate('aiChatAssistant.chatDescription', 'Ask anything, get intelligent responses. You can also upload images or documents for analysis.')}</CardDescription>
             </div>
             <div className="flex items-center space-x-2 pt-1">
+               <Label htmlFor="language-select" className="sr-only"> 
+                <Languages className="h-4 w-4 inline mr-1" />
+                {translate('languageSelector.label', 'Select Language')}
+              </Label>
+              {/* Global language selector is in Header, so no local selector here */}
               <Switch
                 id="autoplay-speech"
                 checked={autoPlayBotSpeech}
@@ -657,7 +669,7 @@ export function AiChatAssistantClient() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && !isLoading && !isAnalyzingImage && !isProcessingDocument && !isSummarizingDocument && !isQueryingDocument && handleSendMessage()}
-                disabled={isLoading || isAnalyzingImage || isProcessingDocument || isSummarizingDocument || isQueryingDocument || (isListening && !input) }
+                disabled={isLoading || isAnalyzingImage || isProcessingDocument || isSummarizingDocument || isQueryingDocument || isListening }
               />
               <Button onClick={handleVoiceInput} size="icon" variant="outline" aria-label={isListening ? translate('telemedicine.stopListening', 'Stop Listening') : translate('telemedicine.useMicButton', 'Use Microphone')} disabled={isLoading || isAnalyzingImage || isProcessingDocument || isSummarizingDocument || isQueryingDocument}>
                 {isListening ? <StopCircle className="h-5 w-5 text-destructive animate-pulse" /> : <Mic className="h-5 w-5" /> }
@@ -776,3 +788,6 @@ export function AiChatAssistantClient() {
     </div>
   );
 }
+
+
+    
