@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'SmartCare Hub',
-  description: 'Your intelligent healthcare companion.',
+  title: 'VakCare', // Renamed
+  description: 'Your intelligent healthcare companion.', // Kept generic, can be updated if needed
 };
 
 export default function RootLayout({

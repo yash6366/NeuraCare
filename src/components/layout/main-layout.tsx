@@ -1,3 +1,4 @@
+
 import type { ReactNode } from "react";
 import {
   SidebarProvider,
@@ -24,7 +25,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         <SidebarHeader className="p-4 border-b border-sidebar-border">
            <Link href="/dashboard" className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
             <Hospital className="h-7 w-7 text-primary flex-shrink-0" />
-            <span className="text-xl font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">SmartCare</span>
+            <span className="text-xl font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">VakCare</span>
           </Link>
         </SidebarHeader>
         <SidebarContent className="p-2">

@@ -1,5 +1,4 @@
 
-
 import type { LanguageCode } from '@/contexts/language-context';
 
 export const supportedLanguagesList: Array<{ value: LanguageCode; label: string; nativeLabel?: string }> = [
@@ -19,8 +18,8 @@ export const defaultLanguage: LanguageCode = 'en-US';
 export type TranslationSet = Record<string, string>;
 
 const enUSTranslations: TranslationSet = {
-    'app.name': 'SmartCare Hub',
-    'login.title': 'SmartCare Hub Login',
+    'app.name': 'VakCare', // Renamed
+    'login.title': 'VakCare Login', // Renamed
     'login.description': 'Access your intelligent healthcare companion.',
     'login.button': 'Login',
     'login.buttonLoading': 'Logging in...',
@@ -34,7 +33,7 @@ const enUSTranslations: TranslationSet = {
     'login.toast.errorTitle': 'Login Error',
     'login.toast.errorDescription': 'An unexpected error occurred. Please try again.',
     'register.title': 'Create Account',
-    'register.description': 'Join SmartCare Hub today.',
+    'register.description': 'Join VakCare today.', // Renamed
     'register.button': 'Create Account',
     'register.buttonLoading': 'Registering...',
     'register.loginLink': 'Already have an account? Log in',
@@ -45,7 +44,6 @@ const enUSTranslations: TranslationSet = {
     'register.roleLabel': 'Register as',
     'register.role.patient': 'Patient',
     'register.role.doctor': 'Doctor',
-    // 'register.role.admin': 'Admin', // Admin registration removed from UI
     'register.emergencyContactLabel': 'Emergency Contact Phone (Optional)',
     'register.medicalIdLabel': 'Medical ID',
     'register.medicalIdPlaceholder': 'Your Medical ID Number',
@@ -56,7 +54,7 @@ const enUSTranslations: TranslationSet = {
     'register.toast.passwordsDontMatch': 'Passwords do not match.',
     'register.toast.medicalIdRequired': 'Medical ID is required for doctors.',
     'register.toast.errorDescription': 'An error occurred. Please try again.',
-    'dashboard.admin.title': 'Admin Dashboard - SmartCare Hub',
+    'dashboard.admin.title': 'Admin Dashboard - VakCare', // Renamed
     'dashboard.admin.description': 'System overview and management tools.',
     'dashboard.doctor.title': 'Doctor Dashboard',
     'dashboard.doctor.description': 'Manage your patients, appointments, and consultations.',
@@ -81,7 +79,7 @@ const enUSTranslations: TranslationSet = {
     'profile.emergencyContactPhoneLabel': 'Emergency Contact Phone',
     'profile.emergencyContactPhonePlaceholder': 'e.g., +1 987-654-3210',
     'profile.avatarAlt': 'User Avatar',
-    'profile.avatarUserFallback': 'SC',
+    'profile.avatarUserFallback': 'VC', // VakCare
     'profile.role.admin': 'Administrator',
     'profile.role.doctor': 'Doctor',
     'profile.role.patient': 'Patient',
@@ -271,8 +269,8 @@ const enUSTranslations: TranslationSet = {
     'aiChatAssistant.documentQueryResponseContext': 'Answer based on the uploaded document.',
     'aiChatAssistant.extractFirstTitle': 'Extract Text First',
     'aiChatAssistant.extractFirstDescription': 'Please extract text from the document to enable summarization and querying features.',
-    'telemedicine.title': 'Doctor Chat',
-    'telemedicine.description': 'Connect directly with registered doctors for text-based consultations.',
+    'telemedicine.title': 'Doctor Chat', // Renamed from "Telemedicine Services" or "Verbal Consultation"
+    'telemedicine.description': 'Connect directly with registered doctors for text-based consultations.', // Updated description
     'telemedicine.chatPlaceholder': 'Type your message...',
     'telemedicine.sendButton': 'Send',
     'telemedicine.listening': 'Listening...',
@@ -280,9 +278,9 @@ const enUSTranslations: TranslationSet = {
     'telemedicine.speakNow': 'Speak now...',
     'telemedicine.voiceError': 'Voice input error. Please try again or type your message.',
     'telemedicine.voiceNotSupported': 'Voice input not supported by your browser.',
-    'telemedicine.autoPlaySpeech': 'Auto-play AI speech',
+    'telemedicine.autoPlaySpeech': 'Auto-play AI speech', // Kept for AI assistant if it were part of this page
     'telemedicine.autoPlayDoctorSpeechLabel': 'Auto-play doctor speech',
-    'telemedicine.aiAssistantInitialGreeting': "Hello! I'm SmartCare AI Assistant. How can I help you today? You can also ask me to analyze images or documents.",
+    'telemedicine.aiAssistantInitialGreeting': "Hello! I'm VakCare AI Assistant. How can I help you today? You can also ask me to analyze images or documents.", // Renamed
     'telemedicine.chatWithDoctorTitle': 'Chat with Your Doctor',
     'telemedicine.chatWithDoctorDescription': 'Select a registered doctor to start a chat session.',
     'telemedicine.selectDoctorLabel': 'Select Doctor',
@@ -328,7 +326,7 @@ const enUSTranslations: TranslationSet = {
     'sidebar.symptomChecker': 'Symptom Checker',
     'sidebar.aiChatAssistant': 'AI Chat Assistant',
     'sidebar.appointments': 'Appointments',
-    'sidebar.telemedicine': 'Doctor Chat',
+    'sidebar.telemedicine': 'Doctor Chat', // Changed from Telemedicine to Doctor Chat
     'sidebar.medicalRecords': 'Medical Records',
     'sidebar.emergency': 'Emergency',
     'sidebar.findCare': 'Find Care',
@@ -339,11 +337,11 @@ const enUSTranslations: TranslationSet = {
     'header.settings': 'Settings',
     'header.myAccount': 'My Account',
     'header.logout': 'Logout',
-    'header.userAvatarFallback': 'U',
+    'header.userAvatarFallback': 'U', // Could be 'V' for VakCare if preferred
     'doctorDashboard.quickAccess.myAppointments.title': 'My Appointments',
     'doctorDashboard.quickAccess.myAppointments.description': 'View and manage your schedule.',
-    'doctorDashboard.quickAccess.telemedicine.title': 'Start Telemedicine Chat',
-    'doctorDashboard.quickAccess.telemedicine.description': 'Initiate text consultations.',
+    'doctorDashboard.quickAccess.telemedicine.title': 'Start Chat with Patient', // Changed from Telemedicine to Chat
+    'doctorDashboard.quickAccess.telemedicine.description': 'Initiate text consultations.', // Kept generic
     'doctorDashboard.quickAccess.accessButton': 'Access',
     'doctorDashboard.myPatients.title': 'My Patients',
     'doctorDashboard.myPatients.description': 'Overview of your assigned patients. Click to view their details.',
@@ -353,7 +351,7 @@ const enUSTranslations: TranslationSet = {
     'doctorDashboard.table.email': 'Email',
     'doctorDashboard.table.contact': 'Contact',
     'doctorDashboard.table.actions': 'Actions',
-    'doctorDashboard.actions.chatOrDetails': 'Chat / Details', // Changed key
+    'doctorDashboard.actions.chatOrDetails': 'Chat / Details',
     'doctorDashboard.actions.viewDetails': 'View Details',
     'doctorDashboard.actions.view': 'View',
     'doctorDashboard.toast.errorFetchingPatients.title': 'Error Fetching Patients',
@@ -397,9 +395,9 @@ const enUSTranslations: TranslationSet = {
 };
 
 const hiINTranslations: TranslationSet = {
-  ...enUSTranslations,
-  'app.name': 'स्मार्टकेयर हब',
-  'login.title': 'स्मार्टकेयर हब लॉगिन',
+  ...enUSTranslations, // Start with English translations and override
+  'app.name': 'वाककेयर', // Renamed
+  'login.title': 'वाककेयर लॉग इन', // Renamed
   'login.description': 'अपने बुद्धिमान स्वास्थ्य साथी तक पहुँचें।',
   'login.button': 'लॉग इन करें',
   'login.buttonLoading': 'लॉग इन हो रहा है...',
@@ -413,7 +411,7 @@ const hiINTranslations: TranslationSet = {
   'login.toast.errorTitle': 'लॉगिन त्रुटि',
   'login.toast.errorDescription': 'एक अप्रत्याशित त्रुटि हुई। कृपया पुन: प्रयास करें।',
   'register.title': 'खाता बनाएं',
-  'register.description': 'आज ही स्मार्टकेयर हब से जुड़ें।',
+  'register.description': 'आज ही वाककेयर से जुड़ें।', // Renamed
   'register.button': 'खाता बनाएं',
   'register.buttonLoading': 'पंजीकरण हो रहा है...',
   'register.loginLink': 'पहले से ही खाता है? लॉग इन करें',
@@ -424,7 +422,6 @@ const hiINTranslations: TranslationSet = {
   'register.roleLabel': 'के रूप में रजिस्टर करें',
   'register.role.patient': 'मरीज',
   'register.role.doctor': 'चिकित्सक',
-  // 'register.role.admin': 'प्रशासक',
   'register.emergencyContactLabel': 'आपातकालीन संपर्क फ़ोन (वैकल्पिक)',
   'register.medicalIdLabel': 'चिकित्सा आईडी',
   'register.medicalIdPlaceholder': 'आपका चिकित्सा आईडी नंबर',
@@ -435,7 +432,7 @@ const hiINTranslations: TranslationSet = {
   'register.toast.passwordsDontMatch': 'पासवर्ड मेल नहीं खाते।',
   'register.toast.medicalIdRequired': 'डॉक्टरों के लिए चिकित्सा आईडी आवश्यक है।',
   'register.toast.errorDescription': 'एक त्रुटि हुई। कृपया पुन: प्रयास करें।',
-  'dashboard.admin.title': 'एडमिन डैशबोर्ड - स्मार्टकेयर हब',
+  'dashboard.admin.title': 'एडमिन डैशबोर्ड - वाककेयर', // Renamed
   'dashboard.admin.description': 'सिस्टम अवलोकन और प्रबंधन उपकरण।',
   'dashboard.doctor.title': 'डॉक्टर डैशबोर्ड',
   'dashboard.doctor.description': 'अपने मरीजों, नियुक्तियों और परामर्शों का प्रबंधन करें।',
@@ -460,7 +457,7 @@ const hiINTranslations: TranslationSet = {
   'profile.emergencyContactPhoneLabel': 'आपातकालीन संपर्क फ़ोन',
   'profile.emergencyContactPhonePlaceholder': 'उदा. +91 9876543210',
   'profile.avatarAlt': 'उपयोगकर्ता अवतार',
-  'profile.avatarUserFallback': 'SC',
+  'profile.avatarUserFallback': 'VC', // Renamed
   'profile.role.admin': 'प्रशासक',
   'profile.role.doctor': 'चिकित्सक',
   'profile.role.patient': 'मरीज़',
@@ -491,12 +488,12 @@ const hiINTranslations: TranslationSet = {
   'appointments.upcoming.noAppointments': "कोई आगामी नियुक्ति नहीं।",
   'appointments.bookNew.title': "एक नई नियुक्ति बुक करें",
   'appointments.bookNew.description': "विवरण भरें या अपनी अगली यात्रा निर्धारित करने के लिए वॉयस कमांड का उपयोग करें।",
-  'appointments.voiceCommand.title': "वॉयস কমান্ড শিড্যুলিং",
-  'appointments.voiceCommand.placeholder': "যেমন, 'আগামী মঙ্গলবার বিকেল ৩টায় জন ডোর জন্য একটি চেকআপ বুক করুন'",
-  'appointments.voiceCommand.micLabel': "মাইক্রোফোন ব্যবহার করুন",
-  'appointments.voiceCommand.processingButton': "প্রসেস করা হচ্ছে...",
-  'appointments.voiceCommand.processButton': "প্রসেস",
-  'appointments.voiceCommand.note': "ভয়েস ইনপুট প্রক্রিয়াকরণ অনুকরণ করে। আপনার কমান্ড টাইপ করুন।",
+  'appointments.voiceCommand.title': "वॉयस कमांड शेड्यूलिंग",
+  'appointments.voiceCommand.placeholder': "जैसे, 'अगले मंगलवार दोपहर ३ बजे जॉन डो के लिए एक चेकअप बुक करें'",
+  'appointments.voiceCommand.micLabel': "माइक्रोफ़ोन का प्रयोग करें",
+  'appointments.voiceCommand.processingButton': "प्रसंस्करण हो रहा है...",
+  'appointments.voiceCommand.processButton': "प्रसंस्करण",
+  'appointments.voiceCommand.note': "वॉयस इनपुट प्रसंस्करण का अनुकरण करता है। अपना कमांड टाइप करें।",
   'appointments.form.appointmentTypeLabel': "नियुक्ति का प्रकार",
   'appointments.form.selectTypePlaceholder': "प्रकार चुनें",
   'appointments.types.generalCheckup': "सामान्य जांच",
@@ -661,7 +658,7 @@ const hiINTranslations: TranslationSet = {
   'telemedicine.voiceNotSupported': 'आपके ब्राउज़र द्वारा वॉइस इनपुट समर्थित नहीं है।',
   'telemedicine.autoPlaySpeech': 'एआई भाषण स्वतः चलाएं',
   'telemedicine.autoPlayDoctorSpeechLabel': 'डॉक्टर का भाषण स्वतः चलाएं',
-  'telemedicine.aiAssistantInitialGreeting': 'नमस्ते! मैं स्मार्टकेयर एआई सहायक हूँ। आज मैं आपकी कैसे मदद कर सकता हूँ? आप मुझसे छवियों या दस्तावेज़ों का विश्लेषण करने के लिए भी कह सकते हैं।',
+  'telemedicine.aiAssistantInitialGreeting': 'नमस्ते! मैं वाककेयर एआई सहायक हूँ। आज मैं आपकी कैसे मदद कर सकता हूँ? आप मुझसे छवियों या दस्तावेज़ों का विश्लेषण करने के लिए भी कह सकते हैं।', // Renamed
   'telemedicine.chatWithDoctorTitle': 'अपने डॉक्टर से चैट करें',
   'telemedicine.chatWithDoctorDescription': 'चैट सत्र शुरू करने के लिए एक पंजीकृत डॉक्टर का चयन करें।',
   'telemedicine.selectDoctorLabel': 'डॉक्टर चुनें',
@@ -718,10 +715,10 @@ const hiINTranslations: TranslationSet = {
   'header.settings': 'सेटिंग्स',
   'header.myAccount': 'मेरा खाता',
   'header.logout': 'लॉग आउट करें',
-  'header.userAvatarFallback': 'U',
+  'header.userAvatarFallback': 'U', // Renamed
   'doctorDashboard.quickAccess.myAppointments.title': 'मेरी नियुक्तियाँ',
   'doctorDashboard.quickAccess.myAppointments.description': 'अपना शेड्यूल देखें और प्रबंधित करें।',
-  'doctorDashboard.quickAccess.telemedicine.title': 'टेलीमेडिसिन चैट शुरू करें',
+  'doctorDashboard.quickAccess.telemedicine.title': 'रोगी के साथ चैट शुरू करें',
   'doctorDashboard.quickAccess.telemedicine.description': 'टेक्स्ट परामर्श शुरू करें।',
   'doctorDashboard.quickAccess.accessButton': 'पहुँचें',
   'doctorDashboard.myPatients.title': 'मेरे मरीज़',
@@ -732,7 +729,7 @@ const hiINTranslations: TranslationSet = {
   'doctorDashboard.table.email': 'ईमेल',
   'doctorDashboard.table.contact': 'संपर्क',
   'doctorDashboard.table.actions': 'कार्रवाइयाँ',
-  'doctorDashboard.actions.chatOrDetails': 'चैट / विवरण', // Changed key
+  'doctorDashboard.actions.chatOrDetails': 'चैट / विवरण',
   'doctorDashboard.actions.viewDetails': 'विवरण देखें',
   'doctorDashboard.actions.view': 'देखें',
   'doctorDashboard.toast.errorFetchingPatients.title': 'मरीजों को लाने में त्रुटि',
@@ -786,8 +783,8 @@ const createPlaceholders = (baseTranslations: TranslationSet): TranslationSet =>
 
 const knINTranslations: TranslationSet = {
   ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'ಸ್ಮಾರ್ಟ್‌ಕೇರ್ ಹಬ್',
-  'login.title': 'ಸ್ಮಾರ್ಟ್‌ಕೇರ್ ಹಬ್ ಲಾಗಿನ್',
+  'app.name': 'ವಾಕ್‌ಕೇರ್', // Renamed
+  'login.title': 'ವಾಕ್‌ಕೇರ್ ಲಾಗಿನ್', // Renamed
   'login.button': 'ಲಾಗಿನ್ ಮಾಡಿ',
   'sidebar.dashboard': 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
   'sidebar.profile': 'ಪ್ರೊಫೈಲ್',
@@ -909,7 +906,7 @@ const knINTranslations: TranslationSet = {
   'profile.savingButton': 'ಉಳಿಸಲಾಗುತ್ತಿದೆ...',
   'doctorDashboard.quickAccess.myAppointments.title': 'ನನ್ನ ನೇಮಕಾತಿಗಳು',
   'doctorDashboard.quickAccess.myAppointments.description': 'ನಿಮ್ಮ ವೇಳಾಪಟ್ಟಿಯನ್ನು ವೀಕ್ಷಿಸಿ ಮತ್ತು ನಿರ್ವಹಿಸಿ.',
-  'doctorDashboard.quickAccess.telemedicine.title': 'ಟೆಲಿಮೆಡಿಸಿನ್ ಚಾಟ್ ಪ್ರಾರಂಭಿಸಿ',
+  'doctorDashboard.quickAccess.telemedicine.title': 'ರೋಗಿಯೊಂದಿಗೆ ಚಾಟ್ ಪ್ರಾರಂಭಿಸಿ',
   'doctorDashboard.quickAccess.telemedicine.description': 'ಪಠ್ಯ ಸಮಾಲೋಚನೆಗಳನ್ನು ಪ್ರಾರಂಭಿಸಿ.',
   'doctorDashboard.quickAccess.accessButton': 'ಪ್ರವೇಶಿಸಿ',
   'doctorDashboard.myPatients.title': 'ನನ್ನ ರೋಗಿಗಳು',
@@ -977,12 +974,13 @@ const knINTranslations: TranslationSet = {
   'register.medicalIdLabel': 'ವೈದ್ಯಕೀಯ ಐಡಿ',
   'register.medicalIdPlaceholder': 'ನಿಮ್ಮ ವೈದ್ಯಕೀಯ ಐಡಿ ಸಂಖ್ಯೆ',
   'register.toast.medicalIdRequired': 'ವೈದ್ಯರಿಗೆ ವೈದ್ಯಕೀಯ ಐಡಿ ಅಗತ್ಯವಿದೆ.',
+  'profile.avatarUserFallback': 'VC', // Renamed
 };
 
 const teINTranslations: TranslationSet = {
   ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'స్మార్ట్‌కేర్ హబ్',
-  'login.title': 'స్మార్ట్‌కేర్ హబ్ లాగిన్',
+  'app.name': 'వాక్‌కేర్', // Renamed
+  'login.title': 'వాక్‌కేర్ లాగిన్', // Renamed
   'login.button': 'లాగిన్ చేయండి',
   'sidebar.dashboard': 'డాష్‌బోర్డ్',
   'sidebar.profile': 'ప్రొఫైల్',
@@ -1104,7 +1102,7 @@ const teINTranslations: TranslationSet = {
   'profile.savingButton': 'సేవ్ చేస్తోంది...',
   'doctorDashboard.quickAccess.myAppointments.title': 'నా నియామకాలు',
   'doctorDashboard.quickAccess.myAppointments.description': 'మీ షెడ్యూల్‌ను వీక్షించండి మరియు నిర్వహించండి.',
-  'doctorDashboard.quickAccess.telemedicine.title': 'టెలిమెడిసిన్ చాట్ ప్రారంభించండి',
+  'doctorDashboard.quickAccess.telemedicine.title': 'రోగి తో చాట్ ప్రారంభించండి',
   'doctorDashboard.quickAccess.telemedicine.description': 'టెక్స్ట్ సంప్రదింపులు ప్రారంభించండి.',
   'doctorDashboard.quickAccess.accessButton': 'ప్రాప్యత',
   'doctorDashboard.myPatients.title': 'నా రోగులు',
@@ -1156,28 +1154,13 @@ const teINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "రకం",
   'doctorDashboard.appointmentsTable.dateTime': "తేదీ & సమయం",
   'doctorDashboard.appointmentsTable.status': "స్థితి",
-  'telemedicine.adminDoctorChatTitle': 'డాక్టర్లతో సంభాషించండి',
-  'telemedicine.adminDoctorChatDescription': 'వ్యక్తిగత డాక్టర్లతో చాట్ చేయండి లేదా అందరికీ సందేశాలు ప్రసారం చేయండి.',
-  'telemedicine.adminBroadcastModeLabel': 'అన్ని డాక్టర్లకు ప్రసారం చేయండి',
-  'telemedicine.adminBroadcastModeActive': 'ప్రసార మోడ్ యాక్టివ్‌గా ఉంది. సందేశాలు అన్ని డాక్టర్లకు పంపబడతాయి (అనుకరణ).',
-  'telemedicine.adminChatWithDoctorGreeting': 'మీరు ఇప్పుడు నిర్వాహకుడిగా డా. {doctorName} తో చాట్ చేస్తున్నారు.',
-  'telemedicine.adminBroadcastingTitle': 'అన్ని డాక్టర్లకు ప్రసారం',
-  'telemedicine.typeBroadcastPlaceholder': 'మీ ప్రసార సందేశాన్ని టైప్ చేయండి...',
-  'telemedicine.broadcastLabel': 'ప్రసారం',
-  'telemedicine.adminBroadcastConfirmation': 'ప్రసార సందేశం అన్ని డాక్టర్లకు పంపబడింది (అనుకరణ): "{messageText}"',
-  'telemedicine.selectDoctorPromptTitlePatient': 'ఒక డాక్టర్‌ను ఎంచుకోండి',
-  'telemedicine.selectDoctorPromptDescPatient': 'మీ చాట్ ప్రారంభించడానికి దయచేసి పై జాబితా నుండి ఒక డాక్టర్‌ను ఎంచుకోండి.',
-  'telemedicine.adminChatPromptTitle': 'డాక్టర్‌ను ఎంచుకోండి లేదా ప్రసారం చేయండి',
-  'telemedicine.adminChatPromptDesc': 'దయచేసి ఒకరితో ఒకరు చాట్ కోసం ఒక డాక్టర్‌ను ఎంచుకోండి, లేదా అందరికీ సందేశం పంపడానికి "అన్ని డాక్టర్లకు ప్రసారం చేయండి" మోడ్‌ను యాక్టివేట్ చేయండి.',
-  'register.medicalIdLabel': 'వైద్య ఐడి',
-  'register.medicalIdPlaceholder': 'మీ వైద్య ఐడి నంబర్',
-  'register.toast.medicalIdRequired': 'వైద్యులకు వైద్య ఐడి అవసరం.',
+  'profile.avatarUserFallback': 'VC', // Renamed
 };
 
 const taINTranslations: TranslationSet = {
   ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'ஸ்மார்ட்கேர் ஹப்',
-  'login.title': 'ஸ்மார்ட்கேர் ஹப் உள்நுழைவு',
+  'app.name': 'வாக்‌கேர்', // Renamed
+  'login.title': 'வாக்‌கேர் உள்நுழைவு', // Renamed
   'login.button': 'உள்நுழையவும்',
   'sidebar.dashboard': ' டாஷ்போர்டு',
   'sidebar.profile': 'சுயவிவரம்',
@@ -1299,7 +1282,7 @@ const taINTranslations: TranslationSet = {
   'profile.savingButton': 'சேமிக்கப்படுகிறது...',
   'doctorDashboard.quickAccess.myAppointments.title': 'எனது சந்திப்புகள்',
   'doctorDashboard.quickAccess.myAppointments.description': 'உங்கள் அட்டவணையை காண்க மற்றும் நிர்வகிக்கவும்.',
-  'doctorDashboard.quickAccess.telemedicine.title': 'தொலைமருத்துவ அரட்டையைத் தொடங்குங்கள்',
+  'doctorDashboard.quickAccess.telemedicine.title': 'நோயாளியுடன் அரட்டையைத் தொடங்குங்கள்',
   'doctorDashboard.quickAccess.telemedicine.description': 'உரை ஆலோசனைகளைத் தொடங்குங்கள்.',
   'doctorDashboard.quickAccess.accessButton': 'அணுகவும்',
   'doctorDashboard.myPatients.title': 'எனது நோயாளிகள்',
@@ -1351,28 +1334,13 @@ const taINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "வகை",
   'doctorDashboard.appointmentsTable.dateTime': "தேதி & நேரம்",
   'doctorDashboard.appointmentsTable.status': "நிலை",
-  'telemedicine.adminDoctorChatTitle': 'மருத்துவர்களுடன் தொடர்பு கொள்ளுங்கள்',
-  'telemedicine.adminDoctorChatDescription': 'தனிப்பட்ட மருத்துவர்களுடன் அரட்டையடிக்கவும் அல்லது அனைவருக்கும் செய்திகளை ஒளிபரப்பவும்.',
-  'telemedicine.adminBroadcastModeLabel': 'அனைத்து மருத்துவர்களுக்கும் ஒளிபரப்பு',
-  'telemedicine.adminBroadcastModeActive': 'ஒளிபரப்பு முறை செயலில் உள்ளது. செய்திகள் அனைத்து மருத்துவர்களுக்கும் அனுப்பப்படும் (போலியானது).',
-  'telemedicine.adminChatWithDoctorGreeting': 'நீங்கள் இப்போது நிர்வாகியாக டாக்டர் {doctorName} உடன் அரட்டையடிக்கிறீர்கள்.',
-  'telemedicine.adminBroadcastingTitle': 'அனைத்து மருத்துவர்களுக்கும் ஒளிபரப்பு',
-  'telemedicine.typeBroadcastPlaceholder': 'உங்கள் ஒளிபரப்பு செய்தியைத் தட்டச்சு செய்க...',
-  'telemedicine.broadcastLabel': 'ஒளிபரப்பு',
-  'telemedicine.adminBroadcastConfirmation': 'அனைத்து மருத்துவர்களுக்கும் ஒளிபரப்பு செய்தி அனுப்பப்பட்டது (போலியானது): "{messageText}"',
-  'telemedicine.selectDoctorPromptTitlePatient': 'ஒரு மருத்துவரைத் தேர்ந்தெடுக்கவும்',
-  'telemedicine.selectDoctorPromptDescPatient': 'உங்கள் அரட்டையைத் தொடங்க மேலே உள்ள பட்டியலிலிருந்து ஒரு மருத்துவரைத் தேர்ந்தெடுக்கவும்.',
-  'telemedicine.adminChatPromptTitle': 'மருத்துவரைத் தேர்ந்தெடுக்கவும் அல்லது ஒளிபரப்பவும்',
-  'telemedicine.adminChatPromptDesc': 'தயவுசெய்து ஒருவருக்கொருவர் அரட்டைக்கு ஒரு மருத்துவரைத் தேர்ந்தெடுக்கவும், அல்லது அனைவருக்கும் செய்தி அனுப்ப "அனைத்து மருத்துவர்களுக்கும் ஒளிபரப்பு" பயன்முறையைச் செயல்படுத்தவும்.',
-  'register.medicalIdLabel': 'மருத்துவ அடையாள அட்டை',
-  'register.medicalIdPlaceholder': 'உங்கள் மருத்துவ அடையாள எண்',
-  'register.toast.medicalIdRequired': 'மருத்துவர்களுக்கு மருத்துவ அடையாள அட்டை தேவை.',
+  'profile.avatarUserFallback': 'VC', // Renamed
 };
 
 const bnINTranslations: TranslationSet = {
   ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'স্মার্টকেয়ার হাব',
-  'login.title': 'স্মার্টকেয়ার হাব লগইন',
+  'app.name': 'ভ্যাককেয়ার', // Renamed
+  'login.title': 'ভ্যাককেয়ার লগইন', // Renamed
   'login.button': 'লগইন করুন',
   'sidebar.dashboard': 'ড্যাশবোর্ড',
   'sidebar.profile': 'প্রোফাইল',
@@ -1494,7 +1462,7 @@ const bnINTranslations: TranslationSet = {
   'profile.savingButton': 'সংরক্ষণ করা হচ্ছে...',
   'doctorDashboard.quickAccess.myAppointments.title': 'আমার অ্যাপয়েন্টমেন্ট',
   'doctorDashboard.quickAccess.myAppointments.description': 'আপনার সময়সূচী দেখুন এবং পরিচালনা করুন।',
-  'doctorDashboard.quickAccess.telemedicine.title': 'টেলিমেডিসিন চ্যাট শুরু করুন',
+  'doctorDashboard.quickAccess.telemedicine.title': 'রোগীর সাথে চ্যাট শুরু করুন',
   'doctorDashboard.quickAccess.telemedicine.description': 'পাঠ্য পরামর্শ শুরু করুন।',
   'doctorDashboard.quickAccess.accessButton': 'অ্যাক্সেস',
   'doctorDashboard.myPatients.title': 'আমার রোগী',
@@ -1546,28 +1514,13 @@ const bnINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "প্রকার",
   'doctorDashboard.appointmentsTable.dateTime': "তারিখ ও সময়",
   'doctorDashboard.appointmentsTable.status': "অবস্থা",
-  'telemedicine.adminDoctorChatTitle': 'ডাক্তারদের সাথে যোগাযোগ করুন',
-  'telemedicine.adminDoctorChatDescription': 'ব্যক্তিগত ডাক্তারদের সাথে চ্যাট করুন অথবা সবার কাছে বার্তা সম্প্রচার করুন।',
-  'telemedicine.adminBroadcastModeLabel': 'সব ডাক্তারদের কাছে সম্প্রচার করুন',
-  'telemedicine.adminBroadcastModeActive': 'সম্প্রচার মোড সক্রিয়। বার্তাগুলি সব ডাক্তারদের কাছে পাঠানো হবে (সিমুলেটেড)।',
-  'telemedicine.adminChatWithDoctorGreeting': 'আপনি এখন একজন প্রশাসক হিসেবে ডঃ {doctorName} এর সাথে চ্যাট করছেন।',
-  'telemedicine.adminBroadcastingTitle': 'সব ডাক্তারদের কাছে সম্প্রচার',
-  'telemedicine.typeBroadcastPlaceholder': 'আপনার সম্প্রচার বার্তা টাইপ করুন...',
-  'telemedicine.broadcastLabel': 'সম্প্রচার',
-  'telemedicine.adminBroadcastConfirmation': 'সম্প্রচার বার্তা সব ডাক্তারদের কাছে পাঠানো হয়েছে (সিমুলেটেড): "{messageText}"',
-  'telemedicine.selectDoctorPromptTitlePatient': 'একজন ডাক্তার নির্বাচন করুন',
-  'telemedicine.selectDoctorPromptDescPatient': 'আপনার চ্যাট শুরু করতে অনুগ্রহ করে উপরের তালিকা থেকে একজন ডাক্তার নির্বাচন করুন।',
-  'telemedicine.adminChatPromptTitle': 'ডাক্তার নির্বাচন করুন অথবা সম্প্রচার করুন',
-  'telemedicine.adminChatPromptDesc': 'অনুগ্রহ করে একের পর এক চ্যাটের জন্য একজন ডাক্তার নির্বাচন করুন, অথবা সবার কাছে বার্তা পাঠাতে "সব ডাক্তারদের কাছে সম্প্রচার করুন" মোড সক্রিয় করুন।',
-  'register.medicalIdLabel': 'মেডিকেল আইডি',
-  'register.medicalIdPlaceholder': 'আপনার মেডিকেল আইডি নম্বর',
-  'register.toast.medicalIdRequired': 'ডাক্তারদের জন্য মেডিকেল আইডি প্রয়োজন।',
+  'profile.avatarUserFallback': 'VC', // Renamed
 };
 
 const mrINTranslations: TranslationSet = {
   ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'स्मार्टकेअर हब',
-  'login.title': 'स्मार्टकेअर हब लॉग इन',
+  'app.name': 'वाककेअर', // Renamed
+  'login.title': 'वाककेअर लॉग इन', // Renamed
   'login.button': 'लॉग इन करा',
   'sidebar.dashboard': 'डॅशबोर्ड',
   'sidebar.profile': 'प्रोफाइल',
@@ -1689,7 +1642,7 @@ const mrINTranslations: TranslationSet = {
   'profile.savingButton': 'जतन करत आहे...',
   'doctorDashboard.quickAccess.myAppointments.title': 'माझ्या भेटी',
   'doctorDashboard.quickAccess.myAppointments.description': 'तुमचे वेळापत्रक पहा आणि व्यवस्थापित करा.',
-  'doctorDashboard.quickAccess.telemedicine.title': 'टेलीमेडिसिन चॅट सुरू करा',
+  'doctorDashboard.quickAccess.telemedicine.title': 'रुग्णाशी चॅट सुरू करा',
   'doctorDashboard.quickAccess.telemedicine.description': 'मजकूर सल्लामसलत सुरू करा.',
   'doctorDashboard.quickAccess.accessButton': 'प्रवेश',
   'doctorDashboard.myPatients.title': 'माझे रुग्ण',
@@ -1741,28 +1694,13 @@ const mrINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "प्रकार",
   'doctorDashboard.appointmentsTable.dateTime': "तारीख आणि वेळ",
   'doctorDashboard.appointmentsTable.status': "स्थिती",
-  'telemedicine.adminDoctorChatTitle': 'डॉक्टरांशी संवाद साधा',
-  'telemedicine.adminDoctorChatDescription': 'वैयक्तिक डॉक्टरांशी चॅट करा किंवा सर्वांना संदेश प्रसारित करा.',
-  'telemedicine.adminBroadcastModeLabel': 'सर्व डॉक्टरांना प्रसारित करा',
-  'telemedicine.adminBroadcastModeActive': 'प्रसारण मोड सक्रिय. संदेश सर्व डॉक्टरांना पाठवले जातील (अनुकरणित).',
-  'telemedicine.adminChatWithDoctorGreeting': 'तुम्ही आता प्रशासक म्हणून डॉ. {doctorName} यांच्याशी चॅट करत आहात.',
-  'telemedicine.adminBroadcastingTitle': 'सर्व डॉक्टरांना प्रसारण',
-  'telemedicine.typeBroadcastPlaceholder': 'तुमचा प्रसारण संदेश टाइप करा...',
-  'telemedicine.broadcastLabel': 'प्रसारण',
-  'telemedicine.adminBroadcastConfirmation': 'प्रसारण संदेश सर्व डॉक्टरांना पाठवला (अनुकरणित): "{messageText}"',
-  'telemedicine.selectDoctorPromptTitlePatient': 'एक डॉक्टर निवडा',
-  'telemedicine.selectDoctorPromptDescPatient': 'तुमची चॅट सुरू करण्यासाठी कृपया वरील यादीतून एक डॉक्टर निवडा.',
-  'telemedicine.adminChatPromptTitle': 'डॉक्टर निवडा किंवा प्रसारित करा',
-  'telemedicine.adminChatPromptDesc': 'कृपया वन-टू-वन चॅटसाठी डॉक्टर निवडा, किंवा सर्वांना संदेश पाठवण्यासाठी "सर्व डॉक्टरांना प्रसारित करा" मोड सक्रिय करा.',
-  'register.medicalIdLabel': 'वैद्यकीय आयडी',
-  'register.medicalIdPlaceholder': 'तुमचा वैद्यकीय आयडी क्रमांक',
-  'register.toast.medicalIdRequired': 'डॉक्टरांसाठी वैद्यकीय आयडी आवश्यक आहे.',
+  'profile.avatarUserFallback': 'VC', // Renamed
 };
 
 const guINTranslations: TranslationSet = {
   ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'સ્માર્ટકેર હબ',
-  'login.title': 'સ્માર્ટકેર હબ લોગિન',
+  'app.name': 'વાકકેર', // Renamed
+  'login.title': 'વાકકેર લોગિન', // Renamed
   'login.button': 'લૉગિન કરો',
   'sidebar.dashboard': 'ડેશબોર્ડ',
   'sidebar.profile': 'પ્રોફાઇલ',
@@ -1884,7 +1822,7 @@ const guINTranslations: TranslationSet = {
   'profile.savingButton': 'સાચવી રહ્યું છે...',
   'doctorDashboard.quickAccess.myAppointments.title': 'મારી મુલાકાતો',
   'doctorDashboard.quickAccess.myAppointments.description': 'તમારું સમયપત્રક જુઓ અને સંચાલિત કરો.',
-  'doctorDashboard.quickAccess.telemedicine.title': 'ટેલિમેડિસિન ચેટ શરૂ કરો',
+  'doctorDashboard.quickAccess.telemedicine.title': 'દર્દી સાથે ચેટ શરૂ કરો',
   'doctorDashboard.quickAccess.telemedicine.description': 'ટેક્સ્ટ પરામર્શ શરૂ કરો.',
   'doctorDashboard.quickAccess.accessButton': 'ઍક્સેસ',
   'doctorDashboard.myPatients.title': 'મારા દર્દીઓ',
@@ -1936,28 +1874,13 @@ const guINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "પ્રકાર",
   'doctorDashboard.appointmentsTable.dateTime': "તારીખ અને સમય",
   'doctorDashboard.appointmentsTable.status': "સ્થિતિ",
-  'telemedicine.adminDoctorChatTitle': 'ડૉક્ટરો સાથે વાતચીત કરો',
-  'telemedicine.adminDoctorChatDescription': 'વ્યક્તિગત ડૉક્ટરો સાથે ચેટ કરો અથવા બધાને સંદેશા મોકલો.',
-  'telemedicine.adminBroadcastModeLabel': 'બધા ડૉક્ટરોને મોકલો',
-  'telemedicine.adminBroadcastModeActive': 'બ્રોડકાસ્ટ મોડ સક્રિય છે. સંદેશા બધા ડૉક્ટરોને મોકલવામાં આવશે (અનુકૃત).',
-  'telemedicine.adminChatWithDoctorGreeting': 'તમે હવે સંચાલક તરીકે ડૉ. {doctorName} સાથે ચેટ કરી રહ્યા છો.',
-  'telemedicine.adminBroadcastingTitle': 'બધા ડૉક્ટરોને મોકલી રહ્યું છે',
-  'telemedicine.typeBroadcastPlaceholder': 'તમારો બ્રોડકા스트 સંદેશ લખો...',
-  'telemedicine.broadcastLabel': 'બ્રોડકાસ્ટ',
-  'telemedicine.adminBroadcastConfirmation': 'બ્રોડકાસ્ટ સંદેશ બધા ડૉક્ટરોને મોકલવામાં આવ્યો (અનુકૃત): "{messageText}"',
-  'telemedicine.selectDoctorPromptTitlePatient': 'એક ડૉક્ટર પસંદ કરો',
-  'telemedicine.selectDoctorPromptDescPatient': 'તમારી ચેટ શરૂ કરવા માટે કૃપા કરીને ઉપરની સૂચિમાંથી એક ડૉક્ટર પસંદ કરો.',
-  'telemedicine.adminChatPromptTitle': 'ડૉક્ટર પસંદ કરો અથવા બ્રોડકાસ્ટ કરો',
-  'telemedicine.adminChatPromptDesc': 'કૃપા કરીને વન-ટુ-વન ચેટ માટે ડૉક્ટર પસંદ કરો, અથવા બધાને સંદેશ મોકલવા માટે "બધા ડૉક્ટરોને બ્રોડકાસ્ટ કરો" મોડ સક્રિય કરો.',
-  'register.medicalIdLabel': 'મેડિકલ આઈડી',
-  'register.medicalIdPlaceholder': 'તમારો મેડિકલ આઈડી નંબર',
-  'register.toast.medicalIdRequired': 'ડૉક્ટરો માટે મેડિકલ આઈડી જરૂરી છે.',
+  'profile.avatarUserFallback': 'VC', // Renamed
 };
 
 const urINTranslations: TranslationSet = {
   ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'اسمارٹ کیئر ہب',
-  'login.title': 'اسمارٹ کیئر ہב لاگ ان',
+  'app.name': 'واک کیئر', // Renamed
+  'login.title': 'واک کیئر لاگ ان', // Renamed
   'login.button': 'لاگ ان کریں',
   'sidebar.dashboard': 'ڈیش بورڈ',
   'sidebar.profile': 'پروفائل',
@@ -2079,7 +2002,7 @@ const urINTranslations: TranslationSet = {
   'profile.savingButton': 'محفوظ کیا جا رہا ہے...',
   'doctorDashboard.quickAccess.myAppointments.title': 'میری ملاقاتیں',
   'doctorDashboard.quickAccess.myAppointments.description': 'اپنا شیڈول دیکھیں اور منظم کریں۔',
-  'doctorDashboard.quickAccess.telemedicine.title': 'ٹیلی میڈیسن چیٹ شروع کریں',
+  'doctorDashboard.quickAccess.telemedicine.title': 'مریض کے ساتھ چیٹ شروع کریں',
   'doctorDashboard.quickAccess.telemedicine.description': 'متنی مشاورت شروع کریں۔',
   'doctorDashboard.quickAccess.accessButton': 'رسائی',
   'doctorDashboard.myPatients.title': 'میرے مریض',
@@ -2131,22 +2054,7 @@ const urINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "قسم",
   'doctorDashboard.appointmentsTable.dateTime': "تاریخ اور وقت",
   'doctorDashboard.appointmentsTable.status': "حیثیت",
-  'telemedicine.adminDoctorChatTitle': 'ڈاکٹروں سے بات چیت کریں',
-  'telemedicine.adminDoctorChatDescription': 'انفرادی ڈاکٹروں سے چیٹ کریں یا سب کو پیغامات نشر کریں۔',
-  'telemedicine.adminBroadcastModeLabel': 'تمام ڈاکٹروں کو نشر کریں',
-  'telemedicine.adminBroadcastModeActive': 'براڈکاسٹ موڈ فعال ہے۔ پیغامات تمام ڈاکٹروں کو بھیجے جائیں گے (نقلی)۔',
-  'telemedicine.adminChatWithDoctorGreeting': 'آپ اب بطور منتظم ڈاکٹر {doctorName} سے چیٹ کر رہے ہیں۔',
-  'telemedicine.adminBroadcastingTitle': 'تمام ڈاکٹروں کو نشر کرنا',
-  'telemedicine.typeBroadcastPlaceholder': 'اپنا نشریاتی پیغام ٹائپ کریں...',
-  'telemedicine.broadcastLabel': 'نشر',
-  'telemedicine.adminBroadcastConfirmation': 'نشریاتی پیغام تمام ڈاکٹروں کو بھیجا گیا (نقلی): "{messageText}"',
-  'telemedicine.selectDoctorPromptTitlePatient': 'ایک ڈاکٹر منتخب کریں',
-  'telemedicine.selectDoctorPromptDescPatient': 'اپنی چیٹ شروع کرنے کے لیے براہ کرم اوپر دی گئی فہرست سے ایک ڈاکٹر منتخب کریں۔',
-  'telemedicine.adminChatPromptTitle': 'ڈاکٹر منتخب کریں یا نشر کریں',
-  'telemedicine.adminChatPromptDesc': 'براہ کرم ون آن ون چیٹ کے لیے ایک ڈاکٹر منتخب کریں، یا سب کو پیغام بھیجنے کے لیے "تمام ڈاکٹروں کو نشر کریں" موڈ کو فعال کریں۔',
-  'register.medicalIdLabel': 'میڈیکل آئی ڈی',
-  'register.medicalIdPlaceholder': 'آپ کا میڈیکل آئی ڈی نمبر',
-  'register.toast.medicalIdRequired': 'ڈاکٹروں کے لیے میڈیکل آئی ڈی درکار ہے۔',
+  'profile.avatarUserFallback': 'VC', // Renamed
 };
 
 export const translationsData: Record<LanguageCode, TranslationSet> = {
@@ -2160,4 +2068,3 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
   'gu-IN': guINTranslations,
   'ur-IN': urINTranslations,
 };
-
