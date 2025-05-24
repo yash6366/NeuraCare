@@ -9,3 +9,4 @@ import '@/ai/flows/telemedicine-chat-flow.ts';
 import '@/ai/flows/image-analysis-flow.ts'; // Added new image analysis flow
 import '@/ai/flows/document-text-extraction-flow.ts'; // Added new document text extraction flow
 import '@/ai/flows/document-summarization-flow.ts'; // Added new document summarization flow
+import '@/ai/flows/document-query-flow.ts'; // Added new document query flow
