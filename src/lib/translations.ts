@@ -48,6 +48,11 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'dashboard.doctor.description': 'Manage your patients, appointments, and consultations.',
     'dashboard.patient.title': 'Patient Dashboard',
     'dashboard.patient.description': 'Access your health information, appointments, and connect with your doctor.',
+    'patientDashboard.yourDoctorTitle': 'Your Assigned Doctor',
+    'patientDashboard.messageDoctorButton': 'Message Doctor',
+    'patientDashboard.requestAppointmentButton': 'Request Appointment',
+    'patientDashboard.noDoctorTitle': 'No Assigned Doctor',
+    'patientDashboard.noDoctorDescription': 'You do not have an assigned doctor. You can use the "Find Care" feature to search for one.',
     'profile.title': 'User Profile',
     'profile.description': 'Manage your personal information and preferences.',
     'profile.saveButton': 'Save Changes',
@@ -88,8 +93,15 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.noConditionsFound': "No specific conditions identified based on the symptoms provided, or the AI could not process the request.",
     'symptomChecker.disclaimerTitle': "Important Disclaimer",
 
-    'telemedicine.title': 'Telemedicine Services',
-    'telemedicine.description': 'Connect with healthcare providers remotely for consultations and get quick answers from our AI chatbot.',
+    'aiChatAssistant.title': 'AI Chat Assistant',
+    'aiChatAssistant.description': 'Engage with our intelligent AI for quick answers, information, and general assistance on health-related topics.',
+    'aiChatAssistant.descriptionShort': 'Get quick answers from our AI.',
+    'aiChatAssistant.chatTitle': 'Chat with AI Assistant',
+    'aiChatAssistant.chatDescription': 'Ask anything, get intelligent responses.',
+
+
+    'telemedicine.title': 'Doctor Chat', // Changed from Telemedicine Services
+    'telemedicine.description': 'Connect directly with registered doctors for text-based consultations.', // Changed
     'telemedicine.chatPlaceholder': 'Type your message...',
     'telemedicine.sendButton': 'Send',
     'telemedicine.listening': 'Listening...',
@@ -97,9 +109,9 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.voiceError': 'Voice input error. Please try again or type your message.',
     'telemedicine.voiceNotSupported': 'Voice input not supported by your browser.',
     'telemedicine.autoPlaySpeech': 'Auto-play AI speech',
-    'telemedicine.aiAssistantTitle': 'AI Chat Assistant',
-    'telemedicine.aiAssistantDescription': 'Get quick answers to your health queries.',
-    'telemedicine.aiAssistantInitialGreeting': "Hello! I'm SmartCare AI Assistant. How can I help you today?",
+    // 'telemedicine.aiAssistantTitle': 'AI Chat Assistant', // No longer here
+    // 'telemedicine.aiAssistantDescription': 'Get quick answers to your health queries.', // No longer here
+    'telemedicine.aiAssistantInitialGreeting': "Hello! I'm SmartCare AI Assistant. How can I help you today?", // Used by AI Chat Assistant page
     'telemedicine.chatWithDoctorTitle': 'Chat with Your Doctor',
     'telemedicine.chatWithDoctorDescription': 'Select a registered doctor to start a chat session.',
     'telemedicine.selectDoctorLabel': 'Select Doctor',
@@ -126,8 +138,9 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'sidebar.doctorDashboard': 'Doctor Dashboard',
     'sidebar.patientDashboard': 'Patient Dashboard',
     'sidebar.symptomChecker': 'Symptom Checker',
+    'sidebar.aiChatAssistant': 'AI Chat Assistant', // Added
     'sidebar.appointments': 'Appointments',
-    'sidebar.telemedicine': 'Telemedicine',
+    'sidebar.telemedicine': 'Doctor Chat', // Renamed
     'sidebar.medicalRecords': 'Medical Records',
     'sidebar.emergency': 'Emergency',
     'sidebar.findCare': 'Find Care',
@@ -167,6 +180,11 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'dashboard.doctor.description': 'अपने मरीजों, नियुक्तियों और परामर्शों का प्रबंधन करें।',
     'dashboard.patient.title': 'रोगी डैशबोर्ड',
     'dashboard.patient.description': 'अपनी स्वास्थ्य जानकारी, नियुक्तियों तक पहुँचें, और अपने डॉक्टर से जुड़ें।',
+    'patientDashboard.yourDoctorTitle': 'आपके नियत डॉक्टर',
+    'patientDashboard.messageDoctorButton': 'डॉक्टर को संदेश भेजें',
+    'patientDashboard.requestAppointmentButton': 'अपॉइंटमेंट का अनुरोध करें',
+    'patientDashboard.noDoctorTitle': 'कोई नियत डॉक्टर नहीं',
+    'patientDashboard.noDoctorDescription': 'आपके पास कोई नियत डॉक्टर नहीं है। आप "देखभाल खोजें" सुविधा का उपयोग करके खोज सकते हैं।',
     'profile.title': 'उपयोगकर्ता प्रोफ़ाइल',
     'profile.description': 'अपनी व्यक्तिगत जानकारी और प्राथमिकताएं प्रबंधित करें।',
     'profile.saveButton': 'बदलाव सहेजें',
@@ -206,9 +224,15 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.confidenceFor': "के लिए आत्मविश्वास",
     'symptomChecker.noConditionsFound': "दिए गए लक्षणों के आधार पर कोई विशिष्ट स्थिति नहीं मिली, या AI अनुरोध को संसाधित नहीं कर सका।",
     'symptomChecker.disclaimerTitle': "महत्वपूर्ण अस्वीकरण",
+
+    'aiChatAssistant.title': 'एआई चैट सहायक',
+    'aiChatAssistant.description': 'त्वरित उत्तरों, सूचनाओं और स्वास्थ्य संबंधी विषयों पर सामान्य सहायता के लिए हमारे बुद्धिमान एआई के साथ जुड़ें।',
+    'aiChatAssistant.descriptionShort': 'हमारे AI से त्वरित उत्तर प्राप्त करें।',
+    'aiChatAssistant.chatTitle': 'एआई सहायक के साथ चैट करें',
+    'aiChatAssistant.chatDescription': 'कुछ भी पूछें, बुद्धिमान प्रतिक्रियाएँ प्राप्त करें।',
     
-    'telemedicine.title': 'टेलीमेडिसिन सेवाएं',
-    'telemedicine.description': 'परामर्श के लिए दूरस्थ रूप से स्वास्थ्य सेवा प्रदाताओं से जुड़ें और हमारे एआई चैटबॉट से त्वरित उत्तर प्राप्त करें।',
+    'telemedicine.title': 'डॉक्टर चैट', // Changed
+    'telemedicine.description': 'पाठ-आधारित परामर्श के लिए पंजीकृत डॉक्टरों से सीधे जुड़ें।', // Changed
     'telemedicine.chatPlaceholder': 'अपना संदेश लिखें...',
     'telemedicine.sendButton': 'भेजें',
     'telemedicine.listening': 'सुन रहा है...',
@@ -216,9 +240,7 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.voiceError': 'वॉइस इनपुट त्रुटि। कृपया पुनः प्रयास करें या अपना संदेश टाइप करें।',
     'telemedicine.voiceNotSupported': 'आपके ब्राउज़र द्वारा वॉइस इनपुट समर्थित नहीं है।',
     'telemedicine.autoPlaySpeech': 'एआई भाषण स्वतः चलाएं',
-    'telemedicine.aiAssistantTitle': 'एआई चैट सहायक',
-    'telemedicine.aiAssistantDescription': 'अपने स्वास्थ्य प्रश्नों के त्वरित उत्तर प्राप्त करें।',
-    'telemedicine.aiAssistantInitialGreeting': 'नमस्ते! मैं स्मार्टकेयर एआई सहायक हूँ। आज मैं आपकी कैसे मदद कर सकता हूँ?',
+    'telemedicine.aiAssistantInitialGreeting': 'नमस्ते! मैं स्मार्टकेयर एआई सहायक हूँ। आज मैं आपकी कैसे मदद कर सकता हूँ?', // Used by AI Chat Assistant page
     'telemedicine.chatWithDoctorTitle': 'अपने डॉक्टर से चैट करें',
     'telemedicine.chatWithDoctorDescription': 'चैट सत्र शुरू करने के लिए एक पंजीकृत डॉक्टर का चयन करें।',
     'telemedicine.selectDoctorLabel': 'डॉक्टर चुनें',
@@ -245,8 +267,9 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'sidebar.doctorDashboard': 'डॉक्टर डैशबोर्ड',
     'sidebar.patientDashboard': 'रोगी डैशबोर्ड',
     'sidebar.symptomChecker': 'लक्षण परीक्षक',
+    'sidebar.aiChatAssistant': 'एआई चैट सहायक', // Added
     'sidebar.appointments': 'नियुक्तियाँ',
-    'sidebar.telemedicine': 'टेलीमेडिसिन',
+    'sidebar.telemedicine': 'डॉक्टर चैट', // Renamed
     'sidebar.medicalRecords': 'चिकित्सा रिकॉर्ड',
     'sidebar.emergency': 'आपातकालीन',
     'sidebar.findCare': 'देखभाल खोजें',
@@ -259,7 +282,7 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'header.logout': 'लॉग आउट करें',
     'header.userAvatarFallback': 'U', 
   },
-  'kn-IN': { // Kannada - Example placeholders, replace with actual translations
+  'kn-IN': { 
     'app.name': 'ಸ್ಮಾರ್ಟ್‌ಕೇರ್ ಹಬ್',
     'login.title': 'ಸ್ಮಾರ್ಟ್‌ಕೇರ್ ಹಬ್ ಲಾಗಿನ್',
     'login.button': 'ಲಾಗಿನ್ ಮಾಡಿ',
@@ -272,13 +295,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'ಕೇಳುತ್ತಿದೆ...',
     'telemedicine.speakNow': 'ಈಗ ಮಾತನಾಡಿ...',
     'telemedicine.aiAssistantInitialGreeting': "ನಮಸ್ಕಾರ! ನಾನು ಸ್ಮಾರ್ಟ್‌ಕೇರ್ AI ಸಹಾಯಕ. ಇಂದು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
-    'telemedicine.chatWithDoctorTitle': 'ನಿಮ್ಮ ವೈದ್ಯರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ', // Placeholder
-    'telemedicine.chatWithDoctorDescription': 'ಚಾಟ್ ಅಧಿವೇಶನವನ್ನು ಪ್ರಾರಂಭಿಸಲು ನೋಂದಾಯಿತ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ.', // Placeholder
-    'telemedicine.selectDoctorLabel': 'ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ', // Placeholder
-    'telemedicine.selectDoctorPlaceholder': 'ಚಾಟ್ ಮಾಡಲು ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ', // Placeholder
-    'telemedicine.typeDoctorMessagePlaceholder': 'ವೈದ್ಯರಿಗೆ ನಿಮ್ಮ ಸಂದೇಶವನ್ನು ಟೈಪ್ ಮಾಡಿ...', // Placeholder
-    'telemedicine.simulatedDoctorReply': 'ಹಲೋ {patientName}, ಇದು ಡಾ. {doctorName} ಅವರಿಂದ ಅನುಕರಿಸಿದ ಪ್ರತ್ಯುತ್ತರ. ನಿಮ್ಮ ಸಂದೇಶವನ್ನು ನಾನು ಸ್ವೀಕರಿಸಿದ್ದೇನೆ: "{messageText}"', // Placeholder
-    'telemedicine.doctorChatGreeting': 'ನೀವು ಈಗ ಡಾ. {doctorName} ಅವರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡುತ್ತಿದ್ದೀರಿ. ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?', // Placeholder
+    'telemedicine.chatWithDoctorTitle': 'ನಿಮ್ಮ ವೈದ್ಯರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ', 
+    'telemedicine.chatWithDoctorDescription': 'ಚಾಟ್ ಅಧಿವೇಶನವನ್ನು ಪ್ರಾರಂಭಿಸಲು ನೋಂದಾಯಿತ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ.', 
+    'telemedicine.selectDoctorLabel': 'ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ', 
+    'telemedicine.selectDoctorPlaceholder': 'ಚಾಟ್ ಮಾಡಲು ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ', 
+    'telemedicine.typeDoctorMessagePlaceholder': 'ವೈದ್ಯರಿಗೆ ನಿಮ್ಮ ಸಂದೇಶವನ್ನು ಟೈಪ್ ಮಾಡಿ...', 
+    'telemedicine.simulatedDoctorReply': 'ಹಲೋ {patientName}, ಇದು ಡಾ. {doctorName} ಅವರಿಂದ ಅನುಕರಿಸಿದ ಪ್ರತ್ಯುತ್ತರ. ನಿಮ್ಮ ಸಂದೇಶವನ್ನು ನಾನು ಸ್ವೀಕರಿಸಿದ್ದೇನೆ: "{messageText}"', 
+    'telemedicine.doctorChatGreeting': 'ನೀವು ಈಗ ಡಾ. {doctorName} ಅವರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡುತ್ತಿದ್ದೀರಿ. ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?', 
     'symptomChecker.title': 'ಎಐ ರೋಗಲಕ್ಷಣ ಪರೀಕ್ಷಕ',
     'symptomChecker.description': 'ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ವಿವರಿಸಿ ಮತ್ತು AI-ಚಾಲಿತ ಒಳನೋಟಗಳನ್ನು ಪಡೆಯಿರಿ, ಸಂಭಾವ್ಯ ಪರಿಸ್ಥಿತಿಗಳು ಮತ್ತು ಪರಿಹಾರ ಸಲಹೆಗಳನ್ನು ಒಳಗೊಂಡಂತೆ. ಈ ಸಾಧನವು ವೈದ್ಯಕೀಯ ಸಲಹೆಯನ್ನು ನೀಡುವುದಿಲ್ಲ.',
     'symptomChecker.describeSymptomsTitle': "ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ವಿವರಿಸಿ",
@@ -288,8 +311,15 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.ayurvedicSuggestionsLabel': "ಆಯುರ್ವೇದ ಸಲಹೆಗಳು",
     'symptomChecker.homeRemediesLabel': "ಮನೆಮದ್ದುಗಳು",
     'symptomChecker.disclaimerTitle': "ಪ್ರಮುಖ ಹಕ್ಕುತ್ಯಾಗ",
+    'aiChatAssistant.title': 'ಎಐ ಚಾಟ್ ಸಹಾಯಕ',
+    'aiChatAssistant.description': 'ತ್ವರಿತ ಉತ್ತರಗಳು, ಮಾಹಿತಿ ಮತ್ತು ಆರೋಗ್ಯ ಸಂಬಂಧಿತ ವಿಷಯಗಳ ಕುರಿತು ಸಾಮಾನ್ಯ ಸಹಾಯಕ್ಕಾಗಿ ನಮ್ಮ ಬುದ್ಧಿವಂತ AI ಯೊಂದಿಗೆ ತೊಡಗಿಸಿಕೊಳ್ಳಿ.',
+    'aiChatAssistant.descriptionShort': 'ನಮ್ಮ AI ನಿಂದ ತ್ವರಿತ ಉತ್ತರಗಳನ್ನು ಪಡೆಯಿರಿ.',
+    'aiChatAssistant.chatTitle': 'AI ಸಹಾಯಕರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ',
+    'aiChatAssistant.chatDescription': 'ಏನನ್ನಾದರೂ ಕೇಳಿ, ಬುದ್ಧಿವಂತ ಪ್ರತಿಕ್ರಿಯೆಗಳನ್ನು ಪಡೆಯಿರಿ.',
+    'sidebar.aiChatAssistant': 'ಎಐ ಚಾಟ್ ಸಹಾಯಕ',
+    'sidebar.telemedicine': 'ಡಾಕ್ಟರ್ ಚಾಟ್',
   },
-  'te-IN': { // Telugu - Example placeholders
+  'te-IN': { 
     'app.name': 'స్మార్ట్‌కేర్ హబ్',
     'login.title': 'స్మార్ట్‌కేర్ హబ్ లాగిన్',
     'login.button': 'లాగిన్ చేయండి',
@@ -302,13 +332,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'వినడం...',
     'telemedicine.speakNow': 'ఇప్పుడు మాట్లాడండి...',
     'telemedicine.aiAssistantInitialGreeting': "నమస్కారం! నేను స్మార్ట్‌కేర్ AI అసిస్టెంట్‌ని. ఈ రోజు నేను మీకు ఎలా సహాయపడగలను?",
-    'telemedicine.chatWithDoctorTitle': 'మీ డాక్టర్‌తో చాట్ చేయండి', // Placeholder
-    'telemedicine.chatWithDoctorDescription': 'చాట్ సెషన్‌ను ప్రారంభించడానికి రిజిస్టర్డ్ డాక్టర్‌ను ఎంచుకోండి.', // Placeholder
-    'telemedicine.selectDoctorLabel': 'డాక్టర్‌ను ఎంచుకోండి', // Placeholder
-    'telemedicine.selectDoctorPlaceholder': 'చాట్ చేయడానికి డాక్టర్‌ను ఎంచుకోండి', // Placeholder
-    'telemedicine.typeDoctorMessagePlaceholder': 'డాక్టర్‌కు మీ సందేశాన్ని టైప్ చేయండి...', // Placeholder
-    'telemedicine.simulatedDoctorReply': 'హలో {patientName}, ఇది డాక్టర్ {doctorName} నుండి అనుకరించబడిన ప్రత్యుత్తరం. మీ సందేశం నాకు అందింది: "{messageText}"', // Placeholder
-    'telemedicine.doctorChatGreeting': 'మీరు ఇప్పుడు డాక్టర్ {doctorName}తో చాట్ చేస్తున్నారు. నేను మీకు ఎలా సహాయపడగలను?', // Placeholder
+    'telemedicine.chatWithDoctorTitle': 'మీ డాక్టర్‌తో చాట్ చేయండి', 
+    'telemedicine.chatWithDoctorDescription': 'చాట్ సెషన్‌ను ప్రారంభించడానికి రిజిస్టర్డ్ డాక్టర్‌ను ఎంచుకోండి.', 
+    'telemedicine.selectDoctorLabel': 'డాక్టర్‌ను ఎంచుకోండి', 
+    'telemedicine.selectDoctorPlaceholder': 'చాట్ చేయడానికి డాక్టర్‌ను ఎంచుకోండి', 
+    'telemedicine.typeDoctorMessagePlaceholder': 'డాక్టర్‌కు మీ సందేశాన్ని టైప్ చేయండి...', 
+    'telemedicine.simulatedDoctorReply': 'హలో {patientName}, ఇది డాక్టర్ {doctorName} నుండి అనుకరించబడిన ప్రత్యుత్తరం. మీ సందేశం నాకు అందింది: "{messageText}"', 
+    'telemedicine.doctorChatGreeting': 'మీరు ఇప్పుడు డాక్టర్ {doctorName}తో చాట్ చేస్తున్నారు. నేను మీకు ఎలా సహాయపడగలను?', 
     'symptomChecker.title': 'AI లక్షణాల తనిఖీ',
     'symptomChecker.description': 'AI-ఆధారిత అంతర్దృష్టులను పొందడానికి మీ లక్షణాలను వివరించండి, సంభావ్య పరిస్థితులు మరియు నివారణ సూచనలతో సహా. ఈ సాధనం వైద్య సలహా అందించదు.',
     'symptomChecker.describeSymptomsTitle': "మీ లక్షణాలను వివరించండి",
@@ -318,8 +348,15 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.ayurvedicSuggestionsLabel': "ఆయుర్వేద సూచనలు",
     'symptomChecker.homeRemediesLabel': "ఇంటి నివారణలు",
     'symptomChecker.disclaimerTitle': "ముఖ్యమైన నిరాకరణ",
+    'aiChatAssistant.title': 'AI చాట్ అసిస్టెంట్',
+    'aiChatAssistant.description': 'ఆరోగ్యానికి సంబంధించిన అంశాలపై త్వరిత సమాధానాలు, సమాచారం మరియు సాధారణ సహాయం కోసం మా తెలివైన AIతో పాలుపంచుకోండి.',
+    'aiChatAssistant.descriptionShort': 'మా AI నుండి త్వరిత సమాధానాలు పొందండి.',
+    'aiChatAssistant.chatTitle': 'AI అసిస్టెంట్‌తో చాట్ చేయండి',
+    'aiChatAssistant.chatDescription': 'ఏదైనా అడగండి, తెలివైన பதில்களைப் பெறுங்கள்.',
+    'sidebar.aiChatAssistant': 'AI చాట్ అసిస్టెంట్',
+    'sidebar.telemedicine': 'డాక్టర్ చాట్',
   },
-  'ta-IN': { // Tamil - Example placeholders
+  'ta-IN': { 
     'app.name': 'ஸ்மார்ட்கேர் ஹப்',
     'login.title': 'ஸ்மார்ட்கேர் ஹப் உள்நுழைவு',
     'login.button': 'உள்நுழையவும்',
@@ -332,13 +369,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'கேட்கிறது...',
     'telemedicine.speakNow': 'இப்போது பேசுங்கள்...',
     'telemedicine.aiAssistantInitialGreeting': "வணக்கம்! நான் ஸ்மார்ட்கேர் AI உதவியாளர். இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்?",
-    'telemedicine.chatWithDoctorTitle': 'உங்கள் மருத்துவருடன் அரட்டையடிக்கவும்', // Placeholder
-    'telemedicine.chatWithDoctorDescription': 'அரட்டை அமர்வைத் தொடங்க பதிவுசெய்யப்பட்ட மருத்துவரைத் தேர்ந்தெடுக்கவும்.', // Placeholder
-    'telemedicine.selectDoctorLabel': 'மருத்துவரைத் தேர்ந்தெடுக்கவும்', // Placeholder
-    'telemedicine.selectDoctorPlaceholder': 'அரட்டையடிக்க மருத்துவரைத் தேர்ந்தெடுக்கவும்', // Placeholder
-    'telemedicine.typeDoctorMessagePlaceholder': 'மருத்துவருக்கு உங்கள் செய்தியைத் தட்டச்சு செய்க...', // Placeholder
-    'telemedicine.simulatedDoctorReply': 'வணக்கம் {patientName}, இது டாக்டர் {doctorName} இடமிருந்து உருவகப்படுத்தப்பட்ட பதில். உங்கள் செய்தியை நான் பெற்றுள்ளேன்: "{messageText}"', // Placeholder
-    'telemedicine.doctorChatGreeting': 'நீங்கள் இப்போது டாக்டர் {doctorName} உடன் அரட்டையடிக்கிறீர்கள். நான் உங்களுக்கு எப்படி உதவ முடியும்?', // Placeholder
+    'telemedicine.chatWithDoctorTitle': 'உங்கள் மருத்துவருடன் அரட்டையடிக்கவும்', 
+    'telemedicine.chatWithDoctorDescription': 'அரட்டை அமர்வைத் தொடங்க பதிவுசெய்யப்பட்ட மருத்துவரைத் தேர்ந்தெடுக்கவும்.', 
+    'telemedicine.selectDoctorLabel': 'மருத்துவரைத் தேர்ந்தெடுக்கவும்', 
+    'telemedicine.selectDoctorPlaceholder': 'அரட்டையடிக்க மருத்துவரைத் தேர்ந்தெடுக்கவும்', 
+    'telemedicine.typeDoctorMessagePlaceholder': 'மருத்துவருக்கு உங்கள் செய்தியைத் தட்டச்சு செய்க...', 
+    'telemedicine.simulatedDoctorReply': 'வணக்கம் {patientName}, இது டாக்டர் {doctorName} இடமிருந்து உருவகப்படுத்தப்பட்ட பதில். உங்கள் செய்தியை நான் பெற்றுள்ளேன்: "{messageText}"', 
+    'telemedicine.doctorChatGreeting': 'நீங்கள் இப்போது டாக்டர் {doctorName} உடன் அரட்டையடிக்கிறீர்கள். நான் உங்களுக்கு எப்படி உதவ முடியும்?', 
     'symptomChecker.title': 'AI அறிகுறி சரிபார்ப்பு',
     'symptomChecker.description': 'AI-இயங்கும் நுண்ணறிவுகளைப் பெற உங்கள் அறிகுறிகளை விவரிக்கவும், சாத்தியமான நிலைமைகள் மற்றும் தீர்வு பரிந்துரைகள் உட்பட. இந்த கருவி மருத்துவ ஆலோசனை வழங்காது.',
     'symptomChecker.describeSymptomsTitle': "உங்கள் அறிகுறிகளை விவரிக்கவும்",
@@ -348,8 +385,15 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.ayurvedicSuggestionsLabel': "ஆயுர்வேத ஆலோசனைகள்",
     'symptomChecker.homeRemediesLabel': "வீட்டு வைத்தியம்",
     'symptomChecker.disclaimerTitle': "முக்கியமான மறுப்பு",
+    'aiChatAssistant.title': 'AI அரட்டை உதவியாளர்',
+    'aiChatAssistant.description': 'உடல்நலம் தொடர்பான தலைப்புகளில் விரைவான பதில்கள், தகவல்கள் மற்றும் பொதுவான உதவிக்கு எங்கள் அறிவார்ந்த AI உடன் ஈடுபடுங்கள்.',
+    'aiChatAssistant.descriptionShort': 'எங்கள் AI யிலிருந்து விரைவான பதில்களைப் பெறுங்கள்.',
+    'aiChatAssistant.chatTitle': 'AI உதவியாளருடன் அரட்டையடிக்கவும்',
+    'aiChatAssistant.chatDescription': 'எதையும் கேளுங்கள், அறிவார்ந்த பதில்களைப் பெறுங்கள்.',
+    'sidebar.aiChatAssistant': 'AI அரட்டை உதவியாளர்',
+    'sidebar.telemedicine': 'மருத்துவர் அரட்டை',
   },
-  'bn-IN': { // Bengali - Example placeholders
+  'bn-IN': { 
     'app.name': 'স্মার্টকেয়ার হাব',
     'login.title': 'স্মার্টকেয়ার হাব লগইন',
     'login.button': 'লগইন করুন',
@@ -362,13 +406,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'শুনছে...',
     'telemedicine.speakNow': 'এখন কথা বলুন...',
     'telemedicine.aiAssistantInitialGreeting': "নমস্কার! আমি স্মার্টকেয়ার এআই অ্যাসিস্ট্যান্ট। আজ আমি আপনাকে কিভাবে সাহায্য করতে পারি?",
-    'telemedicine.chatWithDoctorTitle': 'আপনার ডাক্তারের সাথে চ্যাট করুন', // Placeholder
-    'telemedicine.chatWithDoctorDescription': 'চ্যাট সেশন শুরু করতে একজন নিবন্ধিত ডাক্তার নির্বাচন করুন।', // Placeholder
-    'telemedicine.selectDoctorLabel': 'ডাক্তার নির্বাচন করুন', // Placeholder
-    'telemedicine.selectDoctorPlaceholder': 'চ্যাট করার জন্য একজন ডাক্তার নির্বাচন করুন', // Placeholder
-    'telemedicine.typeDoctorMessagePlaceholder': 'ডাক্তারকে আপনার বার্তা টাইপ করুন...', // Placeholder
-    'telemedicine.simulatedDoctorReply': 'হ্যালো {patientName}, এটি ডাঃ {doctorName} এর কাছ থেকে একটি সিমুলেটেড উত্তর। আমি আপনার বার্তা পেয়েছি: "{messageText}"', // Placeholder
-    'telemedicine.doctorChatGreeting': 'আপনি এখন ডাঃ {doctorName} এর সাথে চ্যাট করছেন। আমি আপনাকে কিভাবে সাহায্য করতে পারি?', // Placeholder
+    'telemedicine.chatWithDoctorTitle': 'আপনার ডাক্তারের সাথে চ্যাট করুন', 
+    'telemedicine.chatWithDoctorDescription': 'চ্যাট সেশন শুরু করতে একজন নিবন্ধিত ডাক্তার নির্বাচন করুন।', 
+    'telemedicine.selectDoctorLabel': 'ডাক্তার নির্বাচন করুন', 
+    'telemedicine.selectDoctorPlaceholder': 'চ্যাট করার জন্য একজন ডাক্তার নির্বাচন করুন', 
+    'telemedicine.typeDoctorMessagePlaceholder': 'ডাক্তারকে আপনার বার্তা টাইপ করুন...', 
+    'telemedicine.simulatedDoctorReply': 'হ্যালো {patientName}, এটি ডাঃ {doctorName} এর কাছ থেকে একটি সিমুলেটেড উত্তর। আমি আপনার বার্তা পেয়েছি: "{messageText}"', 
+    'telemedicine.doctorChatGreeting': 'আপনি এখন ডাঃ {doctorName} এর সাথে চ্যাট করছেন। আমি আপনাকে কিভাবে সাহায্য করতে পারি?', 
     'symptomChecker.title': 'এআই উপসর্গ পরীক্ষক',
     'symptomChecker.description': 'এআই-চালিত অন্তর্দৃষ্টি পেতে আপনার উপসর্গগুলি বর্ণনা করুন, সম্ভাব্য শর্ত এবং প্রতিকারের পরামর্শ সহ। এই সরঞ্জামটি চিকিৎসা পরামর্শ প্রদান করে না।',
     'symptomChecker.describeSymptomsTitle': "আপনার উপসর্গ বর্ণনা করুন",
@@ -378,8 +422,15 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.ayurvedicSuggestionsLabel': "আয়ুর্বেদিক পরামর্শ",
     'symptomChecker.homeRemediesLabel': " گھریلو علاج",
     'symptomChecker.disclaimerTitle': "গুরুত্বপূর্ণ দাবিত্যাগ",
+    'aiChatAssistant.title': 'এআই চ্যাট সহকারী',
+    'aiChatAssistant.description': 'স্বাস্থ্য-সম্পর্কিত বিষয়গুলিতে দ্রুত উত্তর, তথ্য এবং সাধারণ সহায়তার জন্য আমাদের বুদ্ধিমান AI-এর সাথে যুক্ত হন।',
+    'aiChatAssistant.descriptionShort': 'আমাদের AI থেকে দ্রুত উত্তর পান।',
+    'aiChatAssistant.chatTitle': 'AI সহকারীর সাথে চ্যাট করুন',
+    'aiChatAssistant.chatDescription': 'কিছু জিজ্ঞাসা করুন, বুদ্ধিমান প্রতিক্রিয়া পান।',
+    'sidebar.aiChatAssistant': 'এআই চ্যাট সহকারী',
+    'sidebar.telemedicine': 'ডাক্তার চ্যাট',
   },
-  'mr-IN': { // Marathi - Example placeholders
+  'mr-IN': { 
     'app.name': 'स्मार्टकेअर हब',
     'login.title': 'स्मार्टकेअर हब लॉग इन',
     'login.button': 'लॉग इन करा',
@@ -392,13 +443,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'ऐकत आहे...',
     'telemedicine.speakNow': 'आता बोला...',
     'telemedicine.aiAssistantInitialGreeting': "नमस्कार! मी स्मार्टकेअर AI सहाय्यक आहे. आज मी तुमची कशी मदत करू शकेन?",
-    'telemedicine.chatWithDoctorTitle': 'तुमच्या डॉक्टरांशी चॅट करा', // Placeholder
-    'telemedicine.chatWithDoctorDescription': 'चॅट सत्र सुरू करण्यासाठी नोंदणीकृत डॉक्टर निवडा.', // Placeholder
-    'telemedicine.selectDoctorLabel': 'डॉक्टर निवडा', // Placeholder
-    'telemedicine.selectDoctorPlaceholder': 'चॅट करण्यासाठी डॉक्टर निवडा', // Placeholder
-    'telemedicine.typeDoctorMessagePlaceholder': 'डॉक्टरांना तुमचा संदेश टाइप करा...', // Placeholder
-    'telemedicine.simulatedDoctorReply': 'हॅलो {patientName}, हे डॉ. {doctorName} यांच्याकडून सिम्युलेटेड उत्तर आहे. मला तुमचा संदेश मिळाला आहे: "{messageText}"', // Placeholder
-    'telemedicine.doctorChatGreeting': 'तुम्ही आता डॉ. {doctorName} यांच्याशी चॅट करत आहात. मी तुमची कशी मदत करू शकेन?', // Placeholder
+    'telemedicine.chatWithDoctorTitle': 'तुमच्या डॉक्टरांशी चॅट करा', 
+    'telemedicine.chatWithDoctorDescription': 'चॅट सत्र सुरू करण्यासाठी नोंदणीकृत डॉक्टर निवडा.', 
+    'telemedicine.selectDoctorLabel': 'डॉक्टर निवडा', 
+    'telemedicine.selectDoctorPlaceholder': 'चॅट करण्यासाठी डॉक्टर निवडा', 
+    'telemedicine.typeDoctorMessagePlaceholder': 'डॉक्टरांना तुमचा संदेश टाइप करा...', 
+    'telemedicine.simulatedDoctorReply': 'हॅलो {patientName}, हे डॉ. {doctorName} यांच्याकडून सिम्युलेटेड उत्तर आहे. मला तुमचा संदेश मिळाला आहे: "{messageText}"', 
+    'telemedicine.doctorChatGreeting': 'तुम्ही आता डॉ. {doctorName} यांच्याशी चॅट करत आहात. मी तुमची कशी मदत करू शकेन?', 
     'symptomChecker.title': 'एआय लक्षण तपासणी',
     'symptomChecker.description': 'एआय-चालित अंतर्दृष्टी मिळवण्यासाठी तुमची लक्षणे सांगा, संभाव्य परिस्थिती आणि उपाय सूचनांसह. हे साधन वैद्यकीय सल्ला देत नाही.',
     'symptomChecker.describeSymptomsTitle': "तुमची लक्षणे सांगा",
@@ -408,8 +459,15 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.ayurvedicSuggestionsLabel': "आयुर्वेदिक सूचना",
     'symptomChecker.homeRemediesLabel': "घरगुती उपाय",
     'symptomChecker.disclaimerTitle': "महत्वाची अस्वीकृती",
+    'aiChatAssistant.title': 'एआय चॅट सहाय्यक',
+    'aiChatAssistant.description': 'आरोग्य-संबंधित विषयांवर त्वरित उत्तरे, माहिती आणि सामान्य मदतीसाठी आमच्या बुद्धिमान एआयशी संपर्क साधा.',
+    'aiChatAssistant.descriptionShort': 'आमच्या एआयकडून त्वरित उत्तरे मिळवा.',
+    'aiChatAssistant.chatTitle': 'एआय सहाय्यकाशी चॅट करा',
+    'aiChatAssistant.chatDescription': 'काहीही विचारा, बुद्धिमान प्रतिसाद मिळवा.',
+    'sidebar.aiChatAssistant': 'एआय चॅट सहाय्यक',
+    'sidebar.telemedicine': 'डॉक्टर चॅट',
   },
-  'gu-IN': { // Gujarati - Example placeholders
+  'gu-IN': { 
     'app.name': 'સ્માર્ટકેર હબ',
     'login.title': 'સ્માર્ટકેર હબ લોગિન',
     'login.button': 'લૉગિન કરો',
@@ -422,13 +480,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'સાંભળી રહ્યું છે...',
     'telemedicine.speakNow': 'હવે બોલો...',
     'telemedicine.aiAssistantInitialGreeting': "નમસ્તે! હું સ્માર્ટકેર AI સહાયક છું. આજે હું તમારી કેવી રીતે મદદ કરી શકું?",
-    'telemedicine.chatWithDoctorTitle': 'તમારા ડોક્ટર સાથે ચેટ કરો', // Placeholder
-    'telemedicine.chatWithDoctorDescription': 'ચેટ સત્ર શરૂ કરવા માટે નોંધાયેલા ડોક્ટર પસંદ કરો.', // Placeholder
-    'telemedicine.selectDoctorLabel': 'ડોક્ટર પસંદ કરો', // Placeholder
-    'telemedicine.selectDoctorPlaceholder': 'ચેટ કરવા માટે ડોક્ટર પસંદ કરો', // Placeholder
-    'telemedicine.typeDoctorMessagePlaceholder': 'ડોક્ટરને તમારો સંદેશ લખો...', // Placeholder
-    'telemedicine.simulatedDoctorReply': 'હેલો {patientName}, આ ડો. {doctorName} તરફથી સિમ્યુલેટેડ જવાબ છે. મને તમારો સંદેશ મળ્યો છે: "{messageText}"', // Placeholder
-    'telemedicine.doctorChatGreeting': 'તમે હવે ડો. {doctorName} સાથે ચેટ કરી રહ્યાં છો. હું તમારી કેવી રીતે મદદ કરી શકું?', // Placeholder
+    'telemedicine.chatWithDoctorTitle': 'તમારા ડોક્ટર સાથે ચેટ કરો', 
+    'telemedicine.chatWithDoctorDescription': 'ચેટ સત્ર શરૂ કરવા માટે નોંધાયેલા ડોક્ટર પસંદ કરો.', 
+    'telemedicine.selectDoctorLabel': 'ડોક્ટર પસંદ કરો', 
+    'telemedicine.selectDoctorPlaceholder': 'ચેટ કરવા માટે ડોક્ટર પસંદ કરો', 
+    'telemedicine.typeDoctorMessagePlaceholder': 'ડોક્ટરને તમારો સંદેશ લખો...', 
+    'telemedicine.simulatedDoctorReply': 'હેલો {patientName}, આ ડો. {doctorName} તરફથી સિમ્યુલેટેડ જવાબ છે. મને તમારો સંદેશ મળ્યો છે: "{messageText}"', 
+    'telemedicine.doctorChatGreeting': 'તમે હવે ડો. {doctorName} સાથે ચેટ કરી રહ્યાં છો. હું તમારી કેવી રીતે મદદ કરી શકું?', 
     'symptomChecker.title': 'AI લક્ષણ તપાસનાર',
     'symptomChecker.description': 'AI-સંચાલિત આંતરદૃષ્ટિ મેળવવા માટે તમારા લક્ષણોનું વર્ણન કરો, જેમાં સંભવિત પરિસ્થિતિઓ અને ઉપાય સૂચનોનો સમાવેશ થાય છે. આ સાધન તબીબી સલાહ આપતું નથી.',
     'symptomChecker.describeSymptomsTitle': "તમારા લક્ષણોનું વર્ણન કરો",
@@ -438,10 +496,17 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.ayurvedicSuggestionsLabel': "આયુર્વેદિક સૂચનો",
     'symptomChecker.homeRemediesLabel': "ઘરગથ્થુ ઉપચાર",
     'symptomChecker.disclaimerTitle': "મહત્વપૂર્ણ અસ્વીકરણ",
+    'aiChatAssistant.title': 'AI ચેટ સહાયક',
+    'aiChatAssistant.description': 'આરોગ્ય-સંબંધિત વિષયો પર ઝડપી જવાબો, માહિતી અને સામાન્ય સહાય માટે અમારા બુદ્ધિશાળી AI સાથે જોડાઓ.',
+    'aiChatAssistant.descriptionShort': 'અમારા AI પાસેથી ઝડપી જવાબો મેળવો.',
+    'aiChatAssistant.chatTitle': 'AI સહાયક સાથે ચેટ કરો',
+    'aiChatAssistant.chatDescription': 'કંઈપણ પૂછો, બુદ્ધિશાળી પ્રતિસાદ મેળવો.',
+    'sidebar.aiChatAssistant': 'AI ચેટ સહાયક',
+    'sidebar.telemedicine': 'ડૉક્ટર ચેટ',
   },
-  'ur-IN': { // Urdu - Example placeholders
+  'ur-IN': { 
     'app.name': 'اسمارٹ کیئر ہب',
-    'login.title': 'اسمارٹ کیئر ہب لاگ ان',
+    'login.title': 'اسمارٹ کیئر ہব لاگ ان',
     'login.button': 'لاگ ان کریں',
     'sidebar.dashboard': 'ڈیش بورڈ',
     'sidebar.profile': 'پروفائل',
@@ -452,13 +517,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'سن رہا ہے۔..',
     'telemedicine.speakNow': 'اب بولیں...',
     'telemedicine.aiAssistantInitialGreeting': "ہیلو! میں اسمارٹ کیئر AI اسسٹنٹ ہوں۔ آج میں آپ کی کیسے مدد کر سکتا ہوں؟",
-    'telemedicine.chatWithDoctorTitle': 'اپنے ڈاکٹر سے بات کریں', // Placeholder
-    'telemedicine.chatWithDoctorDescription': 'چیٹ سیشن شروع کرنے کے لیے ایک رجسٹرڈ ڈاکٹر منتخب کریں۔', // Placeholder
-    'telemedicine.selectDoctorLabel': 'ڈاکٹر منتخب کریں', // Placeholder
-    'telemedicine.selectDoctorPlaceholder': 'بات کرنے کے لیے ایک ڈاکٹر منتخب کریں', // Placeholder
-    'telemedicine.typeDoctorMessagePlaceholder': 'ڈاکٹر کو اپنا پیغام ٹائپ کریں...', // Placeholder
-    'telemedicine.simulatedDoctorReply': 'ہیلو {patientName}، یہ ڈاکٹر {doctorName} کی طرف سے ایک مصنوعی جواب ہے۔ مجھے آپ کا پیغام موصول ہوا ہے: "{messageText}"', // Placeholder
-    'telemedicine.doctorChatGreeting': 'آپ اب ڈاکٹر {doctorName} سے بات کر رہے ہیں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟', // Placeholder
+    'telemedicine.chatWithDoctorTitle': 'اپنے ڈاکٹر سے بات کریں', 
+    'telemedicine.chatWithDoctorDescription': 'چیٹ سیشن شروع کرنے کے لیے ایک رجسٹرڈ ڈاکٹر منتخب کریں۔', 
+    'telemedicine.selectDoctorLabel': 'ڈاکٹر منتخب کریں', 
+    'telemedicine.selectDoctorPlaceholder': 'بات کرنے کے لیے ایک ڈاکٹر منتخب کریں', 
+    'telemedicine.typeDoctorMessagePlaceholder': 'ڈاکٹر کو اپنا پیغام ٹائپ کریں...', 
+    'telemedicine.simulatedDoctorReply': 'ہیلو {patientName}، یہ ڈاکٹر {doctorName} کی طرف سے ایک مصنوعی جواب ہے۔ مجھے آپ کا پیغام موصول ہوا ہے: "{messageText}"', 
+    'telemedicine.doctorChatGreeting': 'آپ اب ڈاکٹر {doctorName} سے بات کر رہے ہیں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟', 
     'symptomChecker.title': 'AI علامت چیکر',
     'symptomChecker.description': 'AI سے چلنے والی بصیرت حاصل کرنے کے لیے اپنی علامات بیان کریں، بشمول ممکنہ حالات اور علاج کی تجاویز۔ یہ ٹول طبی مشورہ فراہم نہیں کرتا ہے۔',
     'symptomChecker.describeSymptomsTitle': "اپنی علامات بیان کریں",
@@ -468,5 +533,12 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.ayurvedicSuggestionsLabel': "آیورویدک تجاویز",
     'symptomChecker.homeRemediesLabel': "گھریلو علاج",
     'symptomChecker.disclaimerTitle': "اہم دستبرداری",
+    'aiChatAssistant.title': 'AI چیٹ اسسٹنٹ',
+    'aiChatAssistant.description': 'صحت سے متعلق موضوعات پر فوری جوابات، معلومات، اور عمومی مدد کے لیے ہمارے ذہین AI کے ساتھ مشغول ہوں۔',
+    'aiChatAssistant.descriptionShort': 'ہمارے AI سے فوری جوابات حاصل کریں۔',
+    'aiChatAssistant.chatTitle': 'AI اسسٹنٹ کے ساتھ چیٹ کریں',
+    'aiChatAssistant.chatDescription': 'کچھ بھی پوچھیں، ذہین جوابات حاصل کریں۔',
+    'sidebar.aiChatAssistant': 'AI چیٹ اسسٹنٹ',
+    'sidebar.telemedicine': 'ڈاکٹر چیٹ',
   },
 };

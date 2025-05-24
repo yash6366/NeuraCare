@@ -21,17 +21,24 @@ import {
   Users,
   BriefcaseMedical, 
   UserCog, 
+  Bot,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useLanguage } from "@/contexts/language-context"; // Added
+import { useLanguage } from "@/contexts/language-context";
 
 
 const adminFeaturesConfig = [
   {
     titleKey: "symptomChecker.title",
-    descriptionKey: "symptomChecker.description", // Using a generic description, can be more specific
+    descriptionKey: "symptomChecker.description", 
     href: "/symptom-checker",
     icon: HeartPulse,
+  },
+  {
+    titleKey: "aiChatAssistant.title", // Added AI Chat Assistant
+    descriptionKey: "aiChatAssistant.descriptionShort",
+    href: "/ai-chat-assistant",
+    icon: Bot,
   },
   {
     titleKey: "appointments.title",
@@ -50,7 +57,7 @@ const adminFeaturesConfig = [
 export default function DashboardPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { translate } = useLanguage(); // Added
+  const { translate } = useLanguage(); 
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [allUsers, setAllUsers] = useState<AppUser[]>([]);
@@ -125,7 +132,7 @@ export default function DashboardPage() {
         description={translate('dashboard.admin.description', 'System overview and management tools.')}
         icon={LayoutDashboard}
       />
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-8">
+      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8"> {/* Adjusted for 4 cards */}
         {adminFeaturesConfig.map((feature) => (
           <FeatureCard
             key={feature.titleKey}
@@ -213,5 +220,3 @@ export default function DashboardPage() {
     </MainLayout>
   );
 }
-
-    

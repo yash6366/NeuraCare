@@ -14,7 +14,8 @@ import {
   LogOut,
   Stethoscope, 
   UserCheck, 
-  FileText, 
+  FileText,
+  Bot, // Added Bot icon
 } from "lucide-react";
 import {
   SidebarMenu,
@@ -26,11 +27,12 @@ import {
 import { cn } from "@/lib/utils";
 import { logoutUser, getCurrentUser, type AppUser } from "@/lib/auth"; 
 import { useEffect, useState } from "react";
-import { useLanguage } from "@/contexts/language-context"; // Added
+import { useLanguage } from "@/contexts/language-context";
 
 // Base features accessible to most roles if not overridden
 const baseMenuItemsConfig = [
   { translationKey: 'sidebar.symptomChecker', href: "/symptom-checker", icon: HeartPulse, roles: ['admin', 'patient'] },
+  { translationKey: 'sidebar.aiChatAssistant', href: "/ai-chat-assistant", icon: Bot, roles: ['admin', 'patient'] }, // Added AI Chat Assistant
   { translationKey: 'sidebar.appointments', href: "/appointments", icon: CalendarDays, badge: "3", roles: ['admin', 'doctor', 'patient'] },
   { translationKey: 'sidebar.telemedicine', href: "/telemedicine", icon: Video, roles: ['admin', 'doctor', 'patient'] },
   { translationKey: 'sidebar.medicalRecords', href: "/medical-records", icon: FileText, roles: ['patient'] },
@@ -46,7 +48,7 @@ export function SidebarNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { setOpenMobile } = useSidebar(); 
-  const { translate } = useLanguage(); // Added
+  const { translate } = useLanguage(); 
   const [user, setUser] = useState<AppUser | null>(null);
   const [dynamicMenuItems, setDynamicMenuItems] = useState<Array<typeof baseMenuItemsConfig[0] & {label: string}>>([]);
   const [dynamicBottomMenuItems, setDynamicBottomMenuItems] = useState<Array<typeof bottomMenuItemsConfig[0] & {label: string}>>([]);
@@ -76,7 +78,7 @@ export function SidebarNav() {
       .map(item => ({ ...item, label: translate(item.translationKey) }));
     setDynamicBottomMenuItems(filteredBottomItems);
 
-  }, [pathname, user?.role, translate]); // Added translate and user.role dependencies
+  }, [pathname, user?.role, translate]); 
 
   const handleLogout = () => {
     logoutUser();
@@ -145,5 +147,3 @@ export function SidebarNav() {
     </>
   );
 }
-
-    
