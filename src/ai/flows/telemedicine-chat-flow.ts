@@ -17,14 +17,14 @@ const ChatMessageSchema = z.object({
   parts: z.array(z.object({ text: z.string() })),
 });
 
-export const TelemedicineChatInputSchema = z.object({
+const TelemedicineChatInputSchema = z.object({ // Removed export
   userMessage: z.string().describe('The latest message from the user.'),
   chatHistory: z.array(ChatMessageSchema).optional().describe('The history of the conversation so far.'),
   language: z.string().optional().default('English').describe('The language for the conversation.'),
 });
 export type TelemedicineChatInput = z.infer<typeof TelemedicineChatInputSchema>;
 
-export const TelemedicineChatOutputSchema = z.object({
+const TelemedicineChatOutputSchema = z.object({ // Removed export
   botResponse: z.string().describe('The AI assistant\'s response to the user.'),
 });
 export type TelemedicineChatOutput = z.infer<typeof TelemedicineChatOutputSchema>;
@@ -83,5 +83,3 @@ const telemedicineChatFlow = ai.defineFlow(
     }
   }
 );
-
-    
