@@ -75,18 +75,42 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     outputSchema: VoiceSymptomCheckerOutputSchema,
   },
   async (input) => {
-    const {output} = await prompt(input);
-    // Ensure a fallback if the output is unexpectedly null or undefined
-    if (!output) {
+    const llmResponse = await prompt(input);
+    // console.log('[voiceSymptomCheckerFlow] Raw LLM Response:', JSON.stringify(llmResponse, null, 2)); // Optional: for debugging
+    
+    const output = llmResponse.output;
+
+    if (!output || !output.analysis || !output.disclaimer) { // Check for a minimally valid output
       const lang = input.language || 'English';
-      const errorDisclaimer = lang === 'hi-IN' ? 
-        "क्षमा करें, मुझे आपके लक्षणों का विश्लेषण करने में समस्या आ रही है। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें।" :
-        "Sorry, I encountered an issue analyzing your symptoms. Please consult a healthcare professional.";
+      let errorDisclaimer = "";
+      let errorConditionName = "";
+      let errorExplanation = "";
+
+      if (lang === 'hi-IN') {
+        errorDisclaimer = "क्षमा करें, मुझे आपके लक्षणों का विश्लेषण करने में समस्या आ रही है। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक फॉलबैक प्रतिक्रिया है।";
+        errorConditionName = "विश्लेषण में त्रुटि";
+        errorExplanation = "AI लक्षणों को संसाधित नहीं कर सका। यह API समस्या या जटिल इनपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या वाक्यांश बदलें।";
+      } else {
+        errorDisclaimer = "Sorry, I encountered an issue analyzing your symptoms. Please consult a healthcare professional. This is a fallback response indicating the AI could not process the request.";
+        errorConditionName = "Error in Analysis";
+        errorExplanation = "The AI could not process the symptoms. This might be due to an API issue, complex input, or the model not returning the expected structure. Please try again or rephrase.";
+      }
+      
+      console.warn(`[voiceSymptomCheckerFlow] Fallback triggered for language: ${lang}. Input symptoms: ${input.symptoms}. LLM output was: ${JSON.stringify(llmResponse.output, null, 2)}`);
+
       return {
-        analysis: [],
+        analysis: [{
+            conditionName: errorConditionName,
+            confidence: 0,
+            explanation: errorExplanation,
+            allopathicSuggestions: [],
+            ayurvedicSuggestions: [],
+            homeRemedies: []
+        }],
         disclaimer: errorDisclaimer,
       };
     }
     return output;
   }
 );
+
