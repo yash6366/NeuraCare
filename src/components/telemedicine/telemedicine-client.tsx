@@ -27,17 +27,20 @@ interface GenkitChatMessage {
   parts: Array<{ text: string }>;
 }
 
-// Placeholder for Dwani AI supported languages - replace with actual list
+// Updated list of supported languages
 const supportedLanguages = [
   { value: "en-US", label: "English (US)" },
-  { value: "es-ES", label: "Español (España)" },
-  { value: "fr-FR", label: "Français (France)" },
-  { value: "de-DE", label: "Deutsch (Deutschland)" },
-  { value: "hi-IN", label: "हिन्दी (भारत)" },
-  { value: "ja-JP", label: "日本語 (日本)" },
+  { value: "hi-IN", label: "हिन्दी (Hindi)" },
+  { value: "kn-IN", label: "ಕನ್ನಡ (Kannada)" },
+  { value: "te-IN", label: "తెలుగు (Telugu)" },
+  { value: "ta-IN", label: "தமிழ் (Tamil)" },
+  { value: "bn-IN", label: "বাংলা (Bengali)" },
+  { value: "mr-IN", label: "मराठी (Marathi)" },
+  { value: "gu-IN", label: "ગુજરાતી (Gujarati)" },
+  { value: "ur-IN", label: "اردو (Urdu)" },
 ];
 
-// Simple translations for demo purposes
+// Simple translations for demo purposes - extend as needed
 const uiTranslations: Record<string, Record<string, string>> = {
   "en-US": {
     chatPlaceholder: "Type your message...",
@@ -53,21 +56,118 @@ const uiTranslations: Record<string, Record<string, string>> = {
     virtualConsultationTitle: "Virtual Consultation",
     virtualConsultationDescription: "Connect with doctors via video or audio call."
   },
-  "es-ES": {
-    chatPlaceholder: "Escribe tu mensaje...",
-    sendButton: "Enviar",
-    listening: "Escuchando...",
-    speakNow: "Hable ahora...",
-    voiceError: "Error de entrada de voz. Inténtalo de nuevo o escribe tu mensaje.",
-    voiceNotSupported: "Entrada de voz no compatible con tu navegador.",
-    autoPlaySpeech: "Reproducir voz IA automáticamente",
-    language: "Idioma",
-    aiAssistantTitle: "Asistente de Chat IA",
-    aiAssistantDescription: "Obtenga respuestas rápidas a sus consultas de salud.",
-    virtualConsultationTitle: "Consulta Virtual",
-    virtualConsultationDescription: "Conéctese con médicos mediante videollamada o llamada de audio."
+  "hi-IN": {
+    chatPlaceholder: "अपना संदेश लिखें...",
+    sendButton: "भेजें",
+    listening: "सुन रहा है...",
+    speakNow: "अब बोलें...",
+    voiceError: "वॉइस इनपुट त्रुटि। कृपया पुनः प्रयास करें या अपना संदेश टाइप करें।",
+    voiceNotSupported: "आपके ब्राउज़र द्वारा वॉइस इनपुट समर्थित नहीं है।",
+    autoPlaySpeech: "एआई भाषण स्वतः चलाएं",
+    language: "भाषा",
+    aiAssistantTitle: "एआई चैट सहायक",
+    aiAssistantDescription: "अपने स्वास्थ्य प्रश्नों के त्वरित उत्तर प्राप्त करें।",
+    virtualConsultationTitle: "आभासी परामर्श",
+    virtualConsultationDescription: "वीडियो या ऑडियो कॉल के माध्यम से डॉक्टरों से जुड़ें।"
   },
-  // Add more languages as needed
+  "kn-IN": { // Kannada - Using English text as placeholder, replace with actual Kannada
+    chatPlaceholder: "Type your message...",
+    sendButton: "Send",
+    listening: "Listening...",
+    speakNow: "Speak now...",
+    voiceError: "Voice input error. Please try again or type your message.",
+    voiceNotSupported: "Voice input not supported by your browser.",
+    autoPlaySpeech: "Auto-play AI speech",
+    language: "Language",
+    aiAssistantTitle: "AI Chat Assistant",
+    aiAssistantDescription: "Get quick answers to your health queries.",
+    virtualConsultationTitle: "Virtual Consultation",
+    virtualConsultationDescription: "Connect with doctors via video or audio call."
+  },
+  "te-IN": { // Telugu - Using English text as placeholder
+    chatPlaceholder: "Type your message...",
+    sendButton: "Send",
+    listening: "Listening...",
+    speakNow: "Speak now...",
+    voiceError: "Voice input error. Please try again or type your message.",
+    voiceNotSupported: "Voice input not supported by your browser.",
+    autoPlaySpeech: "Auto-play AI speech",
+    language: "Language",
+    aiAssistantTitle: "AI Chat Assistant",
+    aiAssistantDescription: "Get quick answers to your health queries.",
+    virtualConsultationTitle: "Virtual Consultation",
+    virtualConsultationDescription: "Connect with doctors via video or audio call."
+  },
+    "ta-IN": { // Tamil - Using English text as placeholder
+    chatPlaceholder: "Type your message...",
+    sendButton: "Send",
+    listening: "Listening...",
+    speakNow: "Speak now...",
+    voiceError: "Voice input error. Please try again or type your message.",
+    voiceNotSupported: "Voice input not supported by your browser.",
+    autoPlaySpeech: "Auto-play AI speech",
+    language: "Language",
+    aiAssistantTitle: "AI Chat Assistant",
+    aiAssistantDescription: "Get quick answers to your health queries.",
+    virtualConsultationTitle: "Virtual Consultation",
+    virtualConsultationDescription: "Connect with doctors via video or audio call."
+  },
+  "bn-IN": { // Bengali - Using English text as placeholder
+    chatPlaceholder: "Type your message...",
+    sendButton: "Send",
+    listening: "Listening...",
+    speakNow: "Speak now...",
+    voiceError: "Voice input error. Please try again or type your message.",
+    voiceNotSupported: "Voice input not supported by your browser.",
+    autoPlaySpeech: "Auto-play AI speech",
+    language: "Language",
+    aiAssistantTitle: "AI Chat Assistant",
+    aiAssistantDescription: "Get quick answers to your health queries.",
+    virtualConsultationTitle: "Virtual Consultation",
+    virtualConsultationDescription: "Connect with doctors via video or audio call."
+  },
+  "mr-IN": { // Marathi - Using English text as placeholder
+    chatPlaceholder: "Type your message...",
+    sendButton: "Send",
+    listening: "Listening...",
+    speakNow: "Speak now...",
+    voiceError: "Voice input error. Please try again or type your message.",
+    voiceNotSupported: "Voice input not supported by your browser.",
+    autoPlaySpeech: "Auto-play AI speech",
+    language: "Language",
+    aiAssistantTitle: "AI Chat Assistant",
+    aiAssistantDescription: "Get quick answers to your health queries.",
+    virtualConsultationTitle: "Virtual Consultation",
+    virtualConsultationDescription: "Connect with doctors via video or audio call."
+  },
+  "gu-IN": { // Gujarati - Using English text as placeholder
+    chatPlaceholder: "Type your message...",
+    sendButton: "Send",
+    listening: "Listening...",
+    speakNow: "Speak now...",
+    voiceError: "Voice input error. Please try again or type your message.",
+    voiceNotSupported: "Voice input not supported by your browser.",
+    autoPlaySpeech: "Auto-play AI speech",
+    language: "Language",
+    aiAssistantTitle: "AI Chat Assistant",
+    aiAssistantDescription: "Get quick answers to your health queries.",
+    virtualConsultationTitle: "Virtual Consultation",
+    virtualConsultationDescription: "Connect with doctors via video or audio call."
+  },
+  "ur-IN": { // Urdu - Using English text as placeholder
+    chatPlaceholder: "Type your message...",
+    sendButton: "Send",
+    listening: "Listening...",
+    speakNow: "Speak now...",
+    voiceError: "Voice input error. Please try again or type your message.",
+    voiceNotSupported: "Voice input not supported by your browser.",
+    autoPlaySpeech: "Auto-play AI speech",
+    language: "Language",
+    aiAssistantTitle: "AI Chat Assistant",
+    aiAssistantDescription: "Get quick answers to your health queries.",
+    virtualConsultationTitle: "Virtual Consultation",
+    virtualConsultationDescription: "Connect with doctors via video or audio call."
+  },
 };
 
 
@@ -85,10 +185,14 @@ export function TelemedicineClient() {
   const currentTranslations = uiTranslations[selectedLanguage] || uiTranslations["en-US"];
 
   useEffect(() => {
+    const initialBotMessage = selectedLanguage === "hi-IN" 
+      ? "नमस्ते! मैं स्मार्टकेयर एआई सहायक हूँ। आज मैं आपकी कैसे मदद कर सकता हूँ?" 
+      : (uiTranslations[selectedLanguage]?.aiAssistantInitialGreeting || "Hello! I'm SmartCare AI Assistant. How can I help you today?");
+
     setChatMessages([
       {
         id: String(Date.now()),
-        text: selectedLanguage === "es-ES" ? "¡Hola! Soy el Asistente IA de SmartCare. ¿Cómo puedo ayudarte hoy?" : "Hello! I'm SmartCare AI Assistant. How can I help you today?",
+        text: initialBotMessage,
         sender: "bot",
         timestamp: new Date(),
       },
@@ -197,7 +301,7 @@ export function TelemedicineClient() {
       }
     } catch (error) {
       console.error("Error calling telemedicine chat flow:", error);
-      const errorText = selectedLanguage === 'es-ES' ? "Lo siento, no pude conectarme al asistente de IA en este momento. Por favor, inténtalo de nuevo más tarde." : "Sorry, I couldn't connect to the AI assistant right now. Please try again later.";
+      const errorText = currentTranslations.voiceError || "Sorry, I couldn't connect to the AI assistant right now. Please try again later.";
       toast({
         title: "AI Chat Error",
         description: errorText,
@@ -356,6 +460,17 @@ export function TelemedicineClient() {
                   )}
                 </div>
               ))}
+               {isChatLoading && (
+                <div className="flex items-end gap-2 justify-start">
+                   <Avatar className="h-8 w-8">
+                      <AvatarImage src="https://placehold.co/40x40.png" alt="Bot Avatar" data-ai-hint="robot face" />
+                      <AvatarFallback>AI</AvatarFallback>
+                    </Avatar>
+                  <div className="max-w-[75%] rounded-lg px-3 py-2 text-sm shadow-md bg-muted">
+                    <Activity className="h-5 w-5 animate-spin text-primary" />
+                  </div>
+                </div>
+              )}
             </div>
           </ScrollArea>
           <div className="p-4 border-t">
@@ -370,7 +485,7 @@ export function TelemedicineClient() {
               <Button onClick={handleVoiceInput} size="icon" variant="outline" aria-label="Use microphone" disabled={isListening || isChatLoading}>
                 <Mic className={`h-5 w-5 ${isListening ? 'text-destructive animate-pulse' : ''}`} />
               </Button>
-              <Button onClick={() => handleSendMessage()} size="icon" aria-label={currentTranslations.sendButton} disabled={isChatLoading || isListening}>
+              <Button onClick={() => handleSendMessage()} size="icon" aria-label={currentTranslations.sendButton} disabled={isChatLoading || isListening || !chatInput.trim()}>
                 {isChatLoading ? <Activity className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
               </Button>
             </div>
