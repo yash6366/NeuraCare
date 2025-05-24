@@ -46,15 +46,7 @@ If a question is outside your capabilities or requires medical expertise you don
 Do not provide medical diagnoses or treatment plans.
 You MUST understand and respond in the following language: ${input.language || 'English'}.
 `,
-  prompt: (input) => {
-    const history = input.chatHistory || [];
-    // Add the current user message to the history for the prompt
-    const fullHistory = [
-      ...history,
-      { role: 'user' as const, parts: [{ text: input.userMessage }] },
-    ];
-    return { history: fullHistory };
-  },
+  prompt: (input) => input.userMessage, // Corrected: Return the user's message string directly
   config: {
     // temperature: 0.7, 
   },
@@ -67,12 +59,19 @@ const telemedicineChatFlow = ai.defineFlow(
     outputSchema: TelemedicineChatOutputSchema,
   },
   async (input) => {
+    // When 'telemedicineChatPrompt' is called with 'input', Genkit will automatically use
+    // 'input.chatHistory' as the conversation history for the model,
+    // and 'input.userMessage' as the prompt content (due to the corrected 'prompt' function above).
     const llmResponse = await telemedicineChatPrompt(input);
     const responseText = llmResponse.text;
     
     if (!responseText) {
-      return { botResponse: input.language === 'Spanish' ? "Lo siento, no pude procesar eso. ¿Podrías reformularlo?" : "I'm sorry, I couldn't process that. Could you try rephrasing?" };
+      const defaultErrorMessage = input.language === 'hi-IN' ? // Example for Hindi, expand as needed
+        "मुझे क्षमा करें, मैं इसे संसाधित नहीं कर सका। क्या आप इसे फिर से कह सकते हैं?" :
+        "I'm sorry, I couldn't process that. Could you try rephrasing?";
+      return { botResponse: defaultErrorMessage };
     }
     return { botResponse: responseText };
   }
 );
+
