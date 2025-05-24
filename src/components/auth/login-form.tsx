@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Eye, User, KeyRound, Hospital } from "lucide-react";
+import { User, KeyRound, Hospital } from "lucide-react"; // Removed Eye icon
 import { useToast } from "@/hooks/use-toast";
 import { loginUser } from "@/lib/auth"; 
 import { useLanguage } from "@/contexts/language-context"; 
@@ -107,20 +107,7 @@ export function LoginForm() {
             {translate('login.registerLink').split('? ')[1] || 'Register here'}
           </Link>
         </div>
-        <div className="relative w-full my-2">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">
-              Or log in using
-            </span>
-          </div>
-        </div>
-        <Button variant="outline" className="w-full" onClick={() => toast({ title: "Feature not implemented", description: "Face Recognition login is a conceptual feature."})} disabled={isLoading}>
-          <Eye className="mr-2 h-5 w-5" />
-          Face Recognition
-        </Button>
+        {/* Removed the "Or log in using" separator and Face Recognition button */}
         <p className="px-8 pt-2 text-center text-sm text-muted-foreground">
           By clicking continue, you agree to our{" "}
           <a href="#" className="underline underline-offset-4 hover:text-primary">
