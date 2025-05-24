@@ -44,7 +44,7 @@ export function AiChatAssistantClient() {
 
   useEffect(() => {
     setCurrentUser(getCurrentUser());
-    const initialBotMessageText = translate('telemedicine.aiAssistantInitialGreeting'); // Re-use existing key or create new one
+    const initialBotMessageText = translate('telemedicine.aiAssistantInitialGreeting', "Hello! I'm SmartCare AI Assistant. How can I help you today?");
     const initialBotMessage: Message = {
       id: String(Date.now()),
       text: initialBotMessageText,
@@ -89,7 +89,7 @@ export function AiChatAssistantClient() {
       };
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error("Speech recognition error", event.error);
-        toast({ title: translate('telemedicine.voiceError'), description: event.error as string, variant: "destructive" });
+        toast({ title: translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), description: event.error as string, variant: "destructive" });
         setIsListening(false);
       };
       recognitionInstance.onend = () => {
@@ -136,33 +136,37 @@ export function AiChatAssistantClient() {
   const handleSendMessage = async (messageContent?: string) => {
     const currentMessage = typeof messageContent === 'string' ? messageContent : input;
     if (!currentMessage.trim()) return;
+    
+    const userMessageText = currentMessage; // Store before clearing input
+    setInput(""); // Clear input immediately for better UX
+
     setIsLoading(true);
 
     const newUserMessage: Message = {
       id: String(Date.now()),
-      text: currentMessage,
+      text: userMessageText,
       sender: "user",
       timestamp: new Date(),
     };
     setMessages(prev => [...prev, newUserMessage]);
-    if (typeof messageContent !== 'string') { // Clear input only if not from voice auto-send
-        setInput("");
-    }
-
-
-    let textForAI = currentMessage;
+    
+    // Conceptual: If Dwani AI translation was active, this would be translated.
+    // For now, we use the original text in the user's selected language.
+    let textForAI = userMessageText;
     if (language !== "en-US") { 
-        console.log(translate('telemedicine.dwaniTranslateInfo'), "Original (regional) for AI:", currentMessage);
+        console.log(translate('telemedicine.dwaniTranslateInfo', 'Input (if regional) would be translated to English here by Dwani AI for core processing.'), "Original (regional) for AI:", userMessageText);
     }
 
-    const historyForGenkit: GenkitChatMessage[] = messages.map(msg => ({
+    // Construct chat history for Genkit, including the latest user message
+    const historyForGenkit: GenkitChatMessage[] = messages.concat([newUserMessage]).map(msg => ({ // Include the new user message here
       role: msg.sender === "user" ? "user" : "model",
       parts: [{ text: msg.text }],
     }));
+    
 
     const inputForFlow: TelemedicineChatInput = {
       userMessage: textForAI,
-      chatHistory: historyForGenkit,
+      chatHistory: historyForGenkit.slice(0, -1), // Send history *before* the current user message
       language: language.split('-')[0], 
     };
 
@@ -204,14 +208,14 @@ export function AiChatAssistantClient() {
         recognitionRef.current.lang = language; 
         recognitionRef.current.start();
         setIsListening(true);
-        toast({ title: translate('telemedicine.speakNow') });
+        toast({ title: translate('telemedicine.speakNow', 'Speak now...') });
       } catch (e) {
         console.error("Error starting speech recognition:", e);
-        toast({ title: translate('telemedicine.voiceError'), description: (e as Error).message || translate('telemedicine.voiceError'), variant: "destructive" });
+        toast({ title: translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), description: (e as Error).message || translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), variant: "destructive" });
         setIsListening(false);
       }
     } else {
-      toast({ title: translate('telemedicine.voiceNotSupported'), variant: "destructive" });
+      toast({ title: translate('telemedicine.voiceNotSupported', 'Voice input not supported by your browser.'), variant: "destructive" });
     }
   };
 
@@ -230,9 +234,9 @@ export function AiChatAssistantClient() {
               id="autoplay-speech"
               checked={autoPlayBotSpeech}
               onCheckedChange={setAutoPlayBotSpeech}
-              aria-label={translate('telemedicine.autoPlaySpeech')}
+              aria-label={translate('telemedicine.autoPlaySpeech', 'Auto-play AI speech')}
             />
-            <Label htmlFor="autoplay-speech" className="text-sm sr-only">{translate('telemedicine.autoPlaySpeech')}</Label>
+            <Label htmlFor="autoplay-speech" className="text-sm sr-only">{translate('telemedicine.autoPlaySpeech', 'Auto-play AI speech')}</Label>
             {autoPlayBotSpeech ? <Volume2 className="h-5 w-5 text-primary" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}
           </div>
         </div>
@@ -286,16 +290,16 @@ export function AiChatAssistantClient() {
         <div className="p-4 border-t">
           <div className="flex gap-2">
             <Input
-              placeholder={isListening ? translate('telemedicine.listening') : translate('telemedicine.chatPlaceholder')}
+              placeholder={isListening ? translate('telemedicine.listening', 'Listening...') : translate('telemedicine.chatPlaceholder', 'Type your message...')}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
               disabled={isLoading || isListening}
             />
-            <Button onClick={handleVoiceInput} size="icon" variant="outline" aria-label={translate('telemedicine.useMicButton')} disabled={isListening || isLoading}>
+            <Button onClick={handleVoiceInput} size="icon" variant="outline" aria-label={translate('telemedicine.useMicButton', 'Use Microphone')} disabled={isListening || isLoading}>
               <Mic className={`h-5 w-5 ${isListening ? 'text-destructive animate-pulse' : ''}`} />
             </Button>
-            <Button onClick={() => handleSendMessage()} size="icon" aria-label={translate('telemedicine.sendButton')} disabled={isLoading || isListening || !input.trim()}>
+            <Button onClick={() => handleSendMessage()} size="icon" aria-label={translate('telemedicine.sendButton', 'Send')} disabled={isLoading || isListening || !input.trim()}>
               {isLoading ? <Activity className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
             </Button>
           </div>
