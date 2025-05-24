@@ -109,16 +109,22 @@ export function TelemedicineClient() {
     return () => {
       doctorChatRecognitionRef.current?.abort();
       if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel(); // Cancel TTS on unmount
+        window.speechSynthesis.cancel(); 
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language, toast, translate]); 
 
   useEffect(() => {
+    if (!autoPlayDoctorSpeech && typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  }, [autoPlayDoctorSpeech]);
+
+  useEffect(() => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
         const loadVoices = () => window.speechSynthesis.getVoices();
-        loadVoices(); // Initial load
+        loadVoices(); 
         if (window.speechSynthesis.onvoiceschanged !== undefined) {
             window.speechSynthesis.onvoiceschanged = loadVoices;
         }
@@ -186,7 +192,7 @@ export function TelemedicineClient() {
     setSelectedDoctor(doctor || null);
     setDoctorChatMessages([]); 
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel(); // Cancel any ongoing speech
+        window.speechSynthesis.cancel(); 
     }
     if (doctor && currentUser) {
       const greetingText = translate(
@@ -302,6 +308,7 @@ export function TelemedicineClient() {
                         checked={autoPlayDoctorSpeech}
                         onCheckedChange={setAutoPlayDoctorSpeech}
                         aria-label={translate('telemedicine.autoPlayDoctorSpeechLabel', 'Auto-play doctor speech')}
+                        disabled={isDoctorChatLoading || isDoctorChatListening}
                     />
                     <Label htmlFor="autoplay-doctor-speech" className="text-sm sr-only">{translate('telemedicine.autoPlayDoctorSpeechLabel', 'Auto-play doctor speech')}</Label>
                     {autoPlayDoctorSpeech ? <Volume2 className="h-5 w-5 text-primary" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}

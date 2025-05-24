@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Mic, Send, Lightbulb, FileText, Activity, Pill, Leaf, HomeIcon, Volume2, VolumeX } from "lucide-react";
+import { Mic, Send, Lightbulb, FileText, Activity, Pill, Leaf, HomeIcon, Volume2, VolumeX, StopCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { voiceSymptomChecker, type VoiceSymptomCheckerOutput } from "@/ai/flows/voice-symptom-checker";
 import { useToast } from "@/hooks/use-toast";
@@ -45,7 +45,7 @@ export function SymptomCheckerClient() {
         }
         
         setSymptoms(transcribedText);
-        setIsListening(false);
+        // No auto-submit here, user explicitly clicks "Check Symptoms"
       };
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error("Speech recognition error", event.error);
@@ -68,6 +68,12 @@ export function SymptomCheckerClient() {
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language, toast, translate]);
+
+  useEffect(() => {
+    if (!autoPlayResultsSpeech && typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  }, [autoPlayResultsSpeech]);
 
   const playTextAsSpeech = (text: string, lang: LanguageCode) => {
     if (!autoPlayResultsSpeech || typeof window === 'undefined' || !window.speechSynthesis || !text) return;
@@ -162,15 +168,19 @@ export function SymptomCheckerClient() {
   
   const handleVoiceInput = () => {
     if (recognitionRef.current) {
-      try {
-        recognitionRef.current.lang = language; 
-        recognitionRef.current.start();
-        setIsListening(true);
-        toast({ title: translate('symptomChecker.speakNow', 'Speak now...') });
-      } catch (e) {
-        console.error("Error starting speech recognition:", e);
-        toast({ title: translate('symptomChecker.voiceErrorTitle', 'Voice Input Error'), description: (e as Error).message || 'Could not start voice input.', variant: "destructive" });
-        setIsListening(false);
+      if (isListening) {
+        recognitionRef.current.stop();
+      } else {
+        try {
+          recognitionRef.current.lang = language; 
+          recognitionRef.current.start();
+          setIsListening(true);
+          toast({ title: translate('symptomChecker.speakNow', 'Speak now...') });
+        } catch (e) {
+          console.error("Error starting speech recognition:", e);
+          toast({ title: translate('symptomChecker.voiceErrorTitle', 'Voice Input Error'), description: (e as Error).message || 'Could not start voice input.', variant: "destructive" });
+          setIsListening(false);
+        }
       }
     } else {
       toast({ title: translate('symptomChecker.voiceNotSupported', 'Voice input not supported by your browser.'), variant: "destructive" });
@@ -212,9 +222,9 @@ export function SymptomCheckerClient() {
               </Alert>
             )}
             <div className="flex flex-col sm:flex-row gap-2">
-               <Button type="button" variant="outline" onClick={handleVoiceInput} disabled={isLoading || isListening} className="flex-1">
-                <Mic className={`mr-2 h-5 w-5 ${isListening ? 'text-destructive animate-pulse' : ''}`} /> 
-                {isListening ? translate('symptomChecker.listening', 'Listening...') : translate('symptomChecker.useVoiceButton', "Use Voice")}
+               <Button type="button" variant="outline" onClick={handleVoiceInput} disabled={isLoading} className="flex-1">
+                 {isListening ? <StopCircle className="mr-2 h-5 w-5 text-destructive animate-pulse" /> : <Mic className="mr-2 h-5 w-5" />}
+                {isListening ? translate('symptomChecker.stopListening', 'Stop Listening') : translate('symptomChecker.useVoiceButton', "Use Voice")}
               </Button>
               <Button type="submit" disabled={isLoading || isListening || !symptoms.trim()} className="flex-1">
                 {isLoading ? <Activity className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
@@ -227,6 +237,7 @@ export function SymptomCheckerClient() {
                 checked={autoPlayResultsSpeech}
                 onCheckedChange={setAutoPlayResultsSpeech}
                 aria-label={translate('symptomChecker.autoPlayResultsSpeech', 'Auto-play results speech')}
+                disabled={isLoading || isListening}
               />
               <Label htmlFor="autoplay-results-speech" className="text-sm text-muted-foreground">
                 {translate('symptomChecker.autoPlayResultsSpeechLabel', 'Speak Results')}

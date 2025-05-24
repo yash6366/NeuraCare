@@ -27,7 +27,7 @@ interface Message {
   sender: "user" | "bot";
   timestamp: Date;
   isImageQueryResponse?: boolean;
-  isDocumentAnalysisResponse?: boolean; // Added
+  isDocumentAnalysisResponse?: boolean;
 }
 
 interface GenkitChatMessage {
@@ -58,10 +58,10 @@ export function AiChatAssistantClient() {
   const [imageQuery, setImageQuery] = useState("");
   const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);
 
-  const documentInputRef = useRef<HTMLInputElement>(null); // Added
-  const [selectedDocument, setSelectedDocument] = useState<File | null>(null); // Added
-  const [selectedDocumentDataUri, setSelectedDocumentDataUri] = useState<string | null>(null); // Added
-  const [isProcessingDocument, setIsProcessingDocument] = useState(false); // Added
+  const documentInputRef = useRef<HTMLInputElement>(null); 
+  const [selectedDocument, setSelectedDocument] = useState<File | null>(null); 
+  const [selectedDocumentDataUri, setSelectedDocumentDataUri] = useState<string | null>(null); 
+  const [isProcessingDocument, setIsProcessingDocument] = useState(false); 
 
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export function AiChatAssistantClient() {
       timestamp: new Date(),
     };
     setMessages([initialBotMessage]);
-    if (autoPlayBotSpeech && typeof window !== 'undefined' && window.speechSynthesis) {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
       playTextAsSpeech(initialBotMessageText, language);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -127,6 +127,12 @@ export function AiChatAssistantClient() {
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language, toast, translate]); 
+
+  useEffect(() => {
+    if (!autoPlayBotSpeech && typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  }, [autoPlayBotSpeech]);
 
   const playTextAsSpeech = (text: string, lang: LanguageCode) => {
     if (!autoPlayBotSpeech || typeof window === 'undefined' || !window.speechSynthesis || !text) return;
@@ -323,7 +329,7 @@ export function AiChatAssistantClient() {
     }
   };
 
-  const handleDocumentFileChange = (event: ChangeEvent<HTMLInputElement>) => { // Added
+  const handleDocumentFileChange = (event: ChangeEvent<HTMLInputElement>) => { 
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > MAX_FILE_SIZE_BYTES) {
@@ -357,7 +363,7 @@ export function AiChatAssistantClient() {
     }
   };
 
-  const handleExtractTextFromDocument = async () => { // Added
+  const handleExtractTextFromDocument = async () => { 
     if (!selectedDocument || !selectedDocumentDataUri) {
       toast({ title: translate('aiChatAssistant.noDocumentSelectedTitle', 'No Document Selected'), description: translate('aiChatAssistant.noDocumentSelectedDescription', 'Please select a PDF document to extract text from.'), variant: "destructive" });
       return;
