@@ -1,13 +1,13 @@
-// 'use server';
+
+'use server';
 /**
- * @fileOverview A voice-enabled symptom checker AI agent.
+ * @fileOverview A voice-enabled symptom checker AI agent that suggests possible conditions
+ * and provides allopathic, Ayurvedic, and home remedy suggestions.
  *
  * - voiceSymptomChecker - A function that handles the symptom checking process.
  * - VoiceSymptomCheckerInput - The input type for the voiceSymptomChecker function.
  * - VoiceSymptomCheckerOutput - The return type for the voiceSymptomChecker function.
  */
-
-'use server';
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
@@ -16,18 +16,22 @@ const VoiceSymptomCheckerInputSchema = z.object({
   symptoms: z
     .string()
     .describe('The symptoms described by the patient in their preferred language.'),
-  language: z.string().optional().describe('The language of the symptoms description.'),
+  language: z.string().optional().describe('The language of the symptoms description (e.g., "English", "Hindi").'),
 });
 export type VoiceSymptomCheckerInput = z.infer<typeof VoiceSymptomCheckerInputSchema>;
 
+const SuggestedConditionSchema = z.object({
+  conditionName: z.string().describe('The name of the possible medical condition.'),
+  confidence: z.number().min(0).max(1).describe('The confidence level for this condition (0-1).'),
+  explanation: z.string().describe('A brief explanation of the condition and why it might be relevant based on the symptoms. This should be in the specified language.'),
+  allopathicSuggestions: z.array(z.string()).optional().describe('Suggested allopathic (modern medicine) approaches or advice. These are general suggestions, not prescriptions. Provide in the specified language.'),
+  ayurvedicSuggestions: z.array(z.string()).optional().describe('Suggested Ayurvedic remedies or lifestyle advice. These are general suggestions, not prescriptions. Provide in the specified language.'),
+  homeRemedies: z.array(z.string()).optional().describe('Suggested home remedies or self-care tips. These are general suggestions, not medical advice. Provide in the specified language.'),
+});
+
 const VoiceSymptomCheckerOutputSchema = z.object({
-  possibleConditions: z
-    .array(z.string())
-    .describe('Possible medical conditions based on the symptoms.'),
-  confidenceLevels: z
-    .array(z.number())
-    .describe('Confidence levels for each possible condition (0-1).'),
-  explanation: z.string().describe('A brief explanation for each suggested condition.'),
+  analysis: z.array(SuggestedConditionSchema).describe('An array of possible medical conditions with explanations and suggestions.'),
+  disclaimer: z.string().describe('A general disclaimer that this is not medical advice and a professional should be consulted. This should be in the specified language.'),
 });
 export type VoiceSymptomCheckerOutput = z.infer<typeof VoiceSymptomCheckerOutputSchema>;
 
@@ -39,18 +43,29 @@ const prompt = ai.definePrompt({
   name: 'voiceSymptomCheckerPrompt',
   input: {schema: VoiceSymptomCheckerInputSchema},
   output: {schema: VoiceSymptomCheckerOutputSchema},
-  prompt: `You are an AI-powered symptom checker that suggests possible medical conditions based on a patient's description of their symptoms.
+  prompt: (input) => `You are an AI-powered symptom checker. Your goal is to analyze the described symptoms and provide potential insights, including possible conditions and general suggestions for management.
+You MUST respond in the language specified: ${input.language || 'English'}.
 
-  The patient describes their symptoms in their preferred language. Identify possible conditions and provide confidence levels and brief explanations for each.
+The patient describes their symptoms as: "{{{symptoms}}}"
+The patient's preferred language for response is: {{#if language}}{{{language}}}{{else}}English{{/if}}.
 
-  Symptoms: {{{symptoms}}}
-  Language: {{{language}}}
+Based on these symptoms, please provide the following:
+1.  An array named 'analysis' where each element represents a possible medical condition. Each element should be an object with the following fields:
+    *   'conditionName': The name of the possible medical condition.
+    *   'confidence': A numerical confidence score between 0.0 and 1.0 for this condition.
+    *   'explanation': A brief explanation of the condition and why it might be relevant based on the symptoms.
+    *   'allopathicSuggestions': An array of strings with general allopathic (modern medicine) suggestions or advice. Do NOT prescribe specific medications or dosages. Focus on general approaches, types of treatments, or when to see a doctor.
+    *   'ayurvedicSuggestions': An array of strings with general Ayurvedic remedies or lifestyle advice.
+    *   'homeRemedies': An array of strings with common home remedies or self-care tips.
+2.  A 'disclaimer' string: This should be a clear statement emphasizing that this information is not a medical diagnosis, not a substitute for professional medical advice, and that the user should consult a qualified healthcare professional for any health concerns or before making any decisions related to their health.
 
-  Format your response as a JSON object with the following keys:
-  - possibleConditions: An array of possible medical conditions.
-  - confidenceLevels: An array of confidence levels (0-1) for each condition.
-  - explanation: A brief explanation for each suggested condition.
-  `,
+When providing suggestions (allopathic, Ayurvedic, home remedies), ensure they are general and not prescriptive. For example, instead of "Take 500mg Paracetamol", suggest "Over-the-counter pain relievers may help with fever or pain."
+
+Consider a wide range of possibilities, including common ailments.
+Use information from modern medical knowledge, traditional Ayurvedic principles, and common home remedies where appropriate.
+Structure your entire response as a single JSON object adhering to the defined output schema.
+All text in your response, including condition names, explanations, suggestions, and the disclaimer, MUST be in the specified language: ${input.language || 'English'}.
+`,
 });
 
 const voiceSymptomCheckerFlow = ai.defineFlow(
@@ -59,8 +74,19 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     inputSchema: VoiceSymptomCheckerInputSchema,
     outputSchema: VoiceSymptomCheckerOutputSchema,
   },
-  async input => {
+  async (input) => {
     const {output} = await prompt(input);
-    return output!;
+    // Ensure a fallback if the output is unexpectedly null or undefined
+    if (!output) {
+      const lang = input.language || 'English';
+      const errorDisclaimer = lang === 'hi-IN' ? 
+        "क्षमा करें, मुझे आपके लक्षणों का विश्लेषण करने में समस्या आ रही है। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें।" :
+        "Sorry, I encountered an issue analyzing your symptoms. Please consult a healthcare professional.";
+      return {
+        analysis: [],
+        disclaimer: errorDisclaimer,
+      };
+    }
+    return output;
   }
 );
