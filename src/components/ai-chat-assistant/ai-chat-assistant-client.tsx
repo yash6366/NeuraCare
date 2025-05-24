@@ -8,13 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot as BotIcon, Mic, Volume2, VolumeX, Activity, ImagePlus, Paperclip, FileText, Search, HelpCircle, StopCircle, FileType } from "lucide-react";
+import { Send, Bot as BotIcon, Mic, Volume2, VolumeX, Activity, ImagePlus, Paperclip, FileText, Search, HelpCircle, StopCircle, FileType, BookText } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { telemedicineChat, type TelemedicineChatInput, type TelemedicineChatOutput } from "@/ai/flows/telemedicine-chat-flow";
 import { analyzeImage, type AnalyzeImageInput, type AnalyzeImageOutput } from "@/ai/flows/image-analysis-flow";
-import { extractTextFromDocument, type ExtractTextFromDocumentInput, type ExtractTextFromDocumentOutput } from "@/ai/flows/document-text-extraction-flow"; // Added
+import { extractTextFromDocument, type ExtractTextFromDocumentInput, type ExtractTextFromDocumentOutput } from "@/ai/flows/document-text-extraction-flow";
+import { summarizeDocumentText, type SummarizeDocumentTextInput, type SummarizeDocumentTextOutput } from "@/ai/flows/document-summarization-flow"; // Added
 import { useLanguage } from "@/contexts/language-context";
 import type { LanguageCode } from "@/contexts/language-context";
 import { getCurrentUser, type AppUser } from "@/lib/auth";
@@ -28,6 +29,7 @@ interface Message {
   timestamp: Date;
   isImageQueryResponse?: boolean;
   isDocumentAnalysisResponse?: boolean;
+  isDocumentSummaryResponse?: boolean; // Added
 }
 
 interface GenkitChatMessage {
@@ -62,6 +64,8 @@ export function AiChatAssistantClient() {
   const [selectedDocument, setSelectedDocument] = useState<File | null>(null); 
   const [selectedDocumentDataUri, setSelectedDocumentDataUri] = useState<string | null>(null); 
   const [isProcessingDocument, setIsProcessingDocument] = useState(false); 
+  const [lastExtractedText, setLastExtractedText] = useState<string | null>(null); // Added
+  const [isSummarizingDocument, setIsSummarizingDocument] = useState(false); // Added
 
 
   useEffect(() => {
@@ -321,7 +325,6 @@ export function AiChatAssistantClient() {
     } finally {
       setIsAnalyzingImage(false);
       setIsLoading(false);
-      // Reset image selection after analysis
       setSelectedImage(null);
       setSelectedImagePreview(null);
       setImageQuery("");
@@ -340,6 +343,7 @@ export function AiChatAssistantClient() {
         });
         setSelectedDocument(null);
         setSelectedDocumentDataUri(null);
+        setLastExtractedText(null);
         if (documentInputRef.current) documentInputRef.current.value = "";
         return;
       }
@@ -351,10 +355,12 @@ export function AiChatAssistantClient() {
         });
         setSelectedDocument(null);
         setSelectedDocumentDataUri(null);
+        setLastExtractedText(null);
         if (documentInputRef.current) documentInputRef.current.value = "";
         return;
       }
       setSelectedDocument(file);
+      setLastExtractedText(null); // Reset extracted text when new doc is selected
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedDocumentDataUri(reader.result as string);
@@ -370,6 +376,7 @@ export function AiChatAssistantClient() {
     }
     setIsProcessingDocument(true);
     setIsLoading(true);
+    setLastExtractedText(null);
 
     const userQueryMessage: Message = {
       id: String(Date.now()),
@@ -385,6 +392,7 @@ export function AiChatAssistantClient() {
         language: language.split('-')[0],
       };
       const result: ExtractTextFromDocumentOutput = await extractTextFromDocument(inputForFlow);
+      setLastExtractedText(result.extractedText);
       
       const botResponseText = `${translate('aiChatAssistant.extractedTextLabel', 'Extracted text from {fileName}:')
                                   .replace('{fileName}', selectedDocument.name)}\n\n${result.extractedText}`;
@@ -401,7 +409,7 @@ export function AiChatAssistantClient() {
       }
        toast({
         title: translate('aiChatAssistant.textExtractedNotificationTitle', 'Text Extracted'),
-        description: translate('aiChatAssistant.textExtractedNotificationDesc', 'Text successfully extracted from {fileName} and displayed in chat.').replace('{fileName}', selectedDocument.name),
+        description: translate('aiChatAssistant.textExtractedNotificationDesc', 'Text successfully extracted from {fileName} and displayed in chat. You can now summarize it.').replace('{fileName}', selectedDocument.name),
       });
     } catch (error) {
       console.error("Error extracting text from document:", error);
@@ -421,11 +429,80 @@ export function AiChatAssistantClient() {
     } finally {
       setIsProcessingDocument(false);
       setIsLoading(false);
-      // Reset document selection after processing
-      setSelectedDocument(null);
-      setSelectedDocumentDataUri(null);
-      if (documentInputRef.current) documentInputRef.current.value = "";
+      // Do not reset document selection here, so user can summarize
     }
+  };
+
+  const handleSummarizeDocument = async () => {
+    if (!lastExtractedText) {
+      toast({ title: translate('aiChatAssistant.noTextToSummarizeTitle', 'No Text to Summarize'), description: translate('aiChatAssistant.noTextToSummarizeDescription', 'Please extract text from a document first.'), variant: "destructive" });
+      return;
+    }
+    setIsSummarizingDocument(true);
+    setIsLoading(true);
+
+    const userQueryMessage: Message = {
+      id: String(Date.now()),
+      text: translate('aiChatAssistant.summarizingExtractedText', 'User requested to summarize the extracted document text.'),
+      sender: "user",
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, userQueryMessage]);
+
+    try {
+      const inputForFlow: SummarizeDocumentTextInput = {
+        documentText: lastExtractedText,
+        language: language.split('-')[0],
+      };
+      const result: SummarizeDocumentTextOutput = await summarizeDocumentText(inputForFlow);
+      
+      const botResponseText = `${translate('aiChatAssistant.documentSummaryLabel', 'Summary of the document:')}\n\n${result.summary}`;
+      const botResponse: Message = {
+        id: String(Date.now() + 1),
+        text: botResponseText,
+        sender: "bot",
+        timestamp: new Date(),
+        isDocumentSummaryResponse: true,
+      };
+      setMessages(prev => [...prev, botResponse]);
+      if (autoPlayBotSpeech) {
+        playTextAsSpeech(botResponseText, language);
+      }
+      toast({
+        title: translate('aiChatAssistant.summaryGeneratedNotificationTitle', 'Summary Generated'),
+        description: translate('aiChatAssistant.summaryGeneratedNotificationDesc', 'Document summary generated and displayed in chat.'),
+      });
+    } catch (error) {
+      console.error("Error summarizing document:", error);
+      const errorText = translate('aiChatAssistant.documentSummarizationError', "Sorry, I couldn't summarize the document text.");
+      toast({
+        title: translate('aiChatAssistant.documentSummarizationErrorTitle', "Document Summarization Error"),
+        description: `${errorText} ${(error as Error).message ? `Details: ${(error as Error).message}`: ''}`,
+        variant: "destructive",
+      });
+      const errorBotMessage: Message = {
+        id: String(Date.now() + 1),
+        text: errorText,
+        sender: "bot",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorBotMessage]);
+    } finally {
+      setIsSummarizingDocument(false);
+      setIsLoading(false);
+      // Optionally reset lastExtractedText if it should only be summarized once, or keep it for further actions
+      // setLastExtractedText(null); 
+      // setSelectedDocument(null);
+      // setSelectedDocumentDataUri(null);
+      // if (documentInputRef.current) documentInputRef.current.value = "";
+    }
+  };
+
+  const resetDocumentState = () => {
+    setSelectedDocument(null);
+    setSelectedDocumentDataUri(null);
+    setLastExtractedText(null);
+    if (documentInputRef.current) documentInputRef.current.value = "";
   };
 
 
@@ -446,7 +523,7 @@ export function AiChatAssistantClient() {
                 checked={autoPlayBotSpeech}
                 onCheckedChange={setAutoPlayBotSpeech}
                 aria-label={translate('telemedicine.autoPlaySpeech', 'Auto-play AI speech')}
-                disabled={isListening || isLoading || isAnalyzingImage || isProcessingDocument}
+                disabled={isListening || isLoading || isAnalyzingImage || isProcessingDocument || isSummarizingDocument}
               />
               <Label htmlFor="autoplay-speech" className="text-sm sr-only">{translate('telemedicine.autoPlaySpeech', 'Auto-play AI speech')}</Label>
               {autoPlayBotSpeech ? <Volume2 className="h-5 w-5 text-primary" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}
@@ -476,7 +553,7 @@ export function AiChatAssistantClient() {
                         : "bg-muted"
                     }`}
                   >
-                    {msg.isDocumentAnalysisResponse ? (
+                    {msg.isDocumentAnalysisResponse || msg.isDocumentSummaryResponse ? (
                         <pre className="whitespace-pre-wrap font-sans">{msg.text}</pre>
                      ) : (
                         msg.text
@@ -484,6 +561,11 @@ export function AiChatAssistantClient() {
                     {msg.isImageQueryResponse && (
                         <div className="mt-2 border-t pt-2">
                             <p className="text-xs text-muted-foreground italic">{translate('aiChatAssistant.imageQueryResponseContext', 'Response related to the uploaded image.')}</p>
+                        </div>
+                    )}
+                     {msg.isDocumentSummaryResponse && (
+                        <div className="mt-2 border-t pt-2">
+                            <p className="text-xs text-muted-foreground italic">{translate('aiChatAssistant.documentSummaryContext', 'Summary of the uploaded document.')}</p>
                         </div>
                     )}
                   </div>
@@ -495,7 +577,7 @@ export function AiChatAssistantClient() {
                   )}
                 </div>
               ))}
-              {(isLoading || isAnalyzingImage || isProcessingDocument) && !messages.some(m => m.sender === 'bot' && m.text.includes('spin')) && ( 
+              {(isLoading || isAnalyzingImage || isProcessingDocument || isSummarizingDocument) && ( 
                 <div className="flex items-end gap-2 justify-start">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="https://placehold.co/40x40.png" alt="Bot Avatar" data-ai-hint="robot face" />
@@ -514,14 +596,14 @@ export function AiChatAssistantClient() {
                 placeholder={isListening ? translate('telemedicine.listening', 'Listening...') : translate('telemedicine.chatPlaceholder', 'Type your message...')}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && !isLoading && !isAnalyzingImage && !isProcessingDocument && handleSendMessage()}
-                disabled={isLoading || isAnalyzingImage || isProcessingDocument || (isListening && !input) }
+                onKeyPress={(e) => e.key === 'Enter' && !isLoading && !isAnalyzingImage && !isProcessingDocument && !isSummarizingDocument && handleSendMessage()}
+                disabled={isLoading || isAnalyzingImage || isProcessingDocument || isSummarizingDocument || (isListening && !input) }
               />
-              <Button onClick={handleVoiceInput} size="icon" variant="outline" aria-label={isListening ? translate('telemedicine.stopListening', 'Stop Listening') : translate('telemedicine.useMicButton', 'Use Microphone')} disabled={isLoading || isAnalyzingImage || isProcessingDocument}>
+              <Button onClick={handleVoiceInput} size="icon" variant="outline" aria-label={isListening ? translate('telemedicine.stopListening', 'Stop Listening') : translate('telemedicine.useMicButton', 'Use Microphone')} disabled={isLoading || isAnalyzingImage || isProcessingDocument || isSummarizingDocument}>
                 {isListening ? <StopCircle className="h-5 w-5 text-destructive animate-pulse" /> : <Mic className="h-5 w-5" /> }
               </Button>
-              <Button onClick={() => handleSendMessage()} size="icon" aria-label={translate('telemedicine.sendButton', 'Send')} disabled={isLoading || isAnalyzingImage || isProcessingDocument || !input.trim()}>
-                {(isLoading && !isAnalyzingImage && !isProcessingDocument) ? <Activity className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+              <Button onClick={() => handleSendMessage()} size="icon" aria-label={translate('telemedicine.sendButton', 'Send')} disabled={isLoading || isAnalyzingImage || isProcessingDocument || isSummarizingDocument || !input.trim()}>
+                {(isLoading && !isAnalyzingImage && !isProcessingDocument && !isSummarizingDocument) ? <Activity className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
               </Button>
             </div>
           </div>
@@ -545,7 +627,7 @@ export function AiChatAssistantClient() {
               onChange={handleImageFileChange}
               ref={imageInputRef}
               className="text-sm"
-              disabled={isAnalyzingImage || isLoading || isProcessingDocument}
+              disabled={isAnalyzingImage || isLoading || isProcessingDocument || isSummarizingDocument}
             />
             {selectedImagePreview && (
               <div className="mt-2 border rounded-md p-2 flex flex-col items-center">
@@ -561,9 +643,9 @@ export function AiChatAssistantClient() {
               onChange={(e) => setImageQuery(e.target.value)}
               rows={2}
               className="text-sm"
-              disabled={!selectedImage || isAnalyzingImage || isLoading || isProcessingDocument}
+              disabled={!selectedImage || isAnalyzingImage || isLoading || isProcessingDocument || isSummarizingDocument}
             />
-            <Button onClick={handleAnalyzeImage} className="w-full" disabled={!selectedImage || isAnalyzingImage || isLoading || isProcessingDocument}>
+            <Button onClick={handleAnalyzeImage} className="w-full" disabled={!selectedImage || isAnalyzingImage || isLoading || isProcessingDocument || isSummarizingDocument}>
               {isAnalyzingImage ? <Activity className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
               {translate('aiChatAssistant.analyzeImageButton', 'Analyze Image')}
             </Button>
@@ -578,27 +660,31 @@ export function AiChatAssistantClient() {
               onChange={handleDocumentFileChange}
               ref={documentInputRef}
               className="text-sm"
-              disabled={isProcessingDocument || isLoading || isAnalyzingImage}
+              disabled={isProcessingDocument || isLoading || isAnalyzingImage || isSummarizingDocument}
             />
             {selectedDocument && (
               <div className="mt-2 border rounded-md p-2 flex flex-col items-center text-center">
                  <FileText className="h-12 w-12 text-muted-foreground" />
                  <p className="text-sm font-medium mt-1 truncate max-w-[200px]" title={selectedDocument.name}>{selectedDocument.name}</p>
                  <p className="text-xs text-muted-foreground">({(selectedDocument.size / 1024).toFixed(1)} KB)</p>
-                <Button variant="link" size="sm" className="text-xs text-destructive mt-1" onClick={() => {setSelectedDocument(null); setSelectedDocumentDataUri(null); if(documentInputRef.current) documentInputRef.current.value = "";}}>
+                <Button variant="link" size="sm" className="text-xs text-destructive mt-1" onClick={resetDocumentState}>
                   {translate('aiChatAssistant.removeDocumentButton', 'Remove Document')}
                 </Button>
               </div>
             )}
-            <Button onClick={handleExtractTextFromDocument} className="w-full" disabled={!selectedDocument || isProcessingDocument || isLoading || isAnalyzingImage}>
+            <Button onClick={handleExtractTextFromDocument} className="w-full" disabled={!selectedDocument || isProcessingDocument || isLoading || isAnalyzingImage || isSummarizingDocument}>
               {isProcessingDocument ? <Activity className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
               {translate('aiChatAssistant.extractTextButton', 'Extract Text from PDF')}
+            </Button>
+             <Button onClick={handleSummarizeDocument} className="w-full mt-2" disabled={!lastExtractedText || isSummarizingDocument || isLoading || isProcessingDocument || isAnalyzingImage}>
+              {isSummarizingDocument ? <Activity className="mr-2 h-4 w-4 animate-spin" /> : <BookText className="mr-2 h-4 w-4" />}
+              {translate('aiChatAssistant.summarizeTextButton', 'Summarize Extracted Text')}
             </Button>
              <Alert variant="default" className="mt-4">
                 <HelpCircle className="h-4 w-4" />
                 <AlertTitle>{translate('aiChatAssistant.moreDocFeaturesTitle', 'More Document Features Coming Soon!')}</AlertTitle>
                 <AlertDescription>
-                {translate('aiChatAssistant.docSummarizeQueryPlaceholder', 'Features like document summarization and querying specific content within PDFs will be added next.')}
+                {translate('aiChatAssistant.docQueryPlaceholder', 'Querying specific content within PDFs will be added next.')}
                 </AlertDescription>
             </Alert>
           </div>
