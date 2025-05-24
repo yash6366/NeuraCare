@@ -22,7 +22,7 @@ export function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<'patient' | 'doctor' | 'admin'>("patient");
+  const [role, setRole] = useState<'patient' | 'doctor'>("patient"); // Default to patient, admin removed
   const [emergencyContactPhone, setEmergencyContactPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -152,14 +152,14 @@ export function RegisterForm() {
           </div>
            <div className="space-y-2">
             <Label htmlFor="role">{translate('register.roleLabel', 'Register as')}</Label>
-            <Select value={role} onValueChange={(value) => setRole(value as 'patient' | 'doctor' | 'admin')} disabled={isLoading}>
+            <Select value={role} onValueChange={(value) => setRole(value as 'patient' | 'doctor')} disabled={isLoading}>
               <SelectTrigger id="role">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="patient">{translate('register.role.patient','Patient')}</SelectItem>
                 <SelectItem value="doctor">{translate('register.role.doctor','Doctor')}</SelectItem>
-                <SelectItem value="admin">{translate('register.role.admin','Admin')}</SelectItem>
+                {/* Admin role removed from selectable options */}
               </SelectContent>
             </Select>
           </div>
