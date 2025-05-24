@@ -8,12 +8,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot as BotIcon, Mic, Volume2, VolumeX, Activity, ImagePlus, Paperclip, FileText, Search, HelpCircle, StopCircle } from "lucide-react";
+import { Send, Bot as BotIcon, Mic, Volume2, VolumeX, Activity, ImagePlus, Paperclip, FileText, Search, HelpCircle, StopCircle, FileType } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { telemedicineChat, type TelemedicineChatInput, type TelemedicineChatOutput } from "@/ai/flows/telemedicine-chat-flow";
 import { analyzeImage, type AnalyzeImageInput, type AnalyzeImageOutput } from "@/ai/flows/image-analysis-flow";
+import { extractTextFromDocument, type ExtractTextFromDocumentInput, type ExtractTextFromDocumentOutput } from "@/ai/flows/document-text-extraction-flow"; // Added
 import { useLanguage } from "@/contexts/language-context";
 import type { LanguageCode } from "@/contexts/language-context";
 import { getCurrentUser, type AppUser } from "@/lib/auth";
@@ -26,6 +27,7 @@ interface Message {
   sender: "user" | "bot";
   timestamp: Date;
   isImageQueryResponse?: boolean;
+  isDocumentAnalysisResponse?: boolean; // Added
 }
 
 interface GenkitChatMessage {
@@ -49,12 +51,18 @@ export function AiChatAssistantClient() {
   const [autoPlayBotSpeech, setAutoPlayBotSpeech] = useState(true);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  
   const imageInputRef = useRef<HTMLInputElement>(null);
-
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedImagePreview, setSelectedImagePreview] = useState<string | null>(null);
   const [imageQuery, setImageQuery] = useState("");
   const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);
+
+  const documentInputRef = useRef<HTMLInputElement>(null); // Added
+  const [selectedDocument, setSelectedDocument] = useState<File | null>(null); // Added
+  const [selectedDocumentDataUri, setSelectedDocumentDataUri] = useState<string | null>(null); // Added
+  const [isProcessingDocument, setIsProcessingDocument] = useState(false); // Added
+
 
   useEffect(() => {
     setCurrentUser(getCurrentUser());
@@ -70,7 +78,7 @@ export function AiChatAssistantClient() {
       playTextAsSpeech(initialBotMessageText, language);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, translate]); // Removed autoPlayBotSpeech from deps to avoid re-greeting on toggle
+  }, [language, translate]); 
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -96,7 +104,6 @@ export function AiChatAssistantClient() {
           console.log(translate('telemedicine.dwaniTranslateInfo'), "Original (regional):", transcribedText);
         }
         setInput(transcribedText);
-        // setIsListening(false); // onend will handle this
         handleSendMessage(transcribedText); 
       };
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -119,7 +126,7 @@ export function AiChatAssistantClient() {
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, toast, translate]); // Removed handleSendMessage from deps
+  }, [language, toast, translate]); 
 
   const playTextAsSpeech = (text: string, lang: LanguageCode) => {
     if (!autoPlayBotSpeech || typeof window === 'undefined' || !window.speechSynthesis || !text) return;
@@ -140,8 +147,8 @@ export function AiChatAssistantClient() {
   useEffect(() => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
         const loadVoices = () => window.speechSynthesis.getVoices();
-        loadVoices(); // Initial load
-        window.speechSynthesis.onvoiceschanged = loadVoices; // Load when voices change
+        loadVoices(); 
+        window.speechSynthesis.onvoiceschanged = loadVoices;
     }
   }, []);
 
@@ -215,7 +222,6 @@ export function AiChatAssistantClient() {
     if (recognitionRef.current) {
       if (isListening) {
         recognitionRef.current.stop();
-        // setIsListening(false); // onend will handle this
       } else {
         try {
           recognitionRef.current.lang = language; 
@@ -309,8 +315,113 @@ export function AiChatAssistantClient() {
     } finally {
       setIsAnalyzingImage(false);
       setIsLoading(false);
+      // Reset image selection after analysis
+      setSelectedImage(null);
+      setSelectedImagePreview(null);
+      setImageQuery("");
+      if (imageInputRef.current) imageInputRef.current.value = "";
     }
   };
+
+  const handleDocumentFileChange = (event: ChangeEvent<HTMLInputElement>) => { // Added
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        toast({
+          title: translate('aiChatAssistant.documentTooLargeTitle', 'Document Too Large'),
+          description: translate('aiChatAssistant.documentTooLargeDescription', 'Please select a PDF smaller than {MAX_FILE_SIZE_MB}MB.').replace('{MAX_FILE_SIZE_MB}', String(MAX_FILE_SIZE_MB)),
+          variant: "destructive",
+        });
+        setSelectedDocument(null);
+        setSelectedDocumentDataUri(null);
+        if (documentInputRef.current) documentInputRef.current.value = "";
+        return;
+      }
+      if (file.type !== 'application/pdf') {
+        toast({
+          title: translate('aiChatAssistant.invalidDocumentTypeTitle', 'Invalid File Type'),
+          description: translate('aiChatAssistant.invalidDocumentTypeDescription', 'Please select a PDF document.'),
+          variant: "destructive",
+        });
+        setSelectedDocument(null);
+        setSelectedDocumentDataUri(null);
+        if (documentInputRef.current) documentInputRef.current.value = "";
+        return;
+      }
+      setSelectedDocument(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedDocumentDataUri(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleExtractTextFromDocument = async () => { // Added
+    if (!selectedDocument || !selectedDocumentDataUri) {
+      toast({ title: translate('aiChatAssistant.noDocumentSelectedTitle', 'No Document Selected'), description: translate('aiChatAssistant.noDocumentSelectedDescription', 'Please select a PDF document to extract text from.'), variant: "destructive" });
+      return;
+    }
+    setIsProcessingDocument(true);
+    setIsLoading(true);
+
+    const userQueryMessage: Message = {
+      id: String(Date.now()),
+      text: translate('aiChatAssistant.extractingTextFrom', 'User requested to extract text from: {fileName}').replace('{fileName}', selectedDocument.name),
+      sender: "user",
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, userQueryMessage]);
+
+    try {
+      const inputForFlow: ExtractTextFromDocumentInput = {
+        pdfDataUri: selectedDocumentDataUri,
+        language: language.split('-')[0],
+      };
+      const result: ExtractTextFromDocumentOutput = await extractTextFromDocument(inputForFlow);
+      
+      const botResponseText = `${translate('aiChatAssistant.extractedTextLabel', 'Extracted text from {fileName}:')
+                                  .replace('{fileName}', selectedDocument.name)}\n\n${result.extractedText}`;
+      const botResponse: Message = {
+        id: String(Date.now() + 1),
+        text: botResponseText,
+        sender: "bot",
+        timestamp: new Date(),
+        isDocumentAnalysisResponse: true,
+      };
+      setMessages(prev => [...prev, botResponse]);
+      if (autoPlayBotSpeech) {
+        playTextAsSpeech(botResponseText, language);
+      }
+       toast({
+        title: translate('aiChatAssistant.textExtractedNotificationTitle', 'Text Extracted'),
+        description: translate('aiChatAssistant.textExtractedNotificationDesc', 'Text successfully extracted from {fileName} and displayed in chat.').replace('{fileName}', selectedDocument.name),
+      });
+    } catch (error) {
+      console.error("Error extracting text from document:", error);
+      const errorText = translate('aiChatAssistant.documentExtractionError', "Sorry, I couldn't extract text from the document.");
+      toast({
+        title: translate('aiChatAssistant.documentExtractionErrorTitle', "Document Extraction Error"),
+        description: `${errorText} ${(error as Error).message ? `Details: ${(error as Error).message}`: ''}`,
+        variant: "destructive",
+      });
+      const errorBotMessage: Message = {
+        id: String(Date.now() + 1),
+        text: errorText,
+        sender: "bot",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorBotMessage]);
+    } finally {
+      setIsProcessingDocument(false);
+      setIsLoading(false);
+      // Reset document selection after processing
+      setSelectedDocument(null);
+      setSelectedDocumentDataUri(null);
+      if (documentInputRef.current) documentInputRef.current.value = "";
+    }
+  };
+
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
@@ -329,6 +440,7 @@ export function AiChatAssistantClient() {
                 checked={autoPlayBotSpeech}
                 onCheckedChange={setAutoPlayBotSpeech}
                 aria-label={translate('telemedicine.autoPlaySpeech', 'Auto-play AI speech')}
+                disabled={isListening || isLoading || isAnalyzingImage || isProcessingDocument}
               />
               <Label htmlFor="autoplay-speech" className="text-sm sr-only">{translate('telemedicine.autoPlaySpeech', 'Auto-play AI speech')}</Label>
               {autoPlayBotSpeech ? <Volume2 className="h-5 w-5 text-primary" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}
@@ -358,8 +470,12 @@ export function AiChatAssistantClient() {
                         : "bg-muted"
                     }`}
                   >
-                    {msg.text}
-                    {msg.isImageQueryResponse && selectedImagePreview && (
+                    {msg.isDocumentAnalysisResponse ? (
+                        <pre className="whitespace-pre-wrap font-sans">{msg.text}</pre>
+                     ) : (
+                        msg.text
+                     )}
+                    {msg.isImageQueryResponse && (
                         <div className="mt-2 border-t pt-2">
                             <p className="text-xs text-muted-foreground italic">{translate('aiChatAssistant.imageQueryResponseContext', 'Response related to the uploaded image.')}</p>
                         </div>
@@ -373,7 +489,7 @@ export function AiChatAssistantClient() {
                   )}
                 </div>
               ))}
-              {(isLoading || isAnalyzingImage) && !messages.some(m => m.sender === 'bot' && m.text.includes('spin')) && ( 
+              {(isLoading || isAnalyzingImage || isProcessingDocument) && !messages.some(m => m.sender === 'bot' && m.text.includes('spin')) && ( 
                 <div className="flex items-end gap-2 justify-start">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="https://placehold.co/40x40.png" alt="Bot Avatar" data-ai-hint="robot face" />
@@ -392,14 +508,14 @@ export function AiChatAssistantClient() {
                 placeholder={isListening ? translate('telemedicine.listening', 'Listening...') : translate('telemedicine.chatPlaceholder', 'Type your message...')}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && !isLoading && !isAnalyzingImage && handleSendMessage()}
-                disabled={isLoading || isAnalyzingImage || (isListening && !input) }
+                onKeyPress={(e) => e.key === 'Enter' && !isLoading && !isAnalyzingImage && !isProcessingDocument && handleSendMessage()}
+                disabled={isLoading || isAnalyzingImage || isProcessingDocument || (isListening && !input) }
               />
-              <Button onClick={handleVoiceInput} size="icon" variant="outline" aria-label={isListening ? translate('telemedicine.stopListening', 'Stop Listening') : translate('telemedicine.useMicButton', 'Use Microphone')} disabled={isLoading || isAnalyzingImage}>
+              <Button onClick={handleVoiceInput} size="icon" variant="outline" aria-label={isListening ? translate('telemedicine.stopListening', 'Stop Listening') : translate('telemedicine.useMicButton', 'Use Microphone')} disabled={isLoading || isAnalyzingImage || isProcessingDocument}>
                 {isListening ? <StopCircle className="h-5 w-5 text-destructive animate-pulse" /> : <Mic className="h-5 w-5" /> }
               </Button>
-              <Button onClick={() => handleSendMessage()} size="icon" aria-label={translate('telemedicine.sendButton', 'Send')} disabled={isLoading || isAnalyzingImage || !input.trim()}>
-                {(isLoading && !isAnalyzingImage) ? <Activity className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+              <Button onClick={() => handleSendMessage()} size="icon" aria-label={translate('telemedicine.sendButton', 'Send')} disabled={isLoading || isAnalyzingImage || isProcessingDocument || !input.trim()}>
+                {(isLoading && !isAnalyzingImage && !isProcessingDocument) ? <Activity className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
               </Button>
             </div>
           </div>
@@ -423,7 +539,7 @@ export function AiChatAssistantClient() {
               onChange={handleImageFileChange}
               ref={imageInputRef}
               className="text-sm"
-              disabled={isAnalyzingImage || isLoading}
+              disabled={isAnalyzingImage || isLoading || isProcessingDocument}
             />
             {selectedImagePreview && (
               <div className="mt-2 border rounded-md p-2 flex flex-col items-center">
@@ -439,26 +555,46 @@ export function AiChatAssistantClient() {
               onChange={(e) => setImageQuery(e.target.value)}
               rows={2}
               className="text-sm"
-              disabled={!selectedImage || isAnalyzingImage || isLoading}
+              disabled={!selectedImage || isAnalyzingImage || isLoading || isProcessingDocument}
             />
-            <Button onClick={handleAnalyzeImage} className="w-full" disabled={!selectedImage || isAnalyzingImage || isLoading}>
+            <Button onClick={handleAnalyzeImage} className="w-full" disabled={!selectedImage || isAnalyzingImage || isLoading || isProcessingDocument}>
               {isAnalyzingImage ? <Activity className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
               {translate('aiChatAssistant.analyzeImageButton', 'Analyze Image')}
             </Button>
           </div>
 
-          <div className="space-y-3 p-3 border rounded-lg bg-background/50 opacity-50 cursor-not-allowed">
-            <h3 className="font-semibold flex items-center gap-2"><FileText className="h-5 w-5 text-muted-foreground" /> {translate('aiChatAssistant.documentAnalysisTitle', 'Document Analysis (Coming Soon)')}</h3>
-             <Alert variant="default">
+          <div className="space-y-3 p-3 border rounded-lg bg-background/50">
+            <h3 className="font-semibold flex items-center gap-2"><FileType className="h-5 w-5 text-purple-600" /> {translate('aiChatAssistant.documentAnalysisTitle', 'Document Text Extraction')}</h3>
+            <Input
+              id="document-upload"
+              type="file"
+              accept="application/pdf" 
+              onChange={handleDocumentFileChange}
+              ref={documentInputRef}
+              className="text-sm"
+              disabled={isProcessingDocument || isLoading || isAnalyzingImage}
+            />
+            {selectedDocument && (
+              <div className="mt-2 border rounded-md p-2 flex flex-col items-center text-center">
+                 <FileText className="h-12 w-12 text-muted-foreground" />
+                 <p className="text-sm font-medium mt-1 truncate max-w-[200px]" title={selectedDocument.name}>{selectedDocument.name}</p>
+                 <p className="text-xs text-muted-foreground">({(selectedDocument.size / 1024).toFixed(1)} KB)</p>
+                <Button variant="link" size="sm" className="text-xs text-destructive mt-1" onClick={() => {setSelectedDocument(null); setSelectedDocumentDataUri(null); if(documentInputRef.current) documentInputRef.current.value = "";}}>
+                  {translate('aiChatAssistant.removeDocumentButton', 'Remove Document')}
+                </Button>
+              </div>
+            )}
+            <Button onClick={handleExtractTextFromDocument} className="w-full" disabled={!selectedDocument || isProcessingDocument || isLoading || isAnalyzingImage}>
+              {isProcessingDocument ? <Activity className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
+              {translate('aiChatAssistant.extractTextButton', 'Extract Text from PDF')}
+            </Button>
+             <Alert variant="default" className="mt-4">
                 <HelpCircle className="h-4 w-4" />
-                <AlertTitle>{translate('aiChatAssistant.comingSoonTitle', 'Feature Coming Soon!')}</AlertTitle>
+                <AlertTitle>{translate('aiChatAssistant.moreDocFeaturesTitle', 'More Document Features Coming Soon!')}</AlertTitle>
                 <AlertDescription>
-                {translate('aiChatAssistant.documentFeaturePlaceholder', 'Functionality to upload and analyze documents (PDFs) will be added here. You\'ll be able to extract text, get summaries, and ask questions about your documents.')}
+                {translate('aiChatAssistant.docSummarizeQueryPlaceholder', 'Features like document summarization and querying specific content within PDFs will be added next.')}
                 </AlertDescription>
             </Alert>
-            <Button className="w-full" disabled={true}>
-              <Paperclip className="mr-2 h-4 w-4" /> {translate('aiChatAssistant.uploadDocumentButton', 'Upload Document (Disabled)')}
-            </Button>
           </div>
         </CardContent>
       </Card>
