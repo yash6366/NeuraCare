@@ -7,12 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, UserCircle, MessageSquare, Activity, Mic, StopCircle } from "lucide-react"; 
+import { Send, UserCircle, MessageSquare, Activity, Mic, StopCircle, Volume2, VolumeX } from "lucide-react"; 
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/language-context";
+import type { LanguageCode } from "@/contexts/language-context";
 import { getAllUsers } from "@/lib/actions/admin.actions"; 
 import type { Doctor as DoctorType, Patient as PatientUserType } from "@/types"; 
 import { getCurrentUser } from "@/lib/auth";
@@ -29,6 +31,7 @@ export function TelemedicineClient() {
   const [doctorChatInput, setDoctorChatInput] = useState("");
   const [isDoctorChatLoading, setIsDoctorChatLoading] = useState(false); 
   const [isDoctorChatListening, setIsDoctorChatListening] = useState(false);
+  const [autoPlayDoctorSpeech, setAutoPlayDoctorSpeech] = useState(true); // TTS state for doctor chat
 
   const { toast } = useToast();
   const { language, translate } = useLanguage();
@@ -88,8 +91,7 @@ export function TelemedicineClient() {
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         let transcribedText = event.results[0][0].transcript;
         setDoctorChatInput(transcribedText);
-        // setIsDoctorChatListening(false); // onend will handle this
-        handleSendDoctorMessage(transcribedText); // Send message after transcription
+        handleSendDoctorMessage(transcribedText); 
       };
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error("Doctor chat speech recognition error", event.error);
@@ -106,9 +108,39 @@ export function TelemedicineClient() {
 
     return () => {
       doctorChatRecognitionRef.current?.abort();
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel(); // Cancel TTS on unmount
+      }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, toast, translate]); // Removed handleSendDoctorMessage from deps
+  }, [language, toast, translate]); 
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+        const loadVoices = () => window.speechSynthesis.getVoices();
+        loadVoices(); // Initial load
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+    }
+  }, []);
+  
+  const playDoctorTextAsSpeech = (text: string, lang: LanguageCode) => {
+    if (!autoPlayDoctorSpeech || typeof window === 'undefined' || !window.speechSynthesis || !text) return;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    let targetVoice = window.speechSynthesis.getVoices().find(voice => voice.lang === lang);
+    if (!targetVoice) {
+      targetVoice = window.speechSynthesis.getVoices().find(voice => voice.lang.startsWith(lang.split('-')[0]));
+    }
+    if (targetVoice) {
+      utterance.voice = targetVoice;
+    } else {
+      utterance.lang = lang; 
+    }
+    window.speechSynthesis.cancel(); 
+    window.speechSynthesis.speak(utterance);
+  };
 
 
   const handleSendDoctorMessage = async (messageContent?: string) => {
@@ -116,7 +148,7 @@ export function TelemedicineClient() {
     if (!currentMessage.trim() || !selectedDoctor || !currentUser) return;
     
     setIsDoctorChatLoading(true);
-    setDoctorChatInput(""); // Clear input immediately
+    setDoctorChatInput(""); 
 
     const newUserMessage: Message = {
       id: String(Date.now()),
@@ -126,7 +158,6 @@ export function TelemedicineClient() {
     };
     setDoctorChatMessages(prev => [...prev, newUserMessage]);
     
-
     setTimeout(() => {
       const replyText = translate(
         'telemedicine.simulatedDoctorReply', 
@@ -143,6 +174,9 @@ export function TelemedicineClient() {
         timestamp: new Date(),
       };
       setDoctorChatMessages(prev => [...prev, doctorResponse]);
+      if (autoPlayDoctorSpeech) {
+        playDoctorTextAsSpeech(doctorResponse.text, language);
+      }
       setIsDoctorChatLoading(false);
     }, 1500);
   };
@@ -151,6 +185,9 @@ export function TelemedicineClient() {
     const doctor = availableDoctors.find(d => d.id === doctorId);
     setSelectedDoctor(doctor || null);
     setDoctorChatMessages([]); 
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel(); // Cancel any ongoing speech
+    }
     if (doctor && currentUser) {
       const greetingText = translate(
         'telemedicine.doctorChatGreeting', 
@@ -163,6 +200,9 @@ export function TelemedicineClient() {
         timestamp: new Date()
       };
       setDoctorChatMessages([greetingMessage]);
+      if (autoPlayDoctorSpeech) {
+        playDoctorTextAsSpeech(greetingMessage.text, language);
+      }
     }
   };
 
@@ -170,7 +210,6 @@ export function TelemedicineClient() {
     if (doctorChatRecognitionRef.current) {
       if (isDoctorChatListening) {
         doctorChatRecognitionRef.current.stop();
-        // setIsDoctorChatListening(false); // onend will handle this
       } else {
         try {
           doctorChatRecognitionRef.current.lang = language;
@@ -249,7 +288,7 @@ export function TelemedicineClient() {
 
             {selectedDoctor && (
               <Card className="mt-4 flex flex-col h-[450px]">
-                <CardHeader className="border-b py-3">
+                <CardHeader className="border-b py-3 flex flex-row justify-between items-center">
                   <CardTitle className="text-lg flex items-center gap-2">
                      <Avatar className="h-8 w-8">
                         <AvatarImage src={`https://placehold.co/40x40.png?text=${selectedDoctor.name.charAt(0)}`} alt={selectedDoctor.name} data-ai-hint="doctor professional" />
@@ -257,6 +296,16 @@ export function TelemedicineClient() {
                       </Avatar>
                     {translate('telemedicine.chattingWith', 'Chatting with Dr. {doctorName}').replace('{doctorName}', selectedDoctor.name)}
                   </CardTitle>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                        id="autoplay-doctor-speech"
+                        checked={autoPlayDoctorSpeech}
+                        onCheckedChange={setAutoPlayDoctorSpeech}
+                        aria-label={translate('telemedicine.autoPlayDoctorSpeechLabel', 'Auto-play doctor speech')}
+                    />
+                    <Label htmlFor="autoplay-doctor-speech" className="text-sm sr-only">{translate('telemedicine.autoPlayDoctorSpeechLabel', 'Auto-play doctor speech')}</Label>
+                    {autoPlayDoctorSpeech ? <Volume2 className="h-5 w-5 text-primary" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}
+                  </div>
                 </CardHeader>
                 <CardContent className="flex-grow flex flex-col p-0">
                   <ScrollArea className="flex-grow p-4 h-72" ref={doctorChatScrollAreaRef}>

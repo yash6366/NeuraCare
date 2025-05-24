@@ -154,7 +154,8 @@ const enUSTranslations: TranslationSet = {
     'telemedicine.speakNow': 'Speak now...',
     'telemedicine.voiceError': 'Voice input error. Please try again or type your message.',
     'telemedicine.voiceNotSupported': 'Voice input not supported by your browser.',
-    'telemedicine.autoPlaySpeech': 'Auto-play AI speech',
+    'telemedicine.autoPlaySpeech': 'Auto-play AI speech', // General key, used in AiChatAssistant
+    'telemedicine.autoPlayDoctorSpeechLabel': 'Auto-play doctor speech',
     'telemedicine.aiAssistantInitialGreeting': "Hello! I'm SmartCare AI Assistant. How can I help you today? You can also ask me to analyze images or documents.",
     'telemedicine.chatWithDoctorTitle': 'Chat with Your Doctor',
     'telemedicine.chatWithDoctorDescription': 'Select a registered doctor to start a chat session.',
@@ -340,7 +341,8 @@ const hiINTranslations: TranslationSet = {
   'telemedicine.speakNow': 'अब बोलें...',
   'telemedicine.voiceError': 'वॉइस इनपुट त्रुटि। कृपया पुनः प्रयास करें या अपना संदेश टाइप करें।',
   'telemedicine.voiceNotSupported': 'आपके ब्राउज़र द्वारा वॉइस इनपुट समर्थित नहीं है।',
-  'telemedicine.autoPlaySpeech': 'एआई भाषण स्वतः चलाएं',
+  'telemedicine.autoPlaySpeech': 'एआई भाषण स्वतः चलाएं', // General key
+  'telemedicine.autoPlayDoctorSpeechLabel': 'डॉक्टर का भाषण स्वतः चलाएं',
   'telemedicine.aiAssistantInitialGreeting': 'नमस्ते! मैं स्मार्टकेयर एआई सहायक हूँ। आज मैं आपकी कैसे मदद कर सकता हूँ? आप मुझसे छवियों या दस्तावेज़ों का विश्लेषण करने के लिए भी कह सकते हैं।',
   'telemedicine.chatWithDoctorTitle': 'अपने डॉक्टर से चैट करें',
   'telemedicine.chatWithDoctorDescription': 'चैट सत्र शुरू करने के लिए एक पंजीकृत डॉक्टर का चयन करें।',
@@ -411,6 +413,7 @@ const knINTranslations: TranslationSet = {
   'telemedicine.listening': 'ಕೇಳುತ್ತಿದೆ...',
   'telemedicine.stopListening': 'ಕೇಳುವುದನ್ನು ನಿಲ್ಲಿಸಿ',
   'telemedicine.speakNow': 'ಈಗ ಮಾತನಾಡಿ...',
+  'telemedicine.autoPlayDoctorSpeechLabel': 'ಡಾಕ್ಟರ್ ಭಾಷಣವನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಪ್ಲೇ ಮಾಡಿ',
   'telemedicine.aiAssistantInitialGreeting': "ನಮಸ್ಕಾರ! ನಾನು ಸ್ಮಾರ್ಟ್‌ಕೇರ್ AI ಸಹಾಯಕ. ಇಂದು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ? ನೀವು ಚಿತ್ರಗಳನ್ನು ಅಥವಾ ದಾಖಲೆಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಲು ಸಹ ನನ್ನನ್ನು ಕೇಳಬಹುದು.",
   'telemedicine.chatWithDoctorTitle': 'ನಿಮ್ಮ ವೈದ್ಯರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ', 
   'telemedicine.chatWithDoctorDescription': 'ಚಾಟ್ ಅಧಿವೇಶನವನ್ನು ಪ್ರಾರಂಭಿಸಲು ನೋಂದಾಯಿತ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ.', 
@@ -472,6 +475,7 @@ const teINTranslations: TranslationSet = {
   'telemedicine.listening': 'వినడం...',
   'telemedicine.stopListening': 'వినడం ఆపండి',
   'telemedicine.speakNow': 'ఇప్పుడు మాట్లాడండి...',
+  'telemedicine.autoPlayDoctorSpeechLabel': 'డాక్టర్ ప్రసంగాన్ని స్వయంచాలకంగా ప్లే చేయండి',
   'telemedicine.aiAssistantInitialGreeting': "నమస్కారం! నేను స్మార్ట్‌కేర్ AI అసిస్టెంట్‌ని. ఈ రోజు నేను మీకు ఎలా సహాయపడగలను? మీరు చిత్రాలను లేదా పత్రాలను విశ్లేషించమని కూడా నన్ను అడగవచ్చు.",
   'telemedicine.chatWithDoctorTitle': 'మీ డాక్టర్‌తో చాట్ చేయండి', 
   'telemedicine.chatWithDoctorDescription': 'చాట్ సెషన్‌ను ప్రారంభించడానికి రిజిస్టర్డ్ డాక్టర్‌ను ఎంచుకోండి.', 
@@ -533,6 +537,7 @@ const taINTranslations: TranslationSet = {
   'telemedicine.listening': 'கேட்கிறது...',
   'telemedicine.stopListening': 'கேட்பதை நிறுத்து',
   'telemedicine.speakNow': 'இப்போது பேசுங்கள்...',
+  'telemedicine.autoPlayDoctorSpeechLabel': 'மருத்துவர் பேச்சை தானாக இயக்கவும்',
   'telemedicine.aiAssistantInitialGreeting': "வணக்கம்! நான் ஸ்மார்ட்கேர் AI உதவியாளர். இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்? படங்களையோ அல்லது ஆவணங்களையோ பகுப்பாய்வு செய்ய நீங்கள் என்னிடம் கேட்கலாம்.",
   'telemedicine.chatWithDoctorTitle': 'உங்கள் மருத்துவருடன் அரட்டையடிக்கவும்', 
   'telemedicine.chatWithDoctorDescription': 'அரட்டை அமர்வைத் தொடங்க பதிவுசெய்யப்பட்ட மருத்துவரைத் தேர்ந்தெடுக்கவும்.', 
@@ -594,6 +599,7 @@ const bnINTranslations: TranslationSet = {
   'telemedicine.listening': 'শুনছে...',
   'telemedicine.stopListening': 'শোনা বন্ধ করুন',
   'telemedicine.speakNow': 'এখন কথা বলুন...',
+  'telemedicine.autoPlayDoctorSpeechLabel': 'ডাক্তারের বক্তৃতা স্বয়ংক্রিয়ভাবে চালান',
   'telemedicine.aiAssistantInitialGreeting': "নমস্কার! আমি স্মার্টকেয়ার এআই অ্যাসিস্ট্যান্ট। আজ আমি আপনাকে কিভাবে সাহায্য করতে পারি? আপনি ছবি বা নথি বিশ্লেষণ করতেও আমাকে বলতে পারেন।",
   'telemedicine.chatWithDoctorTitle': 'আপনার ডাক্তারের সাথে চ্যাট করুন', 
   'telemedicine.chatWithDoctorDescription': 'চ্যাট সেশন শুরু করতে একজন নিবন্ধিত ডাক্তার নির্বাচন করুন।', 
@@ -655,6 +661,7 @@ const mrINTranslations: TranslationSet = {
   'telemedicine.listening': 'ऐकत आहे...',
   'telemedicine.stopListening': 'ऐकणे थांबवा',
   'telemedicine.speakNow': 'आता बोला...',
+  'telemedicine.autoPlayDoctorSpeechLabel': 'डॉक्टरचे भाषण स्वयं-प्ले करा',
   'telemedicine.aiAssistantInitialGreeting': "नमस्कार! मी स्मार्टकेअर AI सहाय्यक आहे. आज मी तुमची कशी मदत करू शकेन? तुम्ही मला प्रतिमा किंवा कागदपत्रांचे विश्लेषण करण्यासही सांगू शकता.",
   'telemedicine.chatWithDoctorTitle': 'तुमच्या डॉक्टरांशी चॅट करा', 
   'telemedicine.chatWithDoctorDescription': 'चॅट सत्र सुरू करण्यासाठी नोंदणीकृत डॉक्टर निवडा.', 
@@ -698,7 +705,7 @@ const mrINTranslations: TranslationSet = {
   'aiChatAssistant.comingSoonTitle': 'वैशिष्ट्य लवकरच येत आहे!',
   'aiChatAssistant.documentFeaturePlaceholder': 'कागदपत्रे (PDFs) अपलोड करण्याची आणि त्यांचे विश्लेषण करण्याची कार्यक्षमता येथे जोडली जाईल. तुम्ही मजकूर काढू शकाल, सारांश मिळवू शकाल आणि तुमच्या कागदपत्रांबद्दल प्रश्न विचारू शकाल.',
   'aiChatAssistant.uploadDocumentButton': 'कागदपत्र अपलोड करा (अक्षम)',
-  'sidebar.aiChatAssistant': 'एआय चॅट सहाय्यક',
+  'sidebar.aiChatAssistant': 'एआय चॅट सहाय्यक',
   'sidebar.telemedicine': 'डॉक्टर चॅट',
 };
 
@@ -716,6 +723,7 @@ const guINTranslations: TranslationSet = {
   'telemedicine.listening': 'સાંભળી રહ્યું છે...',
   'telemedicine.stopListening': 'સાંભળવાનું બંધ કરો',
   'telemedicine.speakNow': 'હવે બોલો...',
+  'telemedicine.autoPlayDoctorSpeechLabel': 'ડૉક્ટરનું ભાષણ સ્વતઃ-પ્લે કરો',
   'telemedicine.aiAssistantInitialGreeting': "નમસ્તે! હું સ્માર્ટકેર AI સહાયક છું. આજે હું તમારી કેવી રીતે મદદ કરી શકું? તમે છબીઓ અથવા દસ્તાવેજોનું વિશ્લેષણ કરવા માટે પણ મને કહી શકો છો.",
   'telemedicine.chatWithDoctorTitle': 'તમારા ડોક્ટર સાથે ચેટ કરો', 
   'telemedicine.chatWithDoctorDescription': 'ચેટ સત્ર શરૂ કરવા માટે નોંધાયેલા ડોક્ટર પસંદ કરો.', 
@@ -777,6 +785,7 @@ const urINTranslations: TranslationSet = {
   'telemedicine.listening': 'سن رہا ہے۔..',
   'telemedicine.stopListening': 'سننا بند کرو',
   'telemedicine.speakNow': 'اب بولیں...',
+  'telemedicine.autoPlayDoctorSpeechLabel': 'ڈاکٹر کی تقریر خود بخود چلائیں',
   'telemedicine.aiAssistantInitialGreeting': "ہیلو! میں اسمارٹ کیئر AI اسسٹنٹ ہوں۔ آج میں آپ کی کیسے مدد کر سکتا ہوں؟ آپ مجھ سے تصاویر یا دستاویزات کا تجزیہ کرنے کے لیے بھی کہہ سکتے ہیں۔",
   'telemedicine.chatWithDoctorTitle': 'اپنے ڈاکٹر سے بات کریں', 
   'telemedicine.chatWithDoctorDescription': 'چیٹ سیشن شروع کرنے کے لیے ایک رجسٹرڈ ڈاکٹر منتخب کریں۔', 
@@ -839,3 +848,4 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     
 
     
+
