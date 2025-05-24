@@ -41,7 +41,7 @@ export async function voiceSymptomChecker(input: VoiceSymptomCheckerInput): Prom
 
 const prompt = ai.definePrompt({
   name: 'voiceSymptomCheckerPrompt',
-  model: 'googleai/gemini-1.5-flash-latest', // Explicitly use gemini-1.5-flash
+  model: 'googleai/gemini-1.5-flash-latest', // Reverted to Gemini as default
   input: {schema: VoiceSymptomCheckerInputSchema},
   output: {schema: VoiceSymptomCheckerOutputSchema},
   prompt: (input) => `You are an AI-powered symptom checker. Your goal is to analyze the described symptoms and provide potential insights, including possible conditions and comprehensive, actionable suggestions for management.
@@ -51,7 +51,7 @@ The patient describes their symptoms as: "{{{symptoms}}}"
 Carefully consider all details in the provided symptoms, such as severity, duration, and co-occurring symptoms, when formulating your analysis.
 The patient's preferred language for response is: {{#if language}}{{{language}}}{{else}}English{{/if}}.
 
-For very common or general symptoms (e.g., 'hair fall', 'mild fatigue', 'occasional headache'), if no specific serious medical condition is strongly indicated, please still attempt to provide general information regarding potential common causes, relevant lifestyle factors, and general advice on when to see a doctor. This information can be part of the 'explanation' for a generally-named condition like 'General Symptom Inquiry for [symptom]' or 'Symptom Analysis: [symptom]'. Aim to include at least one entry in the 'analysis' array if possible, even for such general inquiries.
+For very common or general symptoms (e.g., 'hair fall', 'mild fatigue', 'occasional headache'), if no specific serious medical condition is strongly indicated, please still attempt to provide general information regarding potential common causes, relevant lifestyle factors, and general advice on when to see a doctor. This information can be part of the 'explanation' for a generally-named condition like 'General Symptom Inquiry for [symptom]' or 'Symptom Analysis: [symptom]'. Aim to include at least one entry in the 'analysis' array if possible, even for such general inquiries. Even if confidence is low for any identified condition, please attempt to include it in the 'analysis' array with a clear explanation.
 
 Based on these symptoms, please provide the following:
 1.  An array named 'analysis' where each element represents a possible medical condition. Each element should be an object with the following fields:
@@ -61,7 +61,6 @@ Based on these symptoms, please provide the following:
     *   'allopathicSuggestions': An array of 2-3 distinct and actionable allopathic (modern medicine) suggestions or advice. Do NOT prescribe specific medications or dosages. Focus on general approaches, types of treatments, or when to see a doctor. If specific suggestions are not readily available, provide general advice for this category or an empty array if nothing is relevant.
     *   'ayurvedicSuggestions': An array of 2-3 distinct and actionable Ayurvedic remedies or lifestyle advice. These are general suggestions, not prescriptions. If specific suggestions are not readily available, provide general advice for this category or an empty array if nothing is relevant.
     *   'homeRemedies': An array of 2-3 distinct and actionable common home remedies or self-care tips. These are general suggestions, not medical advice. If specific suggestions are not readily available, provide general advice for this category or an empty array if nothing is relevant.
-    Even if confidence is low for any identified condition, please attempt to include it in the 'analysis' array.
 2.  A 'disclaimer' string: This should be a clear statement emphasizing that this information is not a medical diagnosis, not a substitute for professional medical advice, and that the user should consult a qualified healthcare professional for any health concerns or before making any decisions related to their health. This disclaimer is mandatory.
 
 When providing suggestions (allopathic, Ayurvedic, home remedies), ensure they are general, actionable, and not prescriptive. For example, instead of "Take 500mg Paracetamol", suggest "Over-the-counter pain relievers may help with fever or pain. Consider consulting a pharmacist for appropriate options."
@@ -72,7 +71,7 @@ Structure your entire response as a single JSON object adhering to the defined o
 All text in your response, including condition names, explanations, suggestions, and the disclaimer, MUST be in the specified language: ${input.language || 'English'}.
 `,
   config: {
-    temperature: 0.5, // Adjusted temperature
+    temperature: 0.5, // Adjusted temperature for Gemini
   },
 });
 
@@ -123,4 +122,3 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     return output;
   }
 );
-
