@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A conversational AI flow for the Telemedicine chat assistant.
@@ -16,14 +17,14 @@ const ChatMessageSchema = z.object({
   parts: z.array(z.object({ text: z.string() })),
 });
 
-const TelemedicineChatInputSchema = z.object({
+export const TelemedicineChatInputSchema = z.object({
   userMessage: z.string().describe('The latest message from the user.'),
   chatHistory: z.array(ChatMessageSchema).optional().describe('The history of the conversation so far.'),
   language: z.string().optional().default('English').describe('The language for the conversation.'),
 });
 export type TelemedicineChatInput = z.infer<typeof TelemedicineChatInputSchema>;
 
-const TelemedicineChatOutputSchema = z.object({
+export const TelemedicineChatOutputSchema = z.object({
   botResponse: z.string().describe('The AI assistant\'s response to the user.'),
 });
 export type TelemedicineChatOutput = z.infer<typeof TelemedicineChatOutputSchema>;
@@ -46,9 +47,9 @@ Do NOT provide medical diagnoses or treatment plans.
 You MUST understand and respond fluently in the following language: ${input.language || 'English'}.
 Adapt your vocabulary and sentence structure to be easily understandable for a general audience in the specified language.
 `,
-  prompt: (input) => input.userMessage, 
+  prompt: (input) => input.userMessage,
   config: {
-    // temperature: 0.7, // A moderate temperature for helpful, factual, yet conversational responses.
+    temperature: 0.75,
   },
 });
 
@@ -59,16 +60,28 @@ const telemedicineChatFlow = ai.defineFlow(
     outputSchema: TelemedicineChatOutputSchema,
   },
   async (input) => {
-    const llmResponse = await telemedicineChatPrompt(input);
-    const responseText = llmResponse.text;
-    
-    if (!responseText) {
-      const defaultErrorMessage = input.language === 'hi-IN' ? 
-        "मुझे क्षमा करें, मैं इसे संसाधित नहीं कर सका। क्या आप इसे फिर से कह सकते हैं?" :
-        "I'm sorry, I couldn't process that. Could you try rephrasing?";
+    console.log('[telemedicineChatFlow] Received input:', JSON.stringify(input, null, 2));
+    try {
+      const llmResponse = await telemedicineChatPrompt(input);
+      const responseText = llmResponse.text;
+      
+      if (!responseText) {
+        console.warn('[telemedicineChatFlow] LLM response text was empty. Input:', JSON.stringify(input, null, 2));
+        const defaultErrorMessage = input.language === 'hi-IN' ?
+          "मुझे क्षमा करें, मैं इसे संसाधित नहीं कर सका। क्या आप इसे फिर से कह सकते हैं?" :
+          "I'm sorry, I couldn't process that. Could you try rephrasing?";
+        return { botResponse: defaultErrorMessage };
+      }
+      console.log('[telemedicineChatFlow] LLM response success. Response text length:', responseText.length);
+      return { botResponse: responseText };
+    } catch (error) {
+      console.error('[telemedicineChatFlow] Error during execution:', error);
+      const defaultErrorMessage = input.language === 'hi-IN' ?
+        "मुझे क्षमा करें, एक तकनीकी समस्या हुई है।" :
+        "I'm sorry, a technical error occurred.";
       return { botResponse: defaultErrorMessage };
     }
-    return { botResponse: responseText };
   }
 );
 
+    
