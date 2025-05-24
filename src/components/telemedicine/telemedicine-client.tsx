@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, UserCircle, MessageSquare, Activity } from "lucide-react"; 
+import { Send, UserCircle, MessageSquare, Activity, Mic } from "lucide-react"; 
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,11 +28,13 @@ export function TelemedicineClient() {
   const [doctorChatMessages, setDoctorChatMessages] = useState<Message[]>([]);
   const [doctorChatInput, setDoctorChatInput] = useState("");
   const [isDoctorChatLoading, setIsDoctorChatLoading] = useState(false); 
+  const [isDoctorChatListening, setIsDoctorChatListening] = useState(false);
 
   const { toast } = useToast();
-  const { translate } = useLanguage();
+  const { language, translate } = useLanguage();
   const [currentUser, setCurrentUser] = useState<PatientUserType | null>(null);
   const doctorChatScrollAreaRef = useRef<HTMLDivElement>(null);
+  const doctorChatRecognitionRef = useRef<SpeechRecognition | null>(null);
 
   const [availableDoctors, setAvailableDoctors] = useState<DoctorType[]>([]);
   const [selectedDoctor, setSelectedDoctor] = useState<DoctorType | null>(null);
@@ -42,10 +44,6 @@ export function TelemedicineClient() {
     const user = getCurrentUser();
     if (user?.role === 'patient') {
       setCurrentUser(user as PatientUserType);
-    } else {
-      // Handle cases where user is not a patient or not logged in,
-      // potentially redirecting or showing an error message.
-      // For now, this component might not be fully functional for non-patients.
     }
     
     const fetchDoctors = async () => {
@@ -78,6 +76,39 @@ export function TelemedicineClient() {
         }
     }
   }, [doctorChatMessages]);
+
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
+      recognitionInstance.lang = language;
+
+      recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
+        let transcribedText = event.results[0][0].transcript;
+        setDoctorChatInput(transcribedText);
+        setIsDoctorChatListening(false);
+      };
+      recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
+        console.error("Doctor chat speech recognition error", event.error);
+        toast({ title: translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), description: event.error as string, variant: "destructive" });
+        setIsDoctorChatListening(false);
+      };
+      recognitionInstance.onend = () => {
+        setIsDoctorChatListening(false);
+      };
+      doctorChatRecognitionRef.current = recognitionInstance;
+    } else {
+      console.warn("SpeechRecognition API not supported for doctor chat.");
+    }
+
+    return () => {
+      doctorChatRecognitionRef.current?.abort();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language, toast, translate]);
+
 
   const handleSendDoctorMessage = async () => {
     if (!doctorChatInput.trim() || !selectedDoctor || !currentUser) return;
@@ -130,6 +161,24 @@ export function TelemedicineClient() {
       setDoctorChatMessages([greetingMessage]);
     }
   };
+
+  const handleDoctorChatVoiceInput = () => {
+    if (doctorChatRecognitionRef.current) {
+      try {
+        doctorChatRecognitionRef.current.lang = language;
+        doctorChatRecognitionRef.current.start();
+        setIsDoctorChatListening(true);
+        toast({ title: translate('telemedicine.speakNow', 'Speak now...') });
+      } catch (e) {
+        console.error("Error starting doctor chat speech recognition:", e);
+        toast({ title: translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), description: (e as Error).message || 'Could not start voice input.', variant: "destructive" });
+        setIsDoctorChatListening(false);
+      }
+    } else {
+      toast({ title: translate('telemedicine.voiceNotSupported', 'Voice input not supported by your browser.'), variant: "destructive" });
+    }
+  };
+
 
   if (!currentUser) {
      return (
@@ -249,13 +298,16 @@ export function TelemedicineClient() {
                   <div className="p-4 border-t bg-background/80">
                     <div className="flex gap-2">
                       <Input
-                        placeholder={translate('telemedicine.typeDoctorMessagePlaceholder', "Type your message to the doctor...")}
+                        placeholder={isDoctorChatListening ? translate('telemedicine.listeningDoctorChat', 'Listening for doctor chat...') : translate('telemedicine.typeDoctorMessagePlaceholder', "Type your message to the doctor...")}
                         value={doctorChatInput}
                         onChange={(e) => setDoctorChatInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && !isDoctorChatLoading && handleSendDoctorMessage()}
-                        disabled={isDoctorChatLoading}
+                        onKeyPress={(e) => e.key === 'Enter' && !isDoctorChatLoading && !isDoctorChatListening && handleSendDoctorMessage()}
+                        disabled={isDoctorChatLoading || isDoctorChatListening}
                       />
-                      <Button onClick={handleSendDoctorMessage} size="icon" aria-label={translate('telemedicine.sendButton')} disabled={isDoctorChatLoading || !doctorChatInput.trim()}>
+                       <Button onClick={handleDoctorChatVoiceInput} size="icon" variant="outline" aria-label={translate('telemedicine.useMicButtonDoctorChat', 'Use Microphone for Doctor Chat')} disabled={isDoctorChatLoading || isDoctorChatListening}>
+                        <Mic className={`h-5 w-5 ${isDoctorChatListening ? 'text-destructive animate-pulse' : ''}`} />
+                      </Button>
+                      <Button onClick={handleSendDoctorMessage} size="icon" aria-label={translate('telemedicine.sendButton')} disabled={isDoctorChatLoading || isDoctorChatListening || !doctorChatInput.trim()}>
                         {isDoctorChatLoading ? <Activity className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                       </Button>
                     </div>
@@ -272,3 +324,5 @@ export function TelemedicineClient() {
     </div>
   );
 }
+
+    
