@@ -100,28 +100,21 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.aiAssistantTitle': 'AI Chat Assistant',
     'telemedicine.aiAssistantDescription': 'Get quick answers to your health queries.',
     'telemedicine.aiAssistantInitialGreeting': "Hello! I'm SmartCare AI Assistant. How can I help you today?",
-    'telemedicine.verbalConsultationTitle': 'Verbal Consultation',
-    'telemedicine.verbalConsultationDescription': 'Connect with registered doctors for a voice call based on your needs.',
-    'telemedicine.readyToConnect': 'Ready to connect with a registered doctor?',
+    'telemedicine.chatWithDoctorTitle': 'Chat with Your Doctor',
+    'telemedicine.chatWithDoctorDescription': 'Select a registered doctor to start a chat session.',
     'telemedicine.selectDoctorLabel': 'Select Doctor',
-    'telemedicine.selectDoctorPlaceholder': 'Select a doctor',
+    'telemedicine.selectDoctorPlaceholder': 'Select a doctor to chat with',
     'telemedicine.errorFetchingDoctors': 'Error fetching doctors. Please try again later.',
-    'telemedicine.noDoctorsAvailable': 'No doctors currently available for consultation.',
-    'telemedicine.startAudioCall': 'Start Audio Call',
-    'telemedicine.startVideoCall': 'Start Video Call',
-    'telemedicine.inConsultationWith': 'In consultation with',
-    'telemedicine.endCallButton': 'End Call',
-    'telemedicine.simulatedConsultationNotice': 'You are currently in a simulated consultation.',
-    'telemedicine.selectDoctorFirst': 'Please select a doctor first.',
-    'telemedicine.audioConsultationStarted': 'Audio Consultation Initiated',
-    'telemedicine.videoConsultationStarted': 'Video Consultation Initiated',
-    'telemedicine.connectingWith': 'Connecting with',
-    'telemedicine.consultationEndedTitle': 'Consultation Ended',
-    'telemedicine.consultationEndedDescription': 'Your simulated consultation has ended.',
+    'telemedicine.noDoctorsAvailable': 'No doctors currently available for chat.',
+    'telemedicine.selectDoctorToChat': 'Please select a doctor from the list to start chatting.',
+    'telemedicine.typeDoctorMessagePlaceholder': 'Type your message to the doctor...',
+    'telemedicine.simulatedDoctorReply': 'Hello {patientName}, this is a simulated reply from Dr. {doctorName}. I have received your message: "{messageText}"',
+    'telemedicine.doctorChatGreeting': 'You are now chatting with Dr. {doctorName}. How can I help you?',
     'telemedicine.aiChatError': "Sorry, I couldn't connect to the AI assistant right now. Please try again later.",
     'telemedicine.aiChatErrorTitle': "AI Chat Error",
     'telemedicine.dwaniSTTInfo': "Using browser STT. (Dwani AI STT would be used here for regional languages)",
     'telemedicine.dwaniTranslateInfo': "Input (if regional) would be translated to English here by Dwani AI for core processing.",
+    'telemedicine.useMicButton': 'Use Microphone',
     
     'medicalRecords.title': 'Medical Records',
     'medicalRecords.description': 'Upload and manage your medical reports and documents securely.',
@@ -226,28 +219,21 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.aiAssistantTitle': 'एआई चैट सहायक',
     'telemedicine.aiAssistantDescription': 'अपने स्वास्थ्य प्रश्नों के त्वरित उत्तर प्राप्त करें।',
     'telemedicine.aiAssistantInitialGreeting': 'नमस्ते! मैं स्मार्टकेयर एआई सहायक हूँ। आज मैं आपकी कैसे मदद कर सकता हूँ?',
-    'telemedicine.verbalConsultationTitle': 'मौखिक परामर्श',
-    'telemedicine.verbalConsultationDescription': 'अपनी आवश्यकताओं के आधार पर पंजीकृत डॉक्टरों के साथ वॉयस कॉल के लिए जुड़ें।',
-    'telemedicine.readyToConnect': 'पंजीकृत डॉक्टर से जुड़ने के लिए तैयार हैं?',
+    'telemedicine.chatWithDoctorTitle': 'अपने डॉक्टर से चैट करें',
+    'telemedicine.chatWithDoctorDescription': 'चैट सत्र शुरू करने के लिए एक पंजीकृत डॉक्टर का चयन करें।',
     'telemedicine.selectDoctorLabel': 'डॉक्टर चुनें',
-    'telemedicine.selectDoctorPlaceholder': 'एक डॉक्टर चुनें',
+    'telemedicine.selectDoctorPlaceholder': 'चैट करने के लिए एक डॉक्टर चुनें',
     'telemedicine.errorFetchingDoctors': 'डॉक्टरों को लाने में त्रुटि। कृपया बाद में पुनः प्रयास करें।',
-    'telemedicine.noDoctorsAvailable': 'परामर्श के लिए वर्तमान में कोई डॉक्टर उपलब्ध नहीं है।',
-    'telemedicine.startAudioCall': 'ऑडियो कॉल शुरू करें',
-    'telemedicine.startVideoCall': 'वीडियो कॉल शुरू करें',
-    'telemedicine.inConsultationWith': 'के साथ परामर्श में',
-    'telemedicine.endCallButton': 'कॉल समाप्त करें',
-    'telemedicine.simulatedConsultationNotice': 'आप वर्तमान में एक नकली परामर्श में हैं।',
-    'telemedicine.selectDoctorFirst': 'कृपया पहले एक डॉक्टर चुनें।',
-    'telemedicine.audioConsultationStarted': 'ऑडियो परामर्श शुरू किया गया',
-    'telemedicine.videoConsultationStarted': 'वीडियो परामर्श शुरू किया गया',
-    'telemedicine.connectingWith': 'के साथ जुड़ रहा है',
-    'telemedicine.consultationEndedTitle': 'परामर्श समाप्त',
-    'telemedicine.consultationEndedDescription': 'आपका नकली परामर्श समाप्त हो गया है।',
+    'telemedicine.noDoctorsAvailable': 'चैट के लिए वर्तमान में कोई डॉक्टर उपलब्ध नहीं है।',
+    'telemedicine.selectDoctorToChat': 'कृपया चैट शुरू करने के लिए सूची से एक डॉक्टर चुनें।',
+    'telemedicine.typeDoctorMessagePlaceholder': 'डॉक्टर को अपना संदेश लिखें...',
+    'telemedicine.simulatedDoctorReply': 'नमस्ते {patientName}, यह डॉ. {doctorName} का एक नकली उत्तर है। मुझे आपका संदेश मिला है: "{messageText}"',
+    'telemedicine.doctorChatGreeting': 'आप अब डॉ. {doctorName} के साथ चैट कर रहे हैं। मैं आपकी कैसे मदद कर सकता हूँ?',
     'telemedicine.aiChatError': "क्षमा करें, मैं अभी AI सहायक से नहीं जुड़ सका। कृपया बाद में पुन: प्रयास करें।",
     'telemedicine.aiChatErrorTitle': "AI चैट त्रुटि",
     'telemedicine.dwaniSTTInfo': "ब्राउज़र STT का उपयोग किया जा रहा है। (क्षेत्रीय भाषाओं के लिए यहां द्वानी एआई STT का उपयोग किया जाएगा)",
     'telemedicine.dwaniTranslateInfo': "इनपुट (यदि क्षेत्रीय हो) को कोर प्रोसेसिंग के लिए द्वानी एआई द्वारा यहां अंग्रेजी में अनुवादित किया जाएगा।",
+    'telemedicine.useMicButton': 'माइक्रोफ़ोन का प्रयोग करें',
 
     'medicalRecords.title': 'चिकित्सा रिकॉर्ड',
     'medicalRecords.description': 'अपनी मेडिकल रिपोर्ट और दस्तावेज़ सुरक्षित रूप से अपलोड और प्रबंधित करें।',
@@ -273,7 +259,7 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'header.logout': 'लॉग आउट करें',
     'header.userAvatarFallback': 'U', 
   },
-  'kn-IN': {
+  'kn-IN': { // Kannada - Example placeholders, replace with actual translations
     'app.name': 'ಸ್ಮಾರ್ಟ್‌ಕೇರ್ ಹಬ್',
     'login.title': 'ಸ್ಮಾರ್ಟ್‌ಕೇರ್ ಹಬ್ ಲಾಗಿನ್',
     'login.button': 'ಲಾಗಿನ್ ಮಾಡಿ',
@@ -286,24 +272,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'ಕೇಳುತ್ತಿದೆ...',
     'telemedicine.speakNow': 'ಈಗ ಮಾತನಾಡಿ...',
     'telemedicine.aiAssistantInitialGreeting': "ನಮಸ್ಕಾರ! ನಾನು ಸ್ಮಾರ್ಟ್‌ಕೇರ್ AI ಸಹಾಯಕ. ಇಂದು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
-    'telemedicine.verbalConsultationTitle': 'ಮೌಖಿಕ ಸಮಾಲೋಚನೆ',
-    'telemedicine.verbalConsultationDescription': 'ನಿಮ್ಮ ಅಗತ್ಯಗಳಿಗೆ ಅನುಗುಣವಾಗಿ ನೋಂದಾಯಿತ ವೈದ್ಯರೊಂದಿಗೆ ಧ್ವನಿ ಕರೆಗಾಗಿ ಸಂಪರ್ಕಿಸಿ.',
-    'telemedicine.readyToConnect': 'ನೋಂದಾಯಿತ ವೈದ್ಯರೊಂದಿಗೆ ಸಂಪರ್ಕಿಸಲು ಸಿದ್ಧರಿದ್ದೀರಾ?',
-    'telemedicine.selectDoctorPlaceholder': 'ಒಬ್ಬ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ',
-    'telemedicine.noDoctorsAvailable': 'ಸಮಾಲೋಚನೆಗಾಗಿ ಪ್ರಸ್ತುತ ಯಾವುದೇ ವೈದ್ಯರು ಲಭ್ಯವಿಲ್ಲ.',
-    'telemedicine.startAudioCall': 'ಆಡಿಯೋ ಕರೆ ಪ್ರಾರಂಭಿಸಿ',
-    'telemedicine.startVideoCall': 'ವೀಡಿಯೊ ಕರೆ ಪ್ರಾರಂಭಿಸಿ',
-    'telemedicine.inConsultationWith': 'ಜೊತೆ ಸಮಾಲೋಚನೆಯಲ್ಲಿದೆ',
-    'telemedicine.endCallButton': 'ಕರೆ ಕೊನೆಗೊಳಿಸಿ',
-    'telemedicine.simulatedConsultationNotice': 'ನೀವು ಪ್ರಸ್ತುತ ಸಿಮ್ಯುಲೇಟೆಡ್ ಸಮಾಲೋಚನೆಯಲ್ಲಿದ್ದೀರಿ.',
-    'telemedicine.selectDoctorFirst': 'ದಯವಿಟ್ಟು ಮೊದಲು ಒಬ್ಬ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ.',
-    'telemedicine.audioConsultationStarted': 'ಆಡಿಯೋ ಸಮಾಲೋಚನೆ ಪ್ರಾರಂಭವಾಯಿತು',
-    'telemedicine.videoConsultationStarted': 'ವೀಡಿಯೊ ಸಮಾಲೋಚನೆ ಪ್ರಾರಂಭವಾಯಿತು',
-    'telemedicine.connectingWith': 'ಜೊತೆ ಸಂಪರ್ಕಿಸಲಾಗುತ್ತಿದೆ',
-    'telemedicine.consultationEndedTitle': 'ಸಮಾಲೋಚನೆ ಮುಗಿದಿದೆ',
-    'telemedicine.consultationEndedDescription': 'ನಿಮ್ಮ ಸಿಮ್ಯುಲೇಟೆಡ್ ಸಮಾಲೋಚನೆ ಮುಗಿದಿದೆ.',
-    'telemedicine.aiChatError': "ಕ್ಷಮಿಸಿ, ಇದೀಗ AI ಸಹಾಯಕರೊಂದಿಗೆ ಸಂಪರ್ಕಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
-    'telemedicine.aiChatErrorTitle': "AI ಚಾಟ್ ದೋಷ",
+    'telemedicine.chatWithDoctorTitle': 'ನಿಮ್ಮ ವೈದ್ಯರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ', // Placeholder
+    'telemedicine.chatWithDoctorDescription': 'ಚಾಟ್ ಅಧಿವೇಶನವನ್ನು ಪ್ರಾರಂಭಿಸಲು ನೋಂದಾಯಿತ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ.', // Placeholder
+    'telemedicine.selectDoctorLabel': 'ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ', // Placeholder
+    'telemedicine.selectDoctorPlaceholder': 'ಚಾಟ್ ಮಾಡಲು ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ', // Placeholder
+    'telemedicine.typeDoctorMessagePlaceholder': 'ವೈದ್ಯರಿಗೆ ನಿಮ್ಮ ಸಂದೇಶವನ್ನು ಟೈಪ್ ಮಾಡಿ...', // Placeholder
+    'telemedicine.simulatedDoctorReply': 'ಹಲೋ {patientName}, ಇದು ಡಾ. {doctorName} ಅವರಿಂದ ಅನುಕರಿಸಿದ ಪ್ರತ್ಯುತ್ತರ. ನಿಮ್ಮ ಸಂದೇಶವನ್ನು ನಾನು ಸ್ವೀಕರಿಸಿದ್ದೇನೆ: "{messageText}"', // Placeholder
+    'telemedicine.doctorChatGreeting': 'ನೀವು ಈಗ ಡಾ. {doctorName} ಅವರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡುತ್ತಿದ್ದೀರಿ. ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?', // Placeholder
     'symptomChecker.title': 'ಎಐ ರೋಗಲಕ್ಷಣ ಪರೀಕ್ಷಕ',
     'symptomChecker.description': 'ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ವಿವರಿಸಿ ಮತ್ತು AI-ಚಾಲಿತ ಒಳನೋಟಗಳನ್ನು ಪಡೆಯಿರಿ, ಸಂಭಾವ್ಯ ಪರಿಸ್ಥಿತಿಗಳು ಮತ್ತು ಪರಿಹಾರ ಸಲಹೆಗಳನ್ನು ಒಳಗೊಂಡಂತೆ. ಈ ಸಾಧನವು ವೈದ್ಯಕೀಯ ಸಲಹೆಯನ್ನು ನೀಡುವುದಿಲ್ಲ.',
     'symptomChecker.describeSymptomsTitle': "ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳನ್ನು ವಿವರಿಸಿ",
@@ -314,7 +289,7 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.homeRemediesLabel': "ಮನೆಮದ್ದುಗಳು",
     'symptomChecker.disclaimerTitle': "ಪ್ರಮುಖ ಹಕ್ಕುತ್ಯಾಗ",
   },
-  'te-IN': {
+  'te-IN': { // Telugu - Example placeholders
     'app.name': 'స్మార్ట్‌కేర్ హబ్',
     'login.title': 'స్మార్ట్‌కేర్ హబ్ లాగిన్',
     'login.button': 'లాగిన్ చేయండి',
@@ -327,24 +302,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'వినడం...',
     'telemedicine.speakNow': 'ఇప్పుడు మాట్లాడండి...',
     'telemedicine.aiAssistantInitialGreeting': "నమస్కారం! నేను స్మార్ట్‌కేర్ AI అసిస్టెంట్‌ని. ఈ రోజు నేను మీకు ఎలా సహాయపడగలను?",
-    'telemedicine.verbalConsultationTitle': 'మౌఖిక సంప్రదింపులు',
-    'telemedicine.verbalConsultationDescription': 'మీ అవసరాలకు అనుగుణంగా రిజిస్టర్డ్ డాక్టర్లతో వాయిస్ కాల్ కోసం కనెక్ట్ అవ్వండి.',
-    'telemedicine.readyToConnect': 'రిజిస్టర్డ్ డాక్టర్‌తో కనెక్ట్ అవ్వడానికి సిద్ధంగా ఉన్నారా?',
-    'telemedicine.selectDoctorPlaceholder': 'ఒక వైద్యుడిని ఎంచుకోండి',
-    'telemedicine.noDoctorsAvailable': 'సంప్రదింపుల కోసం ప్రస్తుతం వైద్యులు అందుబాటులో లేరు.',
-    'telemedicine.startAudioCall': 'ఆడియో కాల్ ప్రారంభించండి',
-    'telemedicine.startVideoCall': 'వీడియో కాల్ ప్రారంభించండి',
-    'telemedicine.inConsultationWith': 'తో సంప్రదింపులు జరుపుతున్నారు',
-    'telemedicine.endCallButton': 'కాల్ ముగించండి',
-    'telemedicine.simulatedConsultationNotice': 'మీరు ప్రస్తుతం అనుకరణ సంప్రదింపులో ఉన్నారు.',
-    'telemedicine.selectDoctorFirst': 'దయచేసి ముందుగా ఒక వైద్యుడిని ఎంచుకోండి.',
-    'telemedicine.audioConsultationStarted': 'ఆడియో సంప్రదింపులు ప్రారంభించబడ్డాయి',
-    'telemedicine.videoConsultationStarted': 'వీడియో సంప్రదింపులు ప్రారంభించబడ్డాయి',
-    'telemedicine.connectingWith': 'తో కనెక్ట్ అవుతున్నారు',
-    'telemedicine.consultationEndedTitle': 'సంప్రదింపులు ముగిశాయి',
-    'telemedicine.consultationEndedDescription': 'మీ అనుకరణ సంప్రదింపులు ముగిశాయి.',
-    'telemedicine.aiChatError': "క్షమించండి, ప్రస్తుతం AI సహాయకుడితో కనెక్ట్ కాలేకపోయాను. దయచేసి తర్వాత మళ్ళీ ప్రయత్నించండి.",
-    'telemedicine.aiChatErrorTitle': "AI చాట్ దోషం",
+    'telemedicine.chatWithDoctorTitle': 'మీ డాక్టర్‌తో చాట్ చేయండి', // Placeholder
+    'telemedicine.chatWithDoctorDescription': 'చాట్ సెషన్‌ను ప్రారంభించడానికి రిజిస్టర్డ్ డాక్టర్‌ను ఎంచుకోండి.', // Placeholder
+    'telemedicine.selectDoctorLabel': 'డాక్టర్‌ను ఎంచుకోండి', // Placeholder
+    'telemedicine.selectDoctorPlaceholder': 'చాట్ చేయడానికి డాక్టర్‌ను ఎంచుకోండి', // Placeholder
+    'telemedicine.typeDoctorMessagePlaceholder': 'డాక్టర్‌కు మీ సందేశాన్ని టైప్ చేయండి...', // Placeholder
+    'telemedicine.simulatedDoctorReply': 'హలో {patientName}, ఇది డాక్టర్ {doctorName} నుండి అనుకరించబడిన ప్రత్యుత్తరం. మీ సందేశం నాకు అందింది: "{messageText}"', // Placeholder
+    'telemedicine.doctorChatGreeting': 'మీరు ఇప్పుడు డాక్టర్ {doctorName}తో చాట్ చేస్తున్నారు. నేను మీకు ఎలా సహాయపడగలను?', // Placeholder
     'symptomChecker.title': 'AI లక్షణాల తనిఖీ',
     'symptomChecker.description': 'AI-ఆధారిత అంతర్దృష్టులను పొందడానికి మీ లక్షణాలను వివరించండి, సంభావ్య పరిస్థితులు మరియు నివారణ సూచనలతో సహా. ఈ సాధనం వైద్య సలహా అందించదు.',
     'symptomChecker.describeSymptomsTitle': "మీ లక్షణాలను వివరించండి",
@@ -355,7 +319,7 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.homeRemediesLabel': "ఇంటి నివారణలు",
     'symptomChecker.disclaimerTitle': "ముఖ్యమైన నిరాకరణ",
   },
-  'ta-IN': {
+  'ta-IN': { // Tamil - Example placeholders
     'app.name': 'ஸ்மார்ட்கேர் ஹப்',
     'login.title': 'ஸ்மார்ட்கேர் ஹப் உள்நுழைவு',
     'login.button': 'உள்நுழையவும்',
@@ -368,24 +332,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'கேட்கிறது...',
     'telemedicine.speakNow': 'இப்போது பேசுங்கள்...',
     'telemedicine.aiAssistantInitialGreeting': "வணக்கம்! நான் ஸ்மார்ட்கேர் AI உதவியாளர். இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்?",
-    'telemedicine.verbalConsultationTitle': 'வாய்மொழி ஆலோசனை',
-    'telemedicine.verbalConsultationDescription': 'உங்கள் தேவைகளுக்கு ஏற்ப பதிவுசெய்யப்பட்ட மருத்துவர்களுடன் குரல் அழைப்புக்கு இணையுங்கள்.',
-    'telemedicine.readyToConnect': 'பதிவுசெய்யப்பட்ட மருத்துவருடன் இணைய தயாரா?',
-    'telemedicine.selectDoctorPlaceholder': 'ஒரு மருத்துவரைத் தேர்ந்தெடுக்கவும்',
-    'telemedicine.noDoctorsAvailable': 'தற்போது ஆலோசனைக்கு மருத்துவர்கள் யாரும் இல்லை.',
-    'telemedicine.startAudioCall': 'ஆடியோ அழைப்பைத் தொடங்கு',
-    'telemedicine.startVideoCall': 'வீடியோ அழைப்பைத் தொடங்கு',
-    'telemedicine.inConsultationWith': 'உடன் ஆலோசனையில்',
-    'telemedicine.endCallButton': 'அழைப்பை முடி',
-    'telemedicine.simulatedConsultationNotice': 'நீங்கள் தற்போது உருவகப்படுத்தப்பட்ட ஆலோசனையில் உள்ளீர்கள்.',
-    'telemedicine.selectDoctorFirst': 'தயவுசெய்து முதலில் ஒரு மருத்துவரைத் தேர்ந்தெடுக்கவும்.',
-    'telemedicine.audioConsultationStarted': 'ஆடியோ ஆலோசனை தொடங்கப்பட்டது',
-    'telemedicine.videoConsultationStarted': 'வீடியோ ஆலோசனை தொடங்கப்பட்டது',
-    'telemedicine.connectingWith': 'உடன் இணைகிறது',
-    'telemedicine.consultationEndedTitle': 'ஆலோசனை முடிந்தது',
-    'telemedicine.consultationEndedDescription': 'உங்கள் உருவகப்படுத்தப்பட்ட ஆலோசனை முடிந்தது.',
-    'telemedicine.aiChatError': "மன்னிக்கவும், இப்போது AI உதவியாளருடன் இணைய முடியவில்லை. தயவுசெய்து பின்னர் மீண்டும் முயற்சிக்கவும்.",
-    'telemedicine.aiChatErrorTitle': "AI அரட்டை பிழை",
+    'telemedicine.chatWithDoctorTitle': 'உங்கள் மருத்துவருடன் அரட்டையடிக்கவும்', // Placeholder
+    'telemedicine.chatWithDoctorDescription': 'அரட்டை அமர்வைத் தொடங்க பதிவுசெய்யப்பட்ட மருத்துவரைத் தேர்ந்தெடுக்கவும்.', // Placeholder
+    'telemedicine.selectDoctorLabel': 'மருத்துவரைத் தேர்ந்தெடுக்கவும்', // Placeholder
+    'telemedicine.selectDoctorPlaceholder': 'அரட்டையடிக்க மருத்துவரைத் தேர்ந்தெடுக்கவும்', // Placeholder
+    'telemedicine.typeDoctorMessagePlaceholder': 'மருத்துவருக்கு உங்கள் செய்தியைத் தட்டச்சு செய்க...', // Placeholder
+    'telemedicine.simulatedDoctorReply': 'வணக்கம் {patientName}, இது டாக்டர் {doctorName} இடமிருந்து உருவகப்படுத்தப்பட்ட பதில். உங்கள் செய்தியை நான் பெற்றுள்ளேன்: "{messageText}"', // Placeholder
+    'telemedicine.doctorChatGreeting': 'நீங்கள் இப்போது டாக்டர் {doctorName} உடன் அரட்டையடிக்கிறீர்கள். நான் உங்களுக்கு எப்படி உதவ முடியும்?', // Placeholder
     'symptomChecker.title': 'AI அறிகுறி சரிபார்ப்பு',
     'symptomChecker.description': 'AI-இயங்கும் நுண்ணறிவுகளைப் பெற உங்கள் அறிகுறிகளை விவரிக்கவும், சாத்தியமான நிலைமைகள் மற்றும் தீர்வு பரிந்துரைகள் உட்பட. இந்த கருவி மருத்துவ ஆலோசனை வழங்காது.',
     'symptomChecker.describeSymptomsTitle': "உங்கள் அறிகுறிகளை விவரிக்கவும்",
@@ -396,7 +349,7 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.homeRemediesLabel': "வீட்டு வைத்தியம்",
     'symptomChecker.disclaimerTitle': "முக்கியமான மறுப்பு",
   },
-  'bn-IN': {
+  'bn-IN': { // Bengali - Example placeholders
     'app.name': 'স্মার্টকেয়ার হাব',
     'login.title': 'স্মার্টকেয়ার হাব লগইন',
     'login.button': 'লগইন করুন',
@@ -409,24 +362,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'শুনছে...',
     'telemedicine.speakNow': 'এখন কথা বলুন...',
     'telemedicine.aiAssistantInitialGreeting': "নমস্কার! আমি স্মার্টকেয়ার এআই অ্যাসিস্ট্যান্ট। আজ আমি আপনাকে কিভাবে সাহায্য করতে পারি?",
-    'telemedicine.verbalConsultationTitle': 'মৌখিক পরামর্শ',
-    'telemedicine.verbalConsultationDescription': 'আপনার প্রয়োজন অনুযায়ী নিবন্ধিত ডাক্তারদের সাথে ভয়েস কলের জন্য সংযোগ করুন।',
-    'telemedicine.readyToConnect': 'নিবন্ধিত ডাক্তারের সাথে সংযোগ করতে প্রস্তুত?',
-    'telemedicine.selectDoctorPlaceholder': 'একজন ডাক্তার নির্বাচন করুন',
-    'telemedicine.noDoctorsAvailable': 'পরামর্শের জন্য বর্তমানে কোন ডাক্তার উপলব্ধ নেই।',
-    'telemedicine.startAudioCall': 'অডিও কল শুরু করুন',
-    'telemedicine.startVideoCall': 'ভিডিও কল শুরু করুন',
-    'telemedicine.inConsultationWith': 'এর সাথে পরামর্শে',
-    'telemedicine.endCallButton': 'কল শেষ করুন',
-    'telemedicine.simulatedConsultationNotice': 'আপনি বর্তমানে একটি সিমুলেটেড পরামর্শে আছেন।',
-    'telemedicine.selectDoctorFirst': 'অনুগ্রহ করে প্রথমে একজন ডাক্তার নির্বাচন করুন।',
-    'telemedicine.audioConsultationStarted': 'অডিও পরামর্শ শুরু হয়েছে',
-    'telemedicine.videoConsultationStarted': 'ভিডিও পরামর্শ শুরু হয়েছে',
-    'telemedicine.connectingWith': 'এর সাথে সংযোগ করা হচ্ছে',
-    'telemedicine.consultationEndedTitle': 'পরামর্শ শেষ হয়েছে',
-    'telemedicine.consultationEndedDescription': 'আপনার সিমুলেটেড পরামর্শ শেষ হয়েছে।',
-    'telemedicine.aiChatError': "দুঃখিত, এই মুহূর্তে এআই সহকারীর সাথে সংযোগ করতে পারিনি। অনুগ্রহ করে পরে আবার চেষ্টা করুন।",
-    'telemedicine.aiChatErrorTitle': "এআই চ্যাট ত্রুটি",
+    'telemedicine.chatWithDoctorTitle': 'আপনার ডাক্তারের সাথে চ্যাট করুন', // Placeholder
+    'telemedicine.chatWithDoctorDescription': 'চ্যাট সেশন শুরু করতে একজন নিবন্ধিত ডাক্তার নির্বাচন করুন।', // Placeholder
+    'telemedicine.selectDoctorLabel': 'ডাক্তার নির্বাচন করুন', // Placeholder
+    'telemedicine.selectDoctorPlaceholder': 'চ্যাট করার জন্য একজন ডাক্তার নির্বাচন করুন', // Placeholder
+    'telemedicine.typeDoctorMessagePlaceholder': 'ডাক্তারকে আপনার বার্তা টাইপ করুন...', // Placeholder
+    'telemedicine.simulatedDoctorReply': 'হ্যালো {patientName}, এটি ডাঃ {doctorName} এর কাছ থেকে একটি সিমুলেটেড উত্তর। আমি আপনার বার্তা পেয়েছি: "{messageText}"', // Placeholder
+    'telemedicine.doctorChatGreeting': 'আপনি এখন ডাঃ {doctorName} এর সাথে চ্যাট করছেন। আমি আপনাকে কিভাবে সাহায্য করতে পারি?', // Placeholder
     'symptomChecker.title': 'এআই উপসর্গ পরীক্ষক',
     'symptomChecker.description': 'এআই-চালিত অন্তর্দৃষ্টি পেতে আপনার উপসর্গগুলি বর্ণনা করুন, সম্ভাব্য শর্ত এবং প্রতিকারের পরামর্শ সহ। এই সরঞ্জামটি চিকিৎসা পরামর্শ প্রদান করে না।',
     'symptomChecker.describeSymptomsTitle': "আপনার উপসর্গ বর্ণনা করুন",
@@ -437,7 +379,7 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.homeRemediesLabel': " گھریلو علاج",
     'symptomChecker.disclaimerTitle': "গুরুত্বপূর্ণ দাবিত্যাগ",
   },
-  'mr-IN': {
+  'mr-IN': { // Marathi - Example placeholders
     'app.name': 'स्मार्टकेअर हब',
     'login.title': 'स्मार्टकेअर हब लॉग इन',
     'login.button': 'लॉग इन करा',
@@ -450,24 +392,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'ऐकत आहे...',
     'telemedicine.speakNow': 'आता बोला...',
     'telemedicine.aiAssistantInitialGreeting': "नमस्कार! मी स्मार्टकेअर AI सहाय्यक आहे. आज मी तुमची कशी मदत करू शकेन?",
-    'telemedicine.verbalConsultationTitle': 'तोंडी सल्ला',
-    'telemedicine.verbalConsultationDescription': 'तुमच्या गरजेनुसार नोंदणीकृत डॉक्टरांशी व्हॉइस कॉलसाठी कनेक्ट व्हा.',
-    'telemedicine.readyToConnect': 'नोंदणीकृत डॉक्टरशी कनेक्ट करण्यास तयार आहात?',
-    'telemedicine.selectDoctorPlaceholder': 'एक डॉक्टर निवडा',
-    'telemedicine.noDoctorsAvailable': 'सध्या सल्लामसलतसाठी कोणतेही डॉक्टर उपलब्ध नाहीत.',
-    'telemedicine.startAudioCall': 'ऑडिओ कॉल सुरू करा',
-    'telemedicine.startVideoCall': 'व्हिडिओ कॉल सुरू करा',
-    'telemedicine.inConsultationWith': 'सोबत सल्लामसलत करत आहे',
-    'telemedicine.endCallButton': 'कॉल समाप्त करा',
-    'telemedicine.simulatedConsultationNotice': 'तुम्ही सध्या एका सिम्युलेटेड सल्लामसलतमध्ये आहात.',
-    'telemedicine.selectDoctorFirst': 'कृपया प्रथम डॉक्टर निवडा.',
-    'telemedicine.audioConsultationStarted': 'ऑडिओ सल्लामसलत सुरू झाली',
-    'telemedicine.videoConsultationStarted': 'व्हिडिओ सल्लामसलत सुरू झाली',
-    'telemedicine.connectingWith': 'सोबत कनेक्ट होत आहे',
-    'telemedicine.consultationEndedTitle': 'सल्लामसलत संपली',
-    'telemedicine.consultationEndedDescription': 'तुमची सिम्युलेटेड सल्लामसलत संपली आहे.',
-    'telemedicine.aiChatError': "क्षमस्व, आत्ता AI सहाय्यकाशी कनेक्ट होऊ शकलो नाही. कृपया नंतर पुन्हा प्रयत्न करा.",
-    'telemedicine.aiChatErrorTitle': "AI चॅट त्रुटी",
+    'telemedicine.chatWithDoctorTitle': 'तुमच्या डॉक्टरांशी चॅट करा', // Placeholder
+    'telemedicine.chatWithDoctorDescription': 'चॅट सत्र सुरू करण्यासाठी नोंदणीकृत डॉक्टर निवडा.', // Placeholder
+    'telemedicine.selectDoctorLabel': 'डॉक्टर निवडा', // Placeholder
+    'telemedicine.selectDoctorPlaceholder': 'चॅट करण्यासाठी डॉक्टर निवडा', // Placeholder
+    'telemedicine.typeDoctorMessagePlaceholder': 'डॉक्टरांना तुमचा संदेश टाइप करा...', // Placeholder
+    'telemedicine.simulatedDoctorReply': 'हॅलो {patientName}, हे डॉ. {doctorName} यांच्याकडून सिम्युलेटेड उत्तर आहे. मला तुमचा संदेश मिळाला आहे: "{messageText}"', // Placeholder
+    'telemedicine.doctorChatGreeting': 'तुम्ही आता डॉ. {doctorName} यांच्याशी चॅट करत आहात. मी तुमची कशी मदत करू शकेन?', // Placeholder
     'symptomChecker.title': 'एआय लक्षण तपासणी',
     'symptomChecker.description': 'एआय-चालित अंतर्दृष्टी मिळवण्यासाठी तुमची लक्षणे सांगा, संभाव्य परिस्थिती आणि उपाय सूचनांसह. हे साधन वैद्यकीय सल्ला देत नाही.',
     'symptomChecker.describeSymptomsTitle': "तुमची लक्षणे सांगा",
@@ -478,7 +409,7 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.homeRemediesLabel': "घरगुती उपाय",
     'symptomChecker.disclaimerTitle': "महत्वाची अस्वीकृती",
   },
-  'gu-IN': {
+  'gu-IN': { // Gujarati - Example placeholders
     'app.name': 'સ્માર્ટકેર હબ',
     'login.title': 'સ્માર્ટકેર હબ લોગિન',
     'login.button': 'લૉગિન કરો',
@@ -491,24 +422,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'સાંભળી રહ્યું છે...',
     'telemedicine.speakNow': 'હવે બોલો...',
     'telemedicine.aiAssistantInitialGreeting': "નમસ્તે! હું સ્માર્ટકેર AI સહાયક છું. આજે હું તમારી કેવી રીતે મદદ કરી શકું?",
-    'telemedicine.verbalConsultationTitle': 'મૌખિક પરામર્શ',
-    'telemedicine.verbalConsultationDescription': 'તમારી જરૂરિયાતો અનુસાર નોંધાયેલા ડોકટરો સાથે વોઇસ કોલ માટે જોડાઓ.',
-    'telemedicine.readyToConnect': 'નોંધાયેલા ડોક્ટર સાથે જોડાવા માટે તૈયાર છો?',
-    'telemedicine.selectDoctorPlaceholder': 'એક ડોક્ટર પસંદ કરો',
-    'telemedicine.noDoctorsAvailable': 'પરામર્શ માટે હાલમાં કોઈ ડોકટરો ઉપલબ્ધ નથી.',
-    'telemedicine.startAudioCall': 'ઓડિયો કોલ શરૂ કરો',
-    'telemedicine.startVideoCall': 'વીડિયો કોલ શરૂ કરો',
-    'telemedicine.inConsultationWith': 'સાથે પરામર્શમાં',
-    'telemedicine.endCallButton': 'કોલ સમાપ્ત કરો',
-    'telemedicine.simulatedConsultationNotice': 'તમે હાલમાં એક સિમ્યુલેટેડ પરામર્શમાં છો.',
-    'telemedicine.selectDoctorFirst': 'કૃપા કરીને પહેલા એક ડોક્ટર પસંદ કરો.',
-    'telemedicine.audioConsultationStarted': 'ઓડિયો પરામર્શ શરૂ થયો',
-    'telemedicine.videoConsultationStarted': 'વીડિયો પરામર્શ શરૂ થયો',
-    'telemedicine.connectingWith': 'સાથે જોડાઈ રહ્યું છે',
-    'telemedicine.consultationEndedTitle': 'પરામર્શ સમાપ્ત થયો',
-    'telemedicine.consultationEndedDescription': 'તમારો સિમ્યુલેટેડ પરામર્શ સમાપ્ત થયો છે.',
-    'telemedicine.aiChatError': "માફ કરશો, અત્યારે AI સહાયક સાથે જોડાઈ શકાયું નથી. કૃપા કરીને પછીથી ફરી પ્રયાસ કરો.",
-    'telemedicine.aiChatErrorTitle': "AI ચેટ ભૂલ",
+    'telemedicine.chatWithDoctorTitle': 'તમારા ડોક્ટર સાથે ચેટ કરો', // Placeholder
+    'telemedicine.chatWithDoctorDescription': 'ચેટ સત્ર શરૂ કરવા માટે નોંધાયેલા ડોક્ટર પસંદ કરો.', // Placeholder
+    'telemedicine.selectDoctorLabel': 'ડોક્ટર પસંદ કરો', // Placeholder
+    'telemedicine.selectDoctorPlaceholder': 'ચેટ કરવા માટે ડોક્ટર પસંદ કરો', // Placeholder
+    'telemedicine.typeDoctorMessagePlaceholder': 'ડોક્ટરને તમારો સંદેશ લખો...', // Placeholder
+    'telemedicine.simulatedDoctorReply': 'હેલો {patientName}, આ ડો. {doctorName} તરફથી સિમ્યુલેટેડ જવાબ છે. મને તમારો સંદેશ મળ્યો છે: "{messageText}"', // Placeholder
+    'telemedicine.doctorChatGreeting': 'તમે હવે ડો. {doctorName} સાથે ચેટ કરી રહ્યાં છો. હું તમારી કેવી રીતે મદદ કરી શકું?', // Placeholder
     'symptomChecker.title': 'AI લક્ષણ તપાસનાર',
     'symptomChecker.description': 'AI-સંચાલિત આંતરદૃષ્ટિ મેળવવા માટે તમારા લક્ષણોનું વર્ણન કરો, જેમાં સંભવિત પરિસ્થિતિઓ અને ઉપાય સૂચનોનો સમાવેશ થાય છે. આ સાધન તબીબી સલાહ આપતું નથી.',
     'symptomChecker.describeSymptomsTitle': "તમારા લક્ષણોનું વર્ણન કરો",
@@ -519,7 +439,7 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'symptomChecker.homeRemediesLabel': "ઘરગથ્થુ ઉપચાર",
     'symptomChecker.disclaimerTitle': "મહત્વપૂર્ણ અસ્વીકરણ",
   },
-  'ur-IN': {
+  'ur-IN': { // Urdu - Example placeholders
     'app.name': 'اسمارٹ کیئر ہب',
     'login.title': 'اسمارٹ کیئر ہب لاگ ان',
     'login.button': 'لاگ ان کریں',
@@ -532,24 +452,13 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
     'telemedicine.listening': 'سن رہا ہے۔..',
     'telemedicine.speakNow': 'اب بولیں...',
     'telemedicine.aiAssistantInitialGreeting': "ہیلو! میں اسمارٹ کیئر AI اسسٹنٹ ہوں۔ آج میں آپ کی کیسے مدد کر سکتا ہوں؟",
-    'telemedicine.verbalConsultationTitle': 'زبانی مشاورت',
-    'telemedicine.verbalConsultationDescription': 'اپنی ضروریات کے مطابق رجسٹرڈ ڈاکٹروں سے وائس کال کے لیے جڑیں۔',
-    'telemedicine.readyToConnect': 'رجسٹرڈ ڈاکٹر سے رابطہ کرنے کے لیے تیار ہیں؟',
-    'telemedicine.selectDoctorPlaceholder': 'ایک ڈاکٹر منتخب کریں',
-    'telemedicine.noDoctorsAvailable': 'مشاورت کے لیے فی الحال کوئی ڈاکٹر دستیاب نہیں ہے۔',
-    'telemedicine.startAudioCall': 'آڈیو کال شروع کریں',
-    'telemedicine.startVideoCall': 'ویڈیو کال شروع کریں',
-    'telemedicine.inConsultationWith': 'کے ساتھ مشاورت میں',
-    'telemedicine.endCallButton': 'کال ختم کریں',
-    'telemedicine.simulatedConsultationNotice': 'آپ فی الحال ایک مصنوعی مشاورت میں ہیں۔',
-    'telemedicine.selectDoctorFirst': 'براہ کرم پہلے ایک ڈاکٹر منتخب کریں۔',
-    'telemedicine.audioConsultationStarted': 'آڈیو مشاورت شروع ہو گئی',
-    'telemedicine.videoConsultationStarted': 'ویڈیو مشاورت شروع ہو گئی',
-    'telemedicine.connectingWith': 'کے ساتھ منسلک ہو رہا ہے۔',
-    'telemedicine.consultationEndedTitle': 'مشاورت ختم ہو گئی',
-    'telemedicine.consultationEndedDescription': 'آپ کی مصنوعی مشاورت ختم ہو گئی ہے۔',
-    'telemedicine.aiChatError': "معذرت، ابھی AI اسسٹنٹ سے رابطہ نہیں ہو سکا۔ براہ کرم بعد میں دوبارہ کوشش کریں۔",
-    'telemedicine.aiChatErrorTitle': "AI چیٹ کی خرابی",
+    'telemedicine.chatWithDoctorTitle': 'اپنے ڈاکٹر سے بات کریں', // Placeholder
+    'telemedicine.chatWithDoctorDescription': 'چیٹ سیشن شروع کرنے کے لیے ایک رجسٹرڈ ڈاکٹر منتخب کریں۔', // Placeholder
+    'telemedicine.selectDoctorLabel': 'ڈاکٹر منتخب کریں', // Placeholder
+    'telemedicine.selectDoctorPlaceholder': 'بات کرنے کے لیے ایک ڈاکٹر منتخب کریں', // Placeholder
+    'telemedicine.typeDoctorMessagePlaceholder': 'ڈاکٹر کو اپنا پیغام ٹائپ کریں...', // Placeholder
+    'telemedicine.simulatedDoctorReply': 'ہیلو {patientName}، یہ ڈاکٹر {doctorName} کی طرف سے ایک مصنوعی جواب ہے۔ مجھے آپ کا پیغام موصول ہوا ہے: "{messageText}"', // Placeholder
+    'telemedicine.doctorChatGreeting': 'آپ اب ڈاکٹر {doctorName} سے بات کر رہے ہیں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟', // Placeholder
     'symptomChecker.title': 'AI علامت چیکر',
     'symptomChecker.description': 'AI سے چلنے والی بصیرت حاصل کرنے کے لیے اپنی علامات بیان کریں، بشمول ممکنہ حالات اور علاج کی تجاویز۔ یہ ٹول طبی مشورہ فراہم نہیں کرتا ہے۔',
     'symptomChecker.describeSymptomsTitle': "اپنی علامات بیان کریں",
