@@ -8,13 +8,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Mic, Send, Lightbulb, FileText, Activity, Pill, Leaf, HomeIcon, Volume2, VolumeX, StopCircle } from "lucide-react";
+import { Mic, Send, Lightbulb, FileText, Activity, Pill, Leaf, HomeIcon, Volume2, VolumeX, StopCircle, Save } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { voiceSymptomChecker, type VoiceSymptomCheckerOutput } from "@/ai/flows/voice-symptom-checker";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/language-context";
 import type { LanguageCode } from "@/contexts/language-context";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { getCurrentUser, type Patient } from "@/lib/auth";
+import { uploadMedicalRecordToDB } from "@/lib/actions/medical.actions";
+import { format } from "date-fns";
 
 export function SymptomCheckerClient() {
   const [symptoms, setSymptoms] = useState("");
@@ -27,6 +30,16 @@ export function SymptomCheckerClient() {
   const [isListening, setIsListening] = useState(false);
   const [autoPlayResultsSpeech, setAutoPlayResultsSpeech] = useState(true);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+  const [currentUser, setCurrentUser] = useState<Patient | null>(null);
+  const [isSavingAnalysis, setIsSavingAnalysis] = useState(false);
+
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (user && user.role === 'patient') {
+      setCurrentUser(user as Patient);
+    }
+  }, []);
 
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -45,7 +58,6 @@ export function SymptomCheckerClient() {
         }
         
         setSymptoms(transcribedText);
-        // No auto-submit here, user explicitly clicks "Check Symptoms"
       };
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error("Speech recognition error", event.error);
@@ -185,6 +197,79 @@ export function SymptomCheckerClient() {
     } else {
       toast({ title: translate('symptomChecker.voiceNotSupported', 'Voice input not supported by your browser.'), variant: "destructive" });
     }
+  };
+
+  const handleSaveAnalysis = async () => {
+    if (!results || !currentUser || currentUser.role !== 'patient') {
+      toast({
+        title: translate('symptomChecker.saveError.title', "Cannot Save Analysis"),
+        description: translate('symptomChecker.saveError.noResultsOrNotPatient', "No analysis to save, or user is not a patient."),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSavingAnalysis(true);
+
+    let analysisText = `${translate('symptomChecker.savedReport.title', "Symptom Check Analysis")}\n`;
+    analysisText += `${translate('symptomChecker.savedReport.date', "Date")}: ${format(new Date(), "PPP p")}\n`;
+    analysisText += `${translate('symptomChecker.savedReport.language', "Language of Analysis")}: ${language}\n\n`;
+    analysisText += `${translate('symptomChecker.savedReport.symptomsTitle', "Reported Symptoms:")}\n`;
+    analysisText += "--------------------\n";
+    analysisText += `${symptoms}\n\n`;
+    analysisText += `${translate('symptomChecker.savedReport.insightsTitle', "Potential Insights:")}\n`;
+    analysisText += "--------------------\n";
+
+    if (results.analysis && results.analysis.length > 0) {
+      results.analysis.forEach(item => {
+        analysisText += `${translate('symptomChecker.savedReport.condition', "Condition")}: ${item.conditionName} (${translate('symptomChecker.savedReport.confidence', "Confidence")}: ${(item.confidence * 100).toFixed(0)}%)\n`;
+        analysisText += `${translate('symptomChecker.savedReport.explanation', "Explanation")}: ${item.explanation}\n`;
+        if (item.allopathicSuggestions && item.allopathicSuggestions.length > 0) {
+          analysisText += `${translate('symptomChecker.allopathicSuggestionsLabel', "Allopathic Suggestions")}:\n${item.allopathicSuggestions.map(s => `- ${s}`).join("\n")}\n`;
+        }
+        if (item.ayurvedicSuggestions && item.ayurvedicSuggestions.length > 0) {
+          analysisText += `${translate('symptomChecker.ayurvedicSuggestionsLabel', "Ayurvedic Suggestions")}:\n${item.ayurvedicSuggestions.map(s => `- ${s}`).join("\n")}\n`;
+        }
+        if (item.homeRemedies && item.homeRemedies.length > 0) {
+          analysisText += `${translate('symptomChecker.homeRemediesLabel', "Home Remedies")}:\n${item.homeRemedies.map(s => `- ${s}`).join("\n")}\n`;
+        }
+        analysisText += "--------------------\n";
+      });
+    } else {
+      analysisText += `${translate('symptomChecker.noConditionsFound', "No specific conditions identified based on the symptoms provided, or the AI could not process the request.")}\n`;
+      analysisText += "--------------------\n";
+    }
+
+    analysisText += `\n${translate('symptomChecker.disclaimerTitle', "Important Disclaimer")}:\n${results.disclaimer}`;
+
+    const fileName = `${translate('symptomChecker.savedReport.fileNamePrefix', "Symptom Analysis")} - ${format(new Date(), 'yyyy-MM-dd HHmm')}.txt`;
+    
+    // Encode URI components and then unescape to handle UTF-8 characters for btoa
+    const base64EncodedText = btoa(unescape(encodeURIComponent(analysisText)));
+    const dataUri = `data:text/plain;base64,${base64EncodedText}`;
+    const fileSize = new TextEncoder().encode(analysisText).length;
+
+    const uploadResult = await uploadMedicalRecordToDB(
+      currentUser.id,
+      fileName,
+      'text/plain',
+      fileSize,
+      dataUri
+    );
+
+    if (uploadResult.success) {
+      toast({
+        title: translate('symptomChecker.saveSuccess.title', "Analysis Saved"),
+        description: translate('symptomChecker.saveSuccess.description', "Your symptom analysis has been saved to your medical records."),
+      });
+    } else {
+      toast({
+        title: translate('symptomChecker.saveError.title', "Save Failed"),
+        description: uploadResult.message || translate('symptomChecker.saveError.general', "Could not save the analysis."),
+        variant: "destructive",
+      });
+    }
+    setIsSavingAnalysis(false);
   };
 
 
@@ -353,6 +438,22 @@ export function SymptomCheckerClient() {
                   </AlertDescription>
                 </Alert>
               )}
+              {currentUser && currentUser.role === 'patient' && results && (
+                <div className="pt-4 text-center">
+                    <Button 
+                        onClick={handleSaveAnalysis} 
+                        disabled={isSavingAnalysis || isLoading}
+                        variant="default"
+                        size="lg"
+                    >
+                        <Save className="mr-2 h-5 w-5" />
+                        {isSavingAnalysis 
+                            ? translate('symptomChecker.savingAnalysisButton', "Saving Analysis...") 
+                            : translate('symptomChecker.saveAnalysisButton', "Save Analysis to Medical Records")
+                        }
+                    </Button>
+                </div>
+              )}
             </div>
           )}
         </CardContent>
@@ -360,3 +461,4 @@ export function SymptomCheckerClient() {
     </div>
   );
 }
+
