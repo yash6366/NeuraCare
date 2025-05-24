@@ -22,7 +22,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CalendarDays, Users, Video, MessageSquarePlus, ArrowRight, FileText, Eye, Activity, BriefcaseMedical, Notebook, Clock, ListTodo } from "lucide-react";
+import { CalendarDays, Users, Video, MessageSquarePlus, ArrowRight, FileText, Eye, Activity, BriefcaseMedical, Notebook, Clock, ListTodo, SendHorizontal } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
@@ -32,6 +32,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/language-context";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Added Tabs
+import { Input } from "@/components/ui/input"; // Added Input
 
 interface SimulatedAppointmentForDoctor {
   id: string;
@@ -39,6 +41,13 @@ interface SimulatedAppointmentForDoctor {
   appointmentType: string;
   dateTime: Date;
   status: "Confirmed" | "Pending";
+}
+
+interface ChatMessage {
+  id: string;
+  text: string;
+  sender: "doctor" | "patient";
+  timestamp: Date;
 }
 
 export function DoctorDashboardClient() {
@@ -58,6 +67,13 @@ export function DoctorDashboardClient() {
   const [selectedPatientForDetails, setSelectedPatientForDetails] = useState<Patient | null>(null);
   
   const [myUpcomingAppointments, setMyUpcomingAppointments] = useState<SimulatedAppointmentForDoctor[]>([]);
+
+  // State for patient chat
+  const [patientChatMessages, setPatientChatMessages] = useState<ChatMessage[]>([]);
+  const [doctorChatMessageInput, setDoctorChatMessageInput] = useState("");
+  const [isSendingPatientChatMessage, setIsSendingPatientChatMessage] = useState(false);
+  const chatScrollAreaRef = useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -85,8 +101,6 @@ export function DoctorDashboardClient() {
       };
       fetchPatients();
 
-      // Simulate fetching doctor's appointments
-      // In a real app, this would be an API call to fetch appointments for currentDoctor.id
       const now = new Date();
       const simulatedDoctorAppointments: SimulatedAppointmentForDoctor[] = [
         { id: 'docAppt1', patientName: 'Alice Smith', appointmentType: translate('appointments.mock.generalCheckup', "General Checkup"), dateTime: addHours(addDays(now, 1), 2), status: 'Confirmed' },
@@ -97,6 +111,15 @@ export function DoctorDashboardClient() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, toast, translate]);
+
+  useEffect(() => {
+    if (chatScrollAreaRef.current) {
+        const scrollableViewport = chatScrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
+        if (scrollableViewport) {
+            scrollableViewport.scrollTop = scrollableViewport.scrollHeight;
+        }
+    }
+  }, [patientChatMessages]);
 
   const generateSimulatedAppointmentsForPatientDialog = (patientName: string): SimulatedAppointmentForDoctor[] => {
     const now = new Date();
@@ -114,6 +137,15 @@ export function DoctorDashboardClient() {
     setSelectedPatientRecords(null);
     setDoctorNotes(""); 
     setSimulatedAppointments(generateSimulatedAppointmentsForPatientDialog(patient.name));
+    setPatientChatMessages([ // Initial greeting for chat
+      {
+        id: String(Date.now()),
+        text: translate('doctorDashboard.chat.greetingFromPatient', "Hello Dr. {doctorName}, how can I help {patientName} today?").replace('{doctorName}', doctor.name).replace('{patientName}', patient.name),
+        sender: "patient", // Simulated initial message from patient perspective
+        timestamp: new Date(),
+      }
+    ]);
+    setDoctorChatMessageInput("");
 
 
     const records = await getMedicalRecordsForPatientByDoctor(patient.id, doctor.id);
@@ -155,6 +187,32 @@ export function DoctorDashboardClient() {
         title: translate('doctorDashboard.toast.notesSaved.title', "Notes Saved (Simulated)"),
         description: translate('doctorDashboard.toast.notesSaved.description', "In a real application, these notes would be saved to the database."),
     });
+  };
+
+  const handleSendPatientChatMessage = () => {
+    if (!doctorChatMessageInput.trim() || !doctor || !selectedPatientForDetails) return;
+    
+    setIsSendingPatientChatMessage(true);
+    const newDoctorMessage: ChatMessage = {
+      id: String(Date.now()),
+      text: doctorChatMessageInput,
+      sender: "doctor",
+      timestamp: new Date(),
+    };
+    setPatientChatMessages(prev => [...prev, newDoctorMessage]);
+    setDoctorChatMessageInput("");
+
+    // Simulate patient reply
+    setTimeout(() => {
+      const simulatedReply: ChatMessage = {
+        id: String(Date.now() + 1),
+        text: translate('doctorDashboard.chat.simulatedPatientReply', "Thank you for your message, Doctor. I understand."),
+        sender: "patient",
+        timestamp: new Date(),
+      };
+      setPatientChatMessages(prev => [...prev, simulatedReply]);
+      setIsSendingPatientChatMessage(false);
+    }, 1500);
   };
 
 
@@ -270,11 +328,8 @@ export function DoctorDashboardClient() {
                     <TableCell>{patient.email}</TableCell>
                     <TableCell className="hidden md:table-cell">{patient.emergencyContactPhone || "N/A"}</TableCell>
                     <TableCell className="text-right space-x-2">
-                       <Button variant="outline" size="sm" onClick={() => router.push('/telemedicine')}>
-                        <MessageSquarePlus className="mr-1 h-4 w-4" /> {translate('doctorDashboard.actions.chat', "Chat")}
-                      </Button>
-                      <Button variant="default" size="sm" onClick={() => handleViewPatientDetails(patient)}>
-                        <FileText className="mr-1 h-4 w-4" /> {translate('doctorDashboard.actions.viewDetails', "View Details")}
+                       <Button variant="outline" size="sm" onClick={() => handleViewPatientDetails(patient)}> {/* Updated to open dialog for chat */}
+                        <MessageSquarePlus className="mr-1 h-4 w-4" /> {translate('doctorDashboard.actions.chatOrDetails', "Chat / Details")}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -300,106 +355,178 @@ export function DoctorDashboardClient() {
               </DialogDescription>
             </DialogHeader>
             
-            <ScrollArea className="flex-grow p-1 -mx-1 overflow-y-auto">
-              {isLoadingPatientDetails ? (
-                <div className="flex justify-center items-center py-10">
-                  <Activity className="h-8 w-8 animate-spin text-primary" />
-                   <p className="ml-2 text-muted-foreground">{translate('doctorDashboard.patientDetailsDialog.loading', "Loading patient details...")}</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
-                  {/* Section 1: Simulated Upcoming Appointments & Notes */}
-                  <div className="space-y-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                          <Clock className="h-5 w-5 text-blue-600" />
-                          {translate('doctorDashboard.patientDetailsDialog.patientAppointments.title', "Patient's Upcoming Appointments (Simulated)")}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {simulatedAppointments.length > 0 ? (
-                          <ul className="space-y-2 text-sm">
-                            {simulatedAppointments.map(appt => (
-                              <li key={appt.id} className="p-2 border rounded-md bg-blue-500/5">
-                                <p className="font-medium text-blue-700">{appt.appointmentType}</p>
-                                <p className="text-xs text-muted-foreground">{format(appt.dateTime, "PPpp")}</p>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p className="text-muted-foreground text-sm">{translate('doctorDashboard.patientDetailsDialog.upcomingAppointments.none', "No upcoming appointments simulated.")}</p>
-                        )}
-                      </CardContent>
-                    </Card>
+            <Tabs defaultValue="info" className="flex-grow flex flex-col overflow-hidden">
+              <TabsList className="shrink-0">
+                <TabsTrigger value="info">{translate('doctorDashboard.patientDetailsDialog.tabInfo', "Patient Info")}</TabsTrigger>
+                <TabsTrigger value="chat">{translate('doctorDashboard.patientDetailsDialog.tabChat', "Chat with Patient")}</TabsTrigger>
+              </TabsList>
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-lg">
-                           <Notebook className="h-5 w-5 text-green-600" />
-                           {translate('doctorDashboard.patientDetailsDialog.notes.title', "Doctor's Notes (Simulated)")}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        <Label htmlFor="doctor-notes" className="sr-only">{translate('doctorDashboard.patientDetailsDialog.notes.label', "Notes")}</Label>
-                        <Textarea
-                          id="doctor-notes"
-                          value={doctorNotes}
-                          onChange={(e) => setDoctorNotes(e.target.value)}
-                          placeholder={translate('doctorDashboard.patientDetailsDialog.notes.placeholder', "Type your notes here...")}
-                          rows={5}
-                          className="text-sm"
-                        />
-                        <Button onClick={handleSaveNotes} size="sm" variant="secondary" className="mt-2">
-                          {translate('doctorDashboard.patientDetailsDialog.notes.saveButton', "Save Notes (Simulated)")}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </div>
+              <TabsContent value="info" className="flex-grow overflow-auto p-1 -mx-1">
+                 <ScrollArea className="h-full">
+                  {isLoadingPatientDetails ? (
+                    <div className="flex justify-center items-center py-10">
+                      <Activity className="h-8 w-8 animate-spin text-primary" />
+                       <p className="ml-2 text-muted-foreground">{translate('doctorDashboard.patientDetailsDialog.loading', "Loading patient details...")}</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
+                      {/* Section 1: Simulated Upcoming Appointments & Notes */}
+                      <div className="space-y-6">
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-lg">
+                              <Clock className="h-5 w-5 text-blue-600" />
+                              {translate('doctorDashboard.patientDetailsDialog.patientAppointments.title', "Patient's Upcoming Appointments (Simulated)")}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            {simulatedAppointments.length > 0 ? (
+                              <ul className="space-y-2 text-sm">
+                                {simulatedAppointments.map(appt => (
+                                  <li key={appt.id} className="p-2 border rounded-md bg-blue-500/5">
+                                    <p className="font-medium text-blue-700">{appt.appointmentType}</p>
+                                    <p className="text-xs text-muted-foreground">{format(appt.dateTime, "PPpp")}</p>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-muted-foreground text-sm">{translate('doctorDashboard.patientDetailsDialog.upcomingAppointments.none', "No upcoming appointments simulated.")}</p>
+                            )}
+                          </CardContent>
+                        </Card>
 
-                  {/* Section 2: Medical Records */}
-                  <Card className="lg:row-span-2">
-                    <CardHeader>
-                       <CardTitle className="flex items-center gap-2 text-lg">
-                         <FileText className="h-5 w-5 text-red-600" />
-                         {translate('doctorDashboard.patientDetailsDialog.medicalRecords.title', "Medical Records")}
-                       </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {selectedPatientRecords && selectedPatientRecords.length > 0 ? (
-                        <ul className="space-y-3 py-2 pr-3">
-                          {selectedPatientRecords.map(record => (
-                            <li key={record.id} className="p-3 border rounded-md flex items-center justify-between gap-3 hover:shadow-sm">
-                              <div className="flex items-center gap-2.5 flex-grow min-w-0">
-                                {record.type === "image" && record.filePreview ? (
-                                  <Image src={record.filePreview} alt={record.name} width={40} height={40} className="rounded object-cover h-10 w-10" data-ai-hint="medical scan"/>
-                                ) : record.type === "pdf" ? (
-                                  <FileText className="h-8 w-8 text-red-500 flex-shrink-0" />
-                                ) : (
-                                  <FileText className="h-8 w-8 text-gray-400 flex-shrink-0" />
-                                )}
-                                <div className="flex-grow min-w-0">
-                                  <p className="font-medium text-sm truncate" title={record.name}>{record.name}</p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {record.fileTypeDetail.toUpperCase()} - {(record.size / 1024).toFixed(1)} KB - {format(new Date(record.uploadedAt), "PPp")}
-                                  </p>
-                                </div>
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-lg">
+                               <Notebook className="h-5 w-5 text-green-600" />
+                               {translate('doctorDashboard.patientDetailsDialog.notes.title', "Doctor's Notes (Simulated)")}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-2">
+                            <Label htmlFor="doctor-notes" className="sr-only">{translate('doctorDashboard.patientDetailsDialog.notes.label', "Notes")}</Label>
+                            <Textarea
+                              id="doctor-notes"
+                              value={doctorNotes}
+                              onChange={(e) => setDoctorNotes(e.target.value)}
+                              placeholder={translate('doctorDashboard.patientDetailsDialog.notes.placeholder', "Type your notes here...")}
+                              rows={5}
+                              className="text-sm"
+                            />
+                            <Button onClick={handleSaveNotes} size="sm" variant="secondary" className="mt-2">
+                              {translate('doctorDashboard.patientDetailsDialog.notes.saveButton', "Save Notes (Simulated)")}
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Section 2: Medical Records */}
+                      <Card className="lg:row-span-2">
+                        <CardHeader>
+                           <CardTitle className="flex items-center gap-2 text-lg">
+                             <FileText className="h-5 w-5 text-red-600" />
+                             {translate('doctorDashboard.patientDetailsDialog.medicalRecords.title', "Medical Records")}
+                           </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          {selectedPatientRecords && selectedPatientRecords.length > 0 ? (
+                            <ul className="space-y-3 py-2 pr-3">
+                              {selectedPatientRecords.map(record => (
+                                <li key={record.id} className="p-3 border rounded-md flex items-center justify-between gap-3 hover:shadow-sm">
+                                  <div className="flex items-center gap-2.5 flex-grow min-w-0">
+                                    {record.type === "image" && record.filePreview ? (
+                                      <Image src={record.filePreview} alt={record.name} width={40} height={40} className="rounded object-cover h-10 w-10" data-ai-hint="medical scan"/>
+                                    ) : record.type === "pdf" ? (
+                                      <FileText className="h-8 w-8 text-red-500 flex-shrink-0" />
+                                    ) : (
+                                      <FileText className="h-8 w-8 text-gray-400 flex-shrink-0" />
+                                    )}
+                                    <div className="flex-grow min-w-0">
+                                      <p className="font-medium text-sm truncate" title={record.name}>{record.name}</p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {record.fileTypeDetail.toUpperCase()} - {(record.size / 1024).toFixed(1)} KB - {format(new Date(record.uploadedAt), "PPp")}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <Button variant="ghost" size="sm" onClick={() => handleViewRecordFile(record)} disabled={!record.filePreview && record.type !== 'other'}>
+                                    <Eye className="mr-1 h-4 w-4" /> {translate('doctorDashboard.actions.view', "View")}
+                                  </Button>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-muted-foreground text-center py-8 text-sm">{translate('doctorDashboard.patientDetailsDialog.medicalRecords.none', "No medical records found for this patient.")}</p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )}
+                 </ScrollArea>
+              </TabsContent>
+
+              <TabsContent value="chat" className="flex-grow flex flex-col overflow-hidden">
+                <Card className="flex-grow flex flex-col">
+                  <CardHeader className="border-b py-3">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <MessageSquarePlus className="h-6 w-6 text-primary" />
+                       {translate('doctorDashboard.chat.titleWithPatient', "Chatting with {patientName}").replace('{patientName}', selectedPatientForDetails.name)}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-grow p-0">
+                    <ScrollArea className="h-[calc(100%-70px)] p-4" ref={chatScrollAreaRef}> {/* Adjust height based on input area */}
+                       <div className="space-y-4">
+                        {patientChatMessages.map(msg => (
+                          <div key={msg.id} className={`flex items-end gap-2 ${msg.sender === 'doctor' ? 'justify-end' : 'justify-start'}`}>
+                            {msg.sender === 'patient' && selectedPatientForDetails && (
+                              <Avatar className="h-8 w-8">
+                                <AvatarImage src={`https://placehold.co/40x40.png?text=${selectedPatientForDetails.name.charAt(0)}`} alt={selectedPatientForDetails.name} data-ai-hint="person user"/>
+                                <AvatarFallback>{selectedPatientForDetails.name.substring(0,1).toUpperCase()}</AvatarFallback>
+                              </Avatar>
+                            )}
+                             <div className={`max-w-[75%] rounded-lg px-3 py-2 text-sm shadow-md ${msg.sender === 'doctor' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                              {msg.text}
+                            </div>
+                            {msg.sender === 'doctor' && doctor && (
+                               <Avatar className="h-8 w-8">
+                                <AvatarImage src={`https://placehold.co/40x40.png?text=${doctor.name.charAt(0)}`} alt={doctor.name} data-ai-hint="doctor professional"/>
+                                <AvatarFallback>{doctor.name.substring(0,1).toUpperCase()}</AvatarFallback>
+                              </Avatar>
+                            )}
+                          </div>
+                        ))}
+                        {isSendingPatientChatMessage && msg.sender === 'patient' && (
+                           <div className="flex items-end gap-2 justify-start">
+                             <Avatar className="h-8 w-8">
+                                <AvatarImage src={`https://placehold.co/40x40.png?text=${selectedPatientForDetails.name.charAt(0)}`} alt={selectedPatientForDetails.name} data-ai-hint="person user"/>
+                                <AvatarFallback>{selectedPatientForDetails.name.substring(0,1).toUpperCase()}</AvatarFallback>
+                              </Avatar>
+                              <div className="max-w-[75%] rounded-lg px-3 py-2 text-sm shadow-md bg-muted">
+                                <Activity className="h-5 w-5 animate-spin text-primary" />
                               </div>
-                              <Button variant="ghost" size="sm" onClick={() => handleViewRecordFile(record)} disabled={!record.filePreview && record.type !== 'other'}>
-                                <Eye className="mr-1 h-4 w-4" /> {translate('doctorDashboard.actions.view', "View")}
-                              </Button>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-muted-foreground text-center py-8 text-sm">{translate('doctorDashboard.patientDetailsDialog.medicalRecords.none', "No medical records found for this patient.")}</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-            </ScrollArea>
-            <DialogFooter className="sm:justify-end pt-4 border-t">
+                           </div>
+                        )}
+                      </div>
+                    </ScrollArea>
+                  </CardContent>
+                  <CardFooter className="p-4 border-t bg-background/80">
+                    <div className="flex gap-2 w-full">
+                      <Input 
+                        placeholder={translate('doctorDashboard.chat.inputPlaceholder', "Type your message to the patient...")}
+                        value={doctorChatMessageInput}
+                        onChange={(e) => setDoctorChatMessageInput(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && !isSendingPatientChatMessage && handleSendPatientChatMessage()}
+                        disabled={isSendingPatientChatMessage}
+                      />
+                      <Button onClick={handleSendPatientChatMessage} disabled={isSendingPatientChatMessage || !doctorChatMessageInput.trim()}>
+                        {isSendingPatientChatMessage ? <Activity className="mr-2 h-4 w-4 animate-spin" /> : <SendHorizontal className="mr-2 h-4 w-4" />}
+                        {translate('doctorDashboard.chat.sendButton', "Send")}
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </Card>
+              </TabsContent>
+            </Tabs>
+            
+            <DialogFooter className="sm:justify-end pt-4 border-t mt-auto shrink-0">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
                   {translate('doctorDashboard.patientDetailsDialog.closeButton', "Close")}
@@ -412,4 +539,3 @@ export function DoctorDashboardClient() {
     </div>
   );
 }
-
