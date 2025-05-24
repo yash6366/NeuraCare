@@ -11,7 +11,6 @@ const apiKeySid = process.env.TWILIO_API_KEY_SID;
 const apiKeySecret = process.env.TWILIO_API_KEY_SECRET;
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 const fixedEmergencyContactPhone = process.env.EMERGENCY_CONTACT_PHONE; // e.g., 108 or primary family member
-// EMERGENCY_SERVICES_PHONE from .env is no longer directly used here for the second recipient.
 
 interface SmsResponse {
   success: boolean;
@@ -30,6 +29,12 @@ export async function sendSosSmsAction(
   location: LocationData | null
 ): Promise<SmsResponse> {
   
+  if (actualAccountSid === "YOUR_ACTUAL_TWILIO_ACCOUNT_SID_STARTS_WITH_AC") {
+    const errorMessage = "Twilio Account SID is not configured. Please update TWILIO_ACCOUNT_SID_ACTUAL in your .env file with your actual Twilio Account SID (starts with AC).";
+    console.error(errorMessage);
+    return { success: false, message: errorMessage };
+  }
+
   let missingEnvVars = [];
   if (!actualAccountSid) missingEnvVars.push('TWILIO_ACCOUNT_SID_ACTUAL');
   if (!apiKeySid) missingEnvVars.push('TWILIO_API_KEY_SID');
@@ -50,7 +55,7 @@ export async function sendSosSmsAction(
   }
 
   let patientEmergencyContact: string | undefined | null = null;
-  let senderName = userNameFromClient || 'A SmartCare Hub User';
+  let senderName = userNameFromClient || 'A VakCare User'; // Updated app name
 
   try {
     if (ObjectId.isValid(userId)) {
@@ -77,7 +82,7 @@ export async function sendSosSmsAction(
     locationInfo = `Their approximate location is: https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
   }
 
-  const messageBody = `SOS Alert from SmartCare Hub: ${senderName} has triggered an emergency alert. ${locationInfo} Please respond immediately.`;
+  const messageBody = `SOS Alert from VakCare: ${senderName} has triggered an emergency alert. ${locationInfo} Please respond immediately.`; // Updated app name
 
   const recipients: string[] = [];
   if (fixedEmergencyContactPhone) {

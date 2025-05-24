@@ -1,3 +1,4 @@
+
 // Use server directive.
 'use server';
 
@@ -65,8 +66,19 @@ const processVoiceCommandFlow = ai.defineFlow(
     inputSchema: ProcessVoiceCommandInputSchema,
     outputSchema: ProcessVoiceCommandOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async (input) => {
+    try {
+      const llmResponse = await prompt(input);
+      if (llmResponse.output) {
+        return llmResponse.output;
+      } else {
+        console.warn('[processVoiceCommandFlow] LLM response did not yield a parsable output. Raw text:', llmResponse.text);
+        // Return a default "OTHER" intent if parsing fails
+        return { intent: 'OTHER' as const };
+      }
+    } catch (error) {
+      console.error('[processVoiceCommandFlow] Error during execution:', error);
+      return { intent: 'OTHER' as const }; // Default error response
+    }
   }
 );

@@ -1,3 +1,4 @@
+
 // The locationBasedRecommendationsFlow suggests nearby hospitals or specialists.
 // It now uses a tool that would (in a full implementation) query the Google Maps Places API.
 // locationBasedRecommendations - A function that takes location data and returns a list of nearby healthcare services.
@@ -145,16 +146,16 @@ const locationBasedRecommendationsFlow = ai.defineFlow(
     outputSchema: LocationBasedRecommendationsOutputSchema,
   },
   async (input) => {
-    const llmResponse = await locationBasedRecommendationsPrompt(input);
-    // The LLM should call the tool, and the tool's output (which matches the flow's output schema)
-    // will be available in llmResponse.output or via tool requests/responses.
-    // If the tool is called, its output becomes the primary content.
-    if (llmResponse.output) {
-        return llmResponse.output;
+    try {
+      const llmResponse = await locationBasedRecommendationsPrompt(input);
+      if (llmResponse.output) {
+          return llmResponse.output;
+      }
+      console.warn("[locationBasedRecommendationsFlow] LLM response did not yield a parsable output or tool was not called as expected. Raw text:", llmResponse.text);
+      return { results: [] }; // Fallback to empty results
+    } catch (error) {
+      console.error('[locationBasedRecommendationsFlow] Error during execution:', error);
+      return { results: [] }; // Default error response
     }
-    // Fallback or error handling if the tool wasn't called as expected or output is missing.
-    // This might indicate a need to refine the prompt's instruction to use the tool.
-    console.warn("Location recommendations: Tool might not have been called, or no output from LLM. Returning empty results.");
-    return { results: [] };
   }
 );
