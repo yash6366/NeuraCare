@@ -13,11 +13,11 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { telemedicineChat, type TelemedicineChatInput, type TelemedicineChatOutput } from "@/ai/flows/telemedicine-chat-flow";
-import { analyzeImage, type AnalyzeImageInput, type AnalyzeImageOutput } from "@/ai/flows/image-analysis-flow"; // Added
+import { analyzeImage, type AnalyzeImageInput, type AnalyzeImageOutput } from "@/ai/flows/image-analysis-flow";
 import { useLanguage } from "@/contexts/language-context";
 import type { LanguageCode } from "@/contexts/language-context";
 import { getCurrentUser, type AppUser } from "@/lib/auth";
-import Image from "next/image"; // For displaying image preview
+import Image from "next/image";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface Message {
@@ -25,7 +25,7 @@ interface Message {
   text: string;
   sender: "user" | "bot";
   timestamp: Date;
-  isImageQueryResponse?: boolean; // To differentiate image analysis responses
+  isImageQueryResponse?: boolean;
 }
 
 interface GenkitChatMessage {
@@ -49,14 +49,12 @@ export function AiChatAssistantClient() {
   const [autoPlayBotSpeech, setAutoPlayBotSpeech] = useState(true);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null); // For image upload
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
-  // Image Analysis State
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedImagePreview, setSelectedImagePreview] = useState<string | null>(null);
   const [imageQuery, setImageQuery] = useState("");
   const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);
-
 
   useEffect(() => {
     setCurrentUser(getCurrentUser());
@@ -82,7 +80,6 @@ export function AiChatAssistantClient() {
         }
     }
   }, [messages]);
-
 
   useEffect(() => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -260,7 +257,7 @@ export function AiChatAssistantClient() {
       return;
     }
     setIsAnalyzingImage(true);
-    setIsLoading(true); // General loading for AI response
+    setIsLoading(true); 
 
     const userQueryMessage: Message = {
         id: String(Date.now()),
@@ -307,14 +304,8 @@ export function AiChatAssistantClient() {
     } finally {
       setIsAnalyzingImage(false);
       setIsLoading(false);
-      // Clear image selection after analysis? Or keep it for follow-up? For now, keep.
-      // setSelectedImage(null);
-      // setSelectedImagePreview(null);
-      // setImageQuery("");
-      // if (imageInputRef.current) imageInputRef.current.value = "";
     }
   };
-
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
@@ -377,7 +368,7 @@ export function AiChatAssistantClient() {
                   )}
                 </div>
               ))}
-              {(isLoading || isAnalyzingImage) && !messages.some(m => m.sender === 'bot' && m.text.includes('spin')) && ( // Avoid double spinner
+              {(isLoading || isAnalyzingImage) && !messages.some(m => m.sender === 'bot' && m.text.includes('spin')) && ( 
                 <div className="flex items-end gap-2 justify-start">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="https://placehold.co/40x40.png" alt="Bot Avatar" data-ai-hint="robot face" />
@@ -418,7 +409,6 @@ export function AiChatAssistantClient() {
           <CardDescription>{translate('aiChatAssistant.fileToolsDescription', 'Upload images or documents for AI analysis.')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Image Analysis Section */}
           <div className="space-y-3 p-3 border rounded-lg bg-background/50">
             <h3 className="font-semibold flex items-center gap-2"><ImagePlus className="h-5 w-5 text-accent" /> {translate('aiChatAssistant.imageAnalysisTitle', 'Image Analysis')}</h3>
             <Input
@@ -452,7 +442,6 @@ export function AiChatAssistantClient() {
             </Button>
           </div>
 
-          {/* Document Analysis Section (Placeholder) */}
           <div className="space-y-3 p-3 border rounded-lg bg-background/50 opacity-50 cursor-not-allowed">
             <h3 className="font-semibold flex items-center gap-2"><FileText className="h-5 w-5 text-muted-foreground" /> {translate('aiChatAssistant.documentAnalysisTitle', 'Document Analysis (Coming Soon)')}</h3>
              <Alert variant="default">
@@ -471,3 +460,5 @@ export function AiChatAssistantClient() {
     </div>
   );
 }
+
+    

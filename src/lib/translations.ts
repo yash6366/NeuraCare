@@ -209,7 +209,7 @@ const hiINTranslations: TranslationSet = {
   'login.emailLabel': 'ईमेल',
   'login.passwordLabel': 'पासवर्ड',
   'login.toast.successTitle': 'लॉगिन सफल',
-  'login.toast.successDescription': 'वापसी पर स्वागत है, {userName}! रीडायरेक्ट किया जा रहा है...',
+  'login.toast.successDescription': 'वापसी पर स्वागत है, {userName}! रीडायRECT किया जा रहा है...',
   'login.toast.failureTitle': 'लॉगिन विफल',
   'login.toast.failureDescription': 'अमान्य ईमेल या पासवर्ड। कृपया पुन: प्रयास करें।',
   'login.toast.errorTitle': 'लॉगिन त्रुटि',
@@ -300,7 +300,7 @@ const hiINTranslations: TranslationSet = {
   'symptomChecker.autoPlayResultsSpeechLabel': 'परिणाम बोलें',
   'symptomChecker.dwaniSTTInfo': "ब्राउज़र STT का उपयोग किया जा रहा है। (क्षेत्रीय भाषाओं के लिए यहां द्वानी एआई STT का उपयोग किया जाएगा)",
   'symptomChecker.dwaniTranslateInfo': "संकल्पना: द्वानी एआई इसे कोर एआई प्रसंस्करण के लिए अंग्रेजी में अनुवाद करेगा:",
-  'symptomChecker.tts.analysisIntro': "आपके लक्षणों के आधार पर, यहाँ कुछ संभावित अंतर्दृष्टियाँ हैं: ",
+  'symptomChecker.tts.analysisIntro': "आपके लक्षणों के आधार पर, यहाँ کچھ संभावित अंतर्दृष्टियाँ हैं: ",
   'symptomChecker.tts.confidence': "आत्मविश्वास",
   'symptomChecker.tts.noSpecificConditions': "कोई विशिष्ट स्थितियाँ पहचानी नहीं गईं, या मैं अनुरोध को संसाधित नहीं कर सका। ",
   'aiChatAssistant.title': 'एआई चैट सहायक',
@@ -384,7 +384,7 @@ const hiINTranslations: TranslationSet = {
 const createPlaceholders = (baseTranslations: TranslationSet): TranslationSet => {
   const placeholders: TranslationSet = {};
   for (const key in baseTranslations) {
-    placeholders[key] = baseTranslations[key]; // Using English as placeholder
+    placeholders[key] = baseTranslations[key]; 
   }
   return placeholders;
 };
@@ -748,7 +748,7 @@ const urINTranslations: TranslationSet = {
   'telemedicine.chatWithDoctorTitle': 'اپنے ڈاکٹر سے بات کریں', 
   'telemedicine.chatWithDoctorDescription': 'چیٹ سیشن شروع کرنے کے لیے ایک رجسٹرڈ ڈاکٹر منتخب کریں۔', 
   'telemedicine.selectDoctorLabel': 'ڈاکٹر منتخب کریں', 
-  'telemedicine.selectDoctorPlaceholder': 'بات کرنے کے لیے ایک ڈاکٹر منتخب کریں', 
+  'telemedicine.selectDoctorPlaceholder': 'بات کرنے کے लिए ایک ڈاکٹر منتخب کریں', 
   'telemedicine.typeDoctorMessagePlaceholder': 'ڈاکٹر کو اپنا پیغام ٹائپ کریں...', 
   'telemedicine.simulatedDoctorReply': 'ہیلو {patientName}، یہ ڈاکٹر {doctorName} کی طرف سے ایک مصنوعی جواب ہے۔ مجھے آپ کا پیغام موصول ہوا ہے: "{messageText}"', 
   'telemedicine.doctorChatGreeting': 'آپ اب ڈاکٹر {doctorName} سے بات کر رہے ہیں۔ میں آپ کی کیسے مدد کر سکتا ہوں؟', 
@@ -788,7 +788,6 @@ const urINTranslations: TranslationSet = {
   'sidebar.telemedicine': 'ڈاکٹر چیٹ',
 };
 
-
 export const translationsData: Record<LanguageCode, TranslationSet> = {
   'en-US': enUSTranslations,
   'hi-IN': hiINTranslations,
@@ -800,3 +799,5 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
   'gu-IN': guINTranslations,
   'ur-IN': urINTranslations,
 };
+
+    
