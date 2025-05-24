@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, KeyRound, Hospital } from "lucide-react"; // Removed Eye icon
+import { User, KeyRound, Hospital } from "lucide-react"; 
 import { useToast } from "@/hooks/use-toast";
 import { loginUser } from "@/lib/auth"; 
 import { useLanguage } from "@/contexts/language-context"; 
@@ -26,7 +26,7 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      const user = await loginUser(email.trim(), password.trim());
+      const user = await loginUser(email.trim().toLowerCase(), password.trim()); // Email to lowercase
 
       if (user) {
         toast({
@@ -107,7 +107,6 @@ export function LoginForm() {
             {translate('login.registerLink').split('? ')[1] || 'Register here'}
           </Link>
         </div>
-        {/* Removed the "Or log in using" separator and Face Recognition button */}
         <p className="px-8 pt-2 text-center text-sm text-muted-foreground">
           By clicking continue, you agree to our{" "}
           <a href="#" className="underline underline-offset-4 hover:text-primary">
@@ -119,13 +118,7 @@ export function LoginForm() {
           </a>
           .
         </p>
-         <div className="text-xs text-muted-foreground mt-4 space-y-1 text-center">
-          <p className="font-semibold">Demo Note:</p>
-          <p>To log in, users (including Admins) must first be registered via the 'Register here' link. The example credentials below can be used for registration if they don't already exist in the database.</p>
-          <p>Example Admin: admin123@gmail.com / Admin@123</p>
-          <p>Example Doctor: doctor.strange@example.com / Doctor@123</p>
-          <p>Example Patient: patient.doe@example.com / Patient@123</p>
-        </div>
+        {/* Demo Note section removed */}
       </CardFooter>
     </Card>
   );
