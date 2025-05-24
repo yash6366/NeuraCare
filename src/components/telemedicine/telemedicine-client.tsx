@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, UserCircle, MessageSquare, Activity, Mic } from "lucide-react"; 
+import { Send, UserCircle, MessageSquare, Activity, Mic, StopCircle } from "lucide-react"; 
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -88,7 +88,8 @@ export function TelemedicineClient() {
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         let transcribedText = event.results[0][0].transcript;
         setDoctorChatInput(transcribedText);
-        setIsDoctorChatListening(false);
+        // setIsDoctorChatListening(false); // onend will handle this
+        handleSendDoctorMessage(transcribedText); // Send message after transcription
       };
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error("Doctor chat speech recognition error", event.error);
@@ -107,21 +108,24 @@ export function TelemedicineClient() {
       doctorChatRecognitionRef.current?.abort();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, toast, translate]);
+  }, [language, toast, translate]); // Removed handleSendDoctorMessage from deps
 
 
-  const handleSendDoctorMessage = async () => {
-    if (!doctorChatInput.trim() || !selectedDoctor || !currentUser) return;
+  const handleSendDoctorMessage = async (messageContent?: string) => {
+    const currentMessage = typeof messageContent === 'string' ? messageContent : doctorChatInput;
+    if (!currentMessage.trim() || !selectedDoctor || !currentUser) return;
+    
     setIsDoctorChatLoading(true);
+    setDoctorChatInput(""); // Clear input immediately
 
     const newUserMessage: Message = {
       id: String(Date.now()),
-      text: doctorChatInput,
+      text: currentMessage,
       sender: "user",
       timestamp: new Date(),
     };
     setDoctorChatMessages(prev => [...prev, newUserMessage]);
-    setDoctorChatInput("");
+    
 
     setTimeout(() => {
       const replyText = translate(
@@ -164,15 +168,20 @@ export function TelemedicineClient() {
 
   const handleDoctorChatVoiceInput = () => {
     if (doctorChatRecognitionRef.current) {
-      try {
-        doctorChatRecognitionRef.current.lang = language;
-        doctorChatRecognitionRef.current.start();
-        setIsDoctorChatListening(true);
-        toast({ title: translate('telemedicine.speakNow', 'Speak now...') });
-      } catch (e) {
-        console.error("Error starting doctor chat speech recognition:", e);
-        toast({ title: translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), description: (e as Error).message || 'Could not start voice input.', variant: "destructive" });
-        setIsDoctorChatListening(false);
+      if (isDoctorChatListening) {
+        doctorChatRecognitionRef.current.stop();
+        // setIsDoctorChatListening(false); // onend will handle this
+      } else {
+        try {
+          doctorChatRecognitionRef.current.lang = language;
+          doctorChatRecognitionRef.current.start();
+          setIsDoctorChatListening(true);
+          toast({ title: translate('telemedicine.speakNow', 'Speak now...') });
+        } catch (e) {
+          console.error("Error starting doctor chat speech recognition:", e);
+          toast({ title: translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), description: (e as Error).message || 'Could not start voice input.', variant: "destructive" });
+          setIsDoctorChatListening(false);
+        }
       }
     } else {
       toast({ title: translate('telemedicine.voiceNotSupported', 'Voice input not supported by your browser.'), variant: "destructive" });
@@ -301,13 +310,19 @@ export function TelemedicineClient() {
                         placeholder={isDoctorChatListening ? translate('telemedicine.listeningDoctorChat', 'Listening for doctor chat...') : translate('telemedicine.typeDoctorMessagePlaceholder', "Type your message to the doctor...")}
                         value={doctorChatInput}
                         onChange={(e) => setDoctorChatInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && !isDoctorChatLoading && !isDoctorChatListening && handleSendDoctorMessage()}
-                        disabled={isDoctorChatLoading || isDoctorChatListening}
+                        onKeyPress={(e) => e.key === 'Enter' && !isDoctorChatLoading && handleSendDoctorMessage()}
+                        disabled={isDoctorChatLoading || (isDoctorChatListening && !doctorChatInput) }
                       />
-                       <Button onClick={handleDoctorChatVoiceInput} size="icon" variant="outline" aria-label={translate('telemedicine.useMicButtonDoctorChat', 'Use Microphone for Doctor Chat')} disabled={isDoctorChatLoading || isDoctorChatListening}>
-                        <Mic className={`h-5 w-5 ${isDoctorChatListening ? 'text-destructive animate-pulse' : ''}`} />
+                       <Button 
+                          onClick={handleDoctorChatVoiceInput} 
+                          size="icon" 
+                          variant="outline" 
+                          aria-label={isDoctorChatListening ? translate('telemedicine.stopListening', 'Stop Listening') : translate('telemedicine.useMicButtonDoctorChat', 'Use Microphone for Doctor Chat')} 
+                          disabled={isDoctorChatLoading}
+                        >
+                        {isDoctorChatListening ? <StopCircle className="h-5 w-5 text-destructive animate-pulse" /> : <Mic className="h-5 w-5" />}
                       </Button>
-                      <Button onClick={handleSendDoctorMessage} size="icon" aria-label={translate('telemedicine.sendButton')} disabled={isDoctorChatLoading || isDoctorChatListening || !doctorChatInput.trim()}>
+                      <Button onClick={() => handleSendDoctorMessage()} size="icon" aria-label={translate('telemedicine.sendButton')} disabled={isDoctorChatLoading || !doctorChatInput.trim()}>
                         {isDoctorChatLoading ? <Activity className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                       </Button>
                     </div>
@@ -324,5 +339,3 @@ export function TelemedicineClient() {
     </div>
   );
 }
-
-    

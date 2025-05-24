@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot as BotIcon, Mic, Volume2, VolumeX, Activity, ImagePlus, Paperclip, FileText, Search, HelpCircle } from "lucide-react";
+import { Send, Bot as BotIcon, Mic, Volume2, VolumeX, Activity, ImagePlus, Paperclip, FileText, Search, HelpCircle, StopCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
@@ -70,7 +70,7 @@ export function AiChatAssistantClient() {
       playTextAsSpeech(initialBotMessageText, language);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, translate]);
+  }, [language, translate]); // Removed autoPlayBotSpeech from deps to avoid re-greeting on toggle
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -96,7 +96,7 @@ export function AiChatAssistantClient() {
           console.log(translate('telemedicine.dwaniTranslateInfo'), "Original (regional):", transcribedText);
         }
         setInput(transcribedText);
-        setIsListening(false);
+        // setIsListening(false); // onend will handle this
         handleSendMessage(transcribedText); 
       };
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -119,7 +119,7 @@ export function AiChatAssistantClient() {
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [language, toast, translate]);
+  }, [language, toast, translate]); // Removed handleSendMessage from deps
 
   const playTextAsSpeech = (text: string, lang: LanguageCode) => {
     if (!autoPlayBotSpeech || typeof window === 'undefined' || !window.speechSynthesis || !text) return;
@@ -167,7 +167,7 @@ export function AiChatAssistantClient() {
         console.log(translate('telemedicine.dwaniTranslateInfo', 'Input (if regional) would be translated to English here by Dwani AI for core processing.'), "Original (regional) for AI:", userMessageText);
     }
 
-    const historyForGenkit: GenkitChatMessage[] = messages.concat([newUserMessage]).map(msg => ({ 
+    const historyForGenkit: GenkitChatMessage[] = messages.filter(msg => msg.sender === 'bot' || msg.sender === 'user').map(msg => ({ 
       role: msg.sender === "user" ? "user" : "model",
       parts: [{ text: msg.text }],
     }));
@@ -175,7 +175,7 @@ export function AiChatAssistantClient() {
 
     const inputForFlow: TelemedicineChatInput = {
       userMessage: textForAI,
-      chatHistory: historyForGenkit.slice(0, -1), 
+      chatHistory: historyForGenkit, 
       language: language.split('-')[0], 
     };
 
@@ -213,15 +213,20 @@ export function AiChatAssistantClient() {
 
   const handleVoiceInput = () => {
     if (recognitionRef.current) {
-      try {
-        recognitionRef.current.lang = language; 
-        recognitionRef.current.start();
-        setIsListening(true);
-        toast({ title: translate('telemedicine.speakNow', 'Speak now...') });
-      } catch (e) {
-        console.error("Error starting speech recognition:", e);
-        toast({ title: translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), description: (e as Error).message || translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), variant: "destructive" });
-        setIsListening(false);
+      if (isListening) {
+        recognitionRef.current.stop();
+        // setIsListening(false); // onend will handle this
+      } else {
+        try {
+          recognitionRef.current.lang = language; 
+          recognitionRef.current.start();
+          setIsListening(true);
+          toast({ title: translate('telemedicine.speakNow', 'Speak now...') });
+        } catch (e) {
+          console.error("Error starting speech recognition:", e);
+          toast({ title: translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), description: (e as Error).message || translate('telemedicine.voiceError', 'Voice input error. Please try again or type your message.'), variant: "destructive" });
+          setIsListening(false);
+        }
       }
     } else {
       toast({ title: translate('telemedicine.voiceNotSupported', 'Voice input not supported by your browser.'), variant: "destructive" });
@@ -388,12 +393,12 @@ export function AiChatAssistantClient() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && !isLoading && !isAnalyzingImage && handleSendMessage()}
-                disabled={isLoading || isListening || isAnalyzingImage}
+                disabled={isLoading || isAnalyzingImage || (isListening && !input) }
               />
-              <Button onClick={handleVoiceInput} size="icon" variant="outline" aria-label={translate('telemedicine.useMicButton', 'Use Microphone')} disabled={isListening || isLoading || isAnalyzingImage}>
-                <Mic className={`h-5 w-5 ${isListening ? 'text-destructive animate-pulse' : ''}`} />
+              <Button onClick={handleVoiceInput} size="icon" variant="outline" aria-label={isListening ? translate('telemedicine.stopListening', 'Stop Listening') : translate('telemedicine.useMicButton', 'Use Microphone')} disabled={isLoading || isAnalyzingImage}>
+                {isListening ? <StopCircle className="h-5 w-5 text-destructive animate-pulse" /> : <Mic className="h-5 w-5" /> }
               </Button>
-              <Button onClick={() => handleSendMessage()} size="icon" aria-label={translate('telemedicine.sendButton', 'Send')} disabled={isLoading || isListening || isAnalyzingImage || !input.trim()}>
+              <Button onClick={() => handleSendMessage()} size="icon" aria-label={translate('telemedicine.sendButton', 'Send')} disabled={isLoading || isAnalyzingImage || !input.trim()}>
                 {(isLoading && !isAnalyzingImage) ? <Activity className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
               </Button>
             </div>
@@ -460,5 +465,3 @@ export function AiChatAssistantClient() {
     </div>
   );
 }
-
-    
