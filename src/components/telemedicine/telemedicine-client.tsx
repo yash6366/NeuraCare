@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Video, Phone, Send, Bot, Mic, Volume2, VolumeX, Activity, Users } from "lucide-react";
+import { Video, Phone, Send, Bot, Mic, Volume2, VolumeX, Activity, Users, Languages } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -55,7 +55,9 @@ const uiTranslations: Record<string, Record<string, string>> = {
     verbalConsultationTitle: "Verbal Consultation",
     verbalConsultationDescription: "Connect with registered doctors for a voice call based on your needs.",
     startAudioCall: "Start Audio Call with a Doctor",
-    startVideoCall: "Start Video Call with a Doctor"
+    startVideoCall: "Start Video Call with a Doctor",
+    dwaniSTTInfo: "Using browser STT. (Dwani AI STT would be used here for regional languages)",
+    dwaniTranslateInfo: "Input (if regional) would be translated to English here by Dwani AI for core processing."
   },
   "hi-IN": {
     chatPlaceholder: "अपना संदेश लिखें...",
@@ -72,127 +74,18 @@ const uiTranslations: Record<string, Record<string, string>> = {
     verbalConsultationTitle: "मौखिक परामर्श",
     verbalConsultationDescription: "अपनी आवश्यकताओं के आधार पर पंजीकृत डॉक्टरों के साथ वॉयस कॉल के लिए जुड़ें।",
     startAudioCall: "डॉक्टर के साथ ऑडियो कॉल शुरू करें",
-    startVideoCall: "डॉक्टर के साथ वीडियो कॉल शुरू करें"
+    startVideoCall: "डॉक्टर के साथ वीडियो कॉल शुरू करें",
+    dwaniSTTInfo: "ब्राउज़र STT का उपयोग किया जा रहा है। (क्षेत्रीय भाषाओं के लिए यहां द्वानी एआई STT का उपयोग किया जाएगा)",
+    dwaniTranslateInfo: "इनपुट (यदि क्षेत्रीय हो) को कोर प्रोसेसिंग के लिए द्वानी एआई द्वारा यहां अंग्रेजी में अनुवादित किया जाएगा।"
   },
-  "kn-IN": { 
-    chatPlaceholder: "ನಿಮ್ಮ ಸಂದೇಶವನ್ನು ಟೈಪ್ ಮಾಡಿ...",
-    sendButton: "ಕಳುಹಿಸು",
-    listening: "ಕೇಳುತ್ತಿದೆ...",
-    speakNow: "ಈಗ ಮಾತನಾಡಿ...",
-    voiceError: "ಧ್ವನಿ ಇನ್ಪುಟ್ ದೋಷ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ನಿಮ್ಮ ಸಂದೇಶವನ್ನು ಟೈಪ್ ಮಾಡಿ.",
-    voiceNotSupported: "ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಿಂದ ಧ್ವನಿ ಇನ್ಪುಟ್ ಬೆಂಬಲಿತವಾಗಿಲ್ಲ.",
-    autoPlaySpeech: "AI ಭಾಷಣವನ್ನು ಸ್ವಯಂ-ಪ್ಲೇ ಮಾಡಿ",
-    language: "ಭಾಷೆ",
-    aiAssistantTitle: "AI ಚಾಟ್ ಸಹಾಯಕ",
-    aiAssistantDescription: "ನಿಮ್ಮ ಆರೋಗ್ಯ ಪ್ರಶ್ನೆಗಳಿಗೆ ತ್ವರಿತ ಉತ್ತರಗಳನ್ನು ಪಡೆಯಿರಿ.",
-    aiAssistantInitialGreeting: "ನಮಸ್ಕಾರ! ನಾನು ಸ್ಮಾರ್ಟ್‌ಕೇರ್ AI ಸಹಾಯಕ. ಇಂದು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
-    verbalConsultationTitle: "ಮೌಖಿಕ ಸಮಾಲೋಚನೆ",
-    verbalConsultationDescription: "ನಿಮ್ಮ ಅಗತ್ಯಗಳಿಗೆ ಅನುಗುಣವಾಗಿ ನೋಂದಾಯಿತ ವೈದ್ಯರೊಂದಿಗೆ ಧ್ವನಿ ಕರೆಗಾಗಿ ಸಂಪರ್ಕಿಸಿ.",
-    startAudioCall: "ವೈದ್ಯರೊಂದಿಗೆ ಆಡಿಯೋ ಕರೆ ಪ್ರಾರಂಭಿಸಿ",
-    startVideoCall: "ವೈದ್ಯರೊಂದಿಗೆ ವೀಡಿಯೊ ಕರೆ ಪ್ರಾರಂಭಿಸಿ"
-  },
-  "te-IN": { 
-    chatPlaceholder: "మీ సందేశాన్ని టైప్ చేయండి...",
-    sendButton: "పంపు",
-    listening: "వినడం...",
-    speakNow: "ఇప్పుడు మాట్లాడండి...",
-    voiceError: "వాయిస్ ఇన్‌పుట్ లోపం. దయచేసి మళ్లీ ప్రయత్నించండి లేదా మీ సందేశాన్ని టైప్ చేయండి.",
-    voiceNotSupported: "మీ బ్రౌజర్ ద్వారా వాయిస్ ఇన్‌పుట్ మద్దతు లేదు.",
-    autoPlaySpeech: "AI ప్రసంగాన్ని ఆటో-ప్లే చేయండి",
-    language: "భాష",
-    aiAssistantTitle: "AI చాట్ అసిస్టెంట్",
-    aiAssistantDescription: "మీ ఆరోగ్య ప్రశ్నలకు త్వరిత సమాధానాలను పొందండి.",
-    aiAssistantInitialGreeting: "నమస్కారం! నేను స్మార్ట్‌కేర్ AI అసిస్టెంట్. ఈ రోజు నేను మీకు ఎలా సహాయపడగలను?",
-    verbalConsultationTitle: "మౌఖిక సంప్రదింపులు",
-    verbalConsultationDescription: "మీ అవసరాలకు అనుగుణంగా రిజిస్టర్డ్ డాక్టర్లతో వాయిస్ కాల్ కోసం కనెక్ట్ అవ్వండి.",
-    startAudioCall: "డాక్టర్‌తో ఆడియో కాల్ ప్రారంభించండి",
-    startVideoCall: "డాక్టర్‌తో వీడియో కాల్ ప్రారంభించండి"
-  },
-    "ta-IN": { 
-    chatPlaceholder: "உங்கள் செய்தியைத் தட்டச்சு செய்க...",
-    sendButton: "அனுப்பு",
-    listening: "கேட்கிறது...",
-    speakNow: "இப்போது பேசுங்கள்...",
-    voiceError: "குரல் உள்ளீட்டுப் பிழை. மீண்டும் முயற்சிக்கவும் அல்லது உங்கள் செய்தியைத் தட்டச்சு செய்யவும்.",
-    voiceNotSupported: "உங்கள் உலாவியில் குரல் உள்ளீடு ஆதரிக்கப்படவில்லை.",
-    autoPlaySpeech: "AI பேச்சைத் தானாக இயக்கு",
-    language: "மொழி",
-    aiAssistantTitle: "AI அரட்டை உதவியாளர்",
-    aiAssistantDescription: "உங்கள் சுகாதார வினவல்களுக்கு விரைவான பதில்களைப் பெறுங்கள்.",
-    aiAssistantInitialGreeting: "வணக்கம்! நான் ஸ்மார்ட்கேர் AI உதவியாளர். இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்?",
-    verbalConsultationTitle: "வாய்மொழி ஆலோசனை",
-    verbalConsultationDescription: "உங்கள் தேவைகளுக்கு ஏற்ப பதிவுசெய்யப்பட்ட மருத்துவர்களுடன் குரல் அழைப்புக்கு இணையுங்கள்.",
-    startAudioCall: "மருத்துவருடன் ஆடியோ அழைப்பைத் தொடங்குங்கள்",
-    startVideoCall: "மருத்துவருடன் வீடியோ அழைப்பைத் தொடங்குங்கள்"
-  },
-  "bn-IN": { 
-    chatPlaceholder: "আপনার বার্তা টাইপ করুন...",
-    sendButton: "পাঠান",
-    listening: "শুনছে...",
-    speakNow: "এখন কথা বলুন...",
-    voiceError: "ভয়েস ইনপুট ত্রুটি। অনুগ্রহ করে আবার চেষ্টা করুন অথবা আপনার বার্তা টাইপ করুন।",
-    voiceNotSupported: "আপনার ব্রাউজার ভয়েস ইনপুট সমর্থন করে না।",
-    autoPlaySpeech: "এআই স্পিচ অটো-প্লে করুন",
-    language: "ভাষা",
-    aiAssistantTitle: "এআই চ্যাট সহকারী",
-    aiAssistantDescription: "আপনার স্বাস্থ্য প্রশ্নের দ্রুত উত্তর পান।",
-    aiAssistantInitialGreeting: "নমস্কার! আমি স্মার্টকেয়ার এআই সহকারী। আজ আমি আপনাকে কিভাবে সাহায্য করতে পারি?",
-    verbalConsultationTitle: "মৌখিক পরামর্শ",
-    verbalConsultationDescription: "আপনার প্রয়োজন অনুযায়ী নিবন্ধিত ডাক্তারদের সাথে ভয়েস কলের জন্য সংযোগ করুন।",
-    startAudioCall: "ডাক্তারের সাথে অডিও কল শুরু করুন",
-    startVideoCall: "ডাক্তারের সাথে ভিডিও কল শুরু করুন"
-  },
-  "mr-IN": {
-    chatPlaceholder: "तुमचा संदेश टाइप करा...",
-    sendButton: "पाठवा",
-    listening: "ऐकत आहे...",
-    speakNow: "आता बोला...",
-    voiceError: "व्हॉइस इनपुट त्रुटी. कृपया पुन्हा प्रयत्न करा किंवा तुमचा संदेश टाइप करा.",
-    voiceNotSupported: "तुमचा ब्राउझर व्हॉइस इनपुटला समर्थन देत नाही.",
-    autoPlaySpeech: "एआय स्पीच ऑटो-प्ले करा",
-    language: "भाषा",
-    aiAssistantTitle: "एआय चॅट असिस्टंट",
-    aiAssistantDescription: "तुमच्या आरोग्यविषयक प्रश्नांची त्वरित उत्तरे मिळवा.",
-    aiAssistantInitialGreeting: "नमस्कार! मी स्मार्टकेअर एआय असिस्टंट आहे. आज मी तुमची कशी मदत करू शकेन?",
-    verbalConsultationTitle: "तोंडी सल्लामसलत",
-    verbalConsultationDescription: "तुमच्या गरजेनुसार नोंदणीकृत डॉक्टरांशी व्हॉइस कॉलसाठी संपर्क साधा.",
-    startAudioCall: "डॉक्टरसोबत ऑडिओ कॉल सुरू करा",
-    startVideoCall: "डॉक्टरसोबत व्हिडिओ कॉल सुरू करा"
-  },
-  "gu-IN": { 
-    chatPlaceholder: "તમારો સંદેશ લખો...",
-    sendButton: "મોકલો",
-    listening: "સાંભળી રહ્યું છે...",
-    speakNow: "હવે બોલો...",
-    voiceError: "વૉઇસ ઇનપુટ ભૂલ. કૃપા કરીને ફરી પ્રયાસ કરો અથવા તમારો સંદેશ લખો.",
-    voiceNotSupported: "તમારું બ્રાઉઝર વૉઇસ ઇનપુટને સમર્થન આપતું નથી.",
-    autoPlaySpeech: "AI સ્પીચ ઓટો-પ્લે કરો",
-    language: "ભાષા",
-    aiAssistantTitle: "AI ચેટ સહાયક",
-    aiAssistantDescription: "તમારા સ્વાસ્થ્ય પ્રશ્નોના ઝડપી જવાબો મેળવો.",
-    aiAssistantInitialGreeting: "નમસ્તે! હું સ્માર્ટકેર AI સહાયક છું. આજે હું તમને કેવી રીતે મદદ કરી શકું?",
-    verbalConsultationTitle: "મૌખિક પરામર્શ",
-    verbalConsultationDescription: "તમારી જરૂરિયાતોને આધારે નોંધાયેલા ડોકટરો સાથે વૉઇસ કૉલ માટે કનેક્ટ થાઓ.",
-    startAudioCall: "ડૉક્ટર સાથે ઑડિયો કૉલ શરૂ કરો",
-    startVideoCall: "ડૉક્ટર સાથે વીડિયો કૉલ શરૂ કરો"
-  },
-  "ur-IN": { 
-    chatPlaceholder: "اپنا پیغام ٹائپ کریں...",
-    sendButton: "بھیجیں",
-    listening: "سن رہا ہے۔..",
-    speakNow: "اب بولیں...",
-    voiceError: "وائس ان پٹ میں خرابی۔ براہ کرم دوبارہ کوشش کریں یا اپنا پیغام ٹائپ کریں۔",
-    voiceNotSupported: "آپ کا براؤزر وائس ان پٹ کو سپورٹ نہیں کرتا۔",
-    autoPlaySpeech: "AI تقریر خود بخود چلائیں",
-    language: "زبان",
-    aiAssistantTitle: "AI چیٹ اسسٹنٹ",
-    aiAssistantDescription: "اپنے صحت کے سوالات کے فوری جوابات حاصل کریں۔",
-    aiAssistantInitialGreeting: "سلام! میں اسمارٹ کیئر AI اسسٹنٹ ہوں۔ آج میں آپ کی کیسے مدد کر سکتا ہوں؟",
-    verbalConsultationTitle: "زبانی مشاورت",
-    verbalConsultationDescription: "اپنی ضروریات کی بنیاد پر رجسٹرڈ ڈاکٹروں کے ساتھ وائس کال کے لیے رابطہ کریں۔",
-    startAudioCall: "ڈاکٹر کے ساتھ آڈیو کال شروع کریں",
-    startVideoCall: "ڈاکٹر کے ساتھ ویڈیو کال شروع کریں"
-  },
+  // Add other language translations similarly, falling back to English if not provided
+  "kn-IN": { chatPlaceholder: "ನಿಮ್ಮ ಸಂದೇಶವನ್ನು ಟೈಪ್ ಮಾಡಿ...", sendButton: "ಕಳುಹಿಸು", listening: "ಕೇಳುತ್ತಿದೆ...", speakNow: "ಈಗ ಮಾತನಾಡಿ...", voiceError: "ಧ್ವನಿ ಇನ್ಪುಟ್ ದೋಷ.", autoPlaySpeech: "AI ಭಾಷಣವನ್ನು ಸ್ವಯಂ-ಪ್ಲೇ ಮಾಡಿ", language: "ಭಾಷೆ", aiAssistantTitle: "AI ಚಾಟ್ ಸಹಾಯಕ", aiAssistantDescription: "ನಿಮ್ಮ ಆರೋಗ್ಯ ಪ್ರಶ್ನೆಗಳಿಗೆ ತ್ವರಿತ ಉತ್ತರಗಳನ್ನು ಪಡೆಯಿರಿ.", aiAssistantInitialGreeting: "ನಮಸ್ಕಾರ! ನಾನು ಸ್ಮಾರ್ಟ್‌ಕೇರ್ AI ಸಹಾಯಕ.", verbalConsultationTitle: "ಮೌಖಿಕ ಸಮಾಲೋಚನೆ", startAudioCall: "ವೈದ್ಯರೊಂದಿಗೆ ಆಡಿಯೋ ಕರೆ ಪ್ರಾರಂಭಿಸಿ", startVideoCall: "ವೈದ್ಯರೊಂದಿಗೆ ವೀಡಿಯೊ ಕರೆ ಪ್ರಾರಂಭಿಸಿ", dwaniSTTInfo: "ಬ್ರೌಸರ್ STT ಬಳಸಲಾಗುತ್ತಿದೆ. (ಪ್ರಾದೇಶಿಕ ಭಾಷೆಗಳಿಗಾಗಿ ದ್ವನಿ AI STT ಇಲ್ಲಿ ಬಳಸಲ್ಪಡುತ್ತದೆ)", dwaniTranslateInfo: "ಇನ್‌ಪುಟ್ (ಪ್ರಾದೇಶಿಕವಾಗಿದ್ದರೆ) ದ್ವನಿ AI ನಿಂದ ಇಲ್ಲಿ ಇಂಗ್ಲಿಷ್‌ಗೆ ಅನುವಾದಿಸಲಾಗುತ್ತದೆ." },
+  "te-IN": { chatPlaceholder: "మీ సందేశాన్ని టైప్ చేయండి...", sendButton: "పంపు", listening: "వినడం...", speakNow: "ఇప్పుడు మాట్లాడండి...", voiceError: "వాయిస్ ఇన్‌పుట్ లోపం.", autoPlaySpeech: "AI ప్రసంగాన్ని ఆటో-ప్లే చేయండి", language: "భాష", aiAssistantTitle: "AI చాట్ అసిస్టెంట్", aiAssistantDescription: "మీ ఆరోగ్య ప్రశ్నలకు త్వరిత సమాధానాలను పొందండి.", aiAssistantInitialGreeting: "నమస్కారం! నేను స్మార్ట్‌కేర్ AI అసిస్టెంట్.", verbalConsultationTitle: "మౌఖిక సంప్రదింపులు", startAudioCall: "డాక్టర్‌తో ఆడియో కాల్ ప్రారంభించండి", startVideoCall: "డాక్టర్‌తో వీడియో కాల్ ప్రారంభించండి", dwaniSTTInfo: "బ్రౌజర్ STT ఉపయోగించబడుతోంది. (ప్రాంతీయ భాషల కోసం ద్వాని AI STT ఇక్కడ ఉపయోగించబడుతుంది)", dwaniTranslateInfo: "ఇన్‌పుట్ (ప్రాంతీయంగా ఉంటే) ఇక్కడ ద్వాని AI ద్వారా ఆంగ్లంలోకి అనువదించబడుతుంది." },
+  "ta-IN": { chatPlaceholder: "உங்கள் செய்தியைத் தட்டச்சு செய்க...", sendButton: "அனுப்பு", listening: "கேட்கிறது...", speakNow: "இப்போது பேசுங்கள்...", voiceError: "குரல் உள்ளீட்டுப் பிழை.", autoPlaySpeech: "AI பேச்சைத் தானாக இயக்கு", language: "மொழி", aiAssistantTitle: "AI அரட்டை உதவியாளர்", aiAssistantDescription: "உங்கள் சுகாதார வினவல்களுக்கு விரைவான பதில்களைப் பெறுங்கள்.", aiAssistantInitialGreeting: "வணக்கம்! நான் ஸ்மார்ட்கேர் AI உதவியாளர்.", verbalConsultationTitle: "வாய்மொழி ஆலோசனை", startAudioCall: "மருத்துவருடன் ஆடியோ அழைப்பைத் தொடங்குங்கள்", startVideoCall: "மருத்துவருடன் வீடியோ அழைப்பைத் தொடங்குங்கள்", dwaniSTTInfo: "உலாவி STT பயன்படுத்தப்படுகிறது. (பிராந்திய மொழிகளுக்கு துவனி AI STT இங்கே பயன்படுத்தப்படும்)", dwaniTranslateInfo: "உள்ளீடு (பிராந்தியமாக இருந்தால்) துவனி AI மூலம் ஆங்கிலத்திற்கு இங்கே மொழிபெயர்க்கப்படும்." },
+  "bn-IN": { chatPlaceholder: "আপনার বার্তা টাইপ করুন...", sendButton: "পাঠান", listening: "শুনছে...", speakNow: "এখন কথা বলুন...", voiceError: "ভয়েস ইনপুট ত্রুটি।", autoPlaySpeech: "এআই স্পিচ অটো-প্লে করুন", language: "ভাষা", aiAssistantTitle: "এআই চ্যাট সহকারী", aiAssistantDescription: "আপনার স্বাস্থ্য প্রশ্নের দ্রুত উত্তর পান।", aiAssistantInitialGreeting: "নমস্কার! আমি স্মার্টকেয়ার এআই সহকারী।", verbalConsultationTitle: "মৌখিক পরামর্শ", startAudioCall: "ডাক্তারের সাথে অডিও কল শুরু করুন", startVideoCall: "ডাক্তারের সাথে ভিডিও কল শুরু করুন", dwaniSTTInfo: "ব্রাউজার এসটিটি ব্যবহার করা হচ্ছে। (আঞ্চলিক ভাষার জন্য এখানে ধ্বনি এআই এসটিটি ব্যবহার করা হবে)", dwaniTranslateInfo: "ইনপুট (যদি আঞ্চলিক হয়) মূল প্রক্রিয়াকরণের জন্য ধ্বনি এআই দ্বারা এখানে ইংরেজিতে অনুবাদ করা হবে।" },
+  "mr-IN": { chatPlaceholder: "तुमचा संदेश टाइप करा...", sendButton: "पाठवा", listening: "ऐकत आहे...", speakNow: "आता बोला...", voiceError: "व्हॉइस इनपुट त्रुटी.", autoPlaySpeech: "एआय स्पीच ऑटो-प्ले करा", language: "भाषा", aiAssistantTitle: "एआय चॅट असिस्टंट", aiAssistantDescription: "तुमच्या आरोग्यविषयक प्रश्नांची त्वरित उत्तरे मिळवा.", aiAssistantInitialGreeting: "नमस्कार! मी स्मार्टकेअर एआय असिस्टंट आहे.", verbalConsultationTitle: "तोंडी सल्लामसलत", startAudioCall: "डॉक्टरसोबत ऑडिओ कॉल सुरू करा", startVideoCall: "डॉक्टरसोबत व्हिडिओ कॉल सुरू करा", dwaniSTTInfo: "ब्राउझर एसटीटी वापरले जात आहे. (प्रादेशिक भाषांसाठी ध्वनी एआय एसटीटी येथे वापरला जाईल)", dwaniTranslateInfo: "इनपुट (प्रादेशिक असल्यास) कोर प्रक्रियेसाठी ध्वनी एआयद्वारे येथे इंग्रजीमध्ये अनुवादित केले जाईल." },
+  "gu-IN": { chatPlaceholder: "તમારો સંદેશ લખો...", sendButton: "મોકલો", listening: "સાંભળી રહ્યું છે...", speakNow: "હવે બોલો...", voiceError: "વૉઇસ ઇનપુટ ભૂલ.", autoPlaySpeech: "AI સ્પીચ ઓટો-પ્લે કરો", language: "ભાષા", aiAssistantTitle: "AI ચેટ સહાયક", aiAssistantDescription: "તમારા સ્વાસ્થ્ય પ્રશ્નોના ઝડપી જવાબો મેળવો.", aiAssistantInitialGreeting: "નમસ્તે! હું સ્માર્ટકેર AI સહાયક છું.", verbalConsultationTitle: "મૌખિક પરામર્શ", startAudioCall: "ડૉક્ટર સાથે ઑડિયો કૉલ શરૂ કરો", startVideoCall: "ડૉક્ટર સાથે વીડિયો કૉલ શરૂ કરો", dwaniSTTInfo: "બ્રાઉઝર STT નો ઉપયોગ કરી રહ્યું છે. (પ્રાદેશિક ભાષાઓ માટે અહીં દ્વાની AI STT નો ઉપયોગ કરવામાં આવશે)", dwaniTranslateInfo: "ઇનપુટ (જો પ્રાદેશિક હોય તો) મુખ્ય પ્રક્રિયા માટે દ્વાની AI દ્વારા અહીં અંગ્રેજીમાં અનુવાદિત કરવામાં આવશે." },
+  "ur-IN": { chatPlaceholder: "اپنا پیغام ٹائپ کریں...", sendButton: "بھیجیں", listening: "سن رہا ہے۔..", speakNow: "اب بولیں...", voiceError: "وائس ان پٹ میں خرابی۔", autoPlaySpeech: "AI تقریر خود بخود چلائیں", language: "زبان", aiAssistantTitle: "AI چیٹ اسسٹنٹ", aiAssistantDescription: "اپنے صحت کے سوالات کے فوری جوابات حاصل کریں۔", aiAssistantInitialGreeting: "سلام! میں اسمار্ট کیئر AI اسسٹنٹ ہوں۔", verbalConsultationTitle: "زبانی مشاورت", startAudioCall: "ڈاکٹر کے ساتھ آڈیو کال شروع کریں", startVideoCall: "ڈاکٹر کے ساتھ ویڈیو کال شروع کریں", dwaniSTTInfo: "براؤزر ایس ٹی ٹی استعمال کیا جا رہا ہے۔ (علاقائی زبانوں کے لیے یہاں ڈوانی اے آئی ایس ٹی ٹی استعمال کیا جائے گا)", dwaniTranslateInfo: "ان پٹ (اگر علاقائی ہو) کو بنیادی پروسیسنگ کے لیے ڈوانی اے آئی کے ذریعے یہاں انگریزی میں ترجمہ کیا جائے گا۔" },
 };
 
 
@@ -207,25 +100,35 @@ export function TelemedicineClient() {
   const [isListening, setIsListening] = useState(false);
   const [autoPlayBotSpeech, setAutoPlayBotSpeech] = useState(true);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  
   const currentTranslations = uiTranslations[selectedLanguage] || uiTranslations["en-US"];
+
 
   useEffect(() => {
     const initialBotMessageKey = "aiAssistantInitialGreeting";
     const defaultGreeting = "Hello! I'm SmartCare AI Assistant. How can I help you today?";
-    const initialBotMessage = currentTranslations[initialBotMessageKey] || 
+    const initialBotMessageText = currentTranslations[initialBotMessageKey] || 
                               (uiTranslations["en-US"][initialBotMessageKey] || defaultGreeting);
     
-    setChatMessages([
-      {
-        id: String(Date.now()),
-        text: initialBotMessage,
-        sender: "bot",
-        timestamp: new Date(),
-      },
-    ]);
-  }, [selectedLanguage, currentTranslations]);
+    const initialBotMessage: Message = {
+      id: String(Date.now()),
+      text: initialBotMessageText,
+      sender: "bot",
+      timestamp: new Date(),
+    };
+    setChatMessages([initialBotMessage]);
+
+    // Play initial greeting if autoPlay is on
+    if (autoPlayBotSpeech) {
+        playTextAsSpeech(initialBotMessageText, selectedLanguage);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLanguage]); // Removed currentTranslations and autoPlayBotSpeech to avoid re-triggering on toggle
   
   useEffect(() => {
+    // Initialize SpeechRecognition
+    // This would be where Dwani AI STT integration would happen for regional languages.
+    // For now, we use Web Speech API.
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognitionInstance = new SpeechRecognition();
@@ -234,13 +137,25 @@ export function TelemedicineClient() {
       recognitionInstance.lang = selectedLanguage;
 
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
-        const transcript = event.results[0][0].transcript;
-        setChatInput(transcript);
+        let transcribedText = event.results[0][0].transcript;
+        console.log(currentTranslations.dwaniSTTInfo, "Transcribed text:", transcribedText);
+        
+        // Simulate Dwani AI translation to English for internal processing
+        if (selectedLanguage !== "en-US") {
+            console.log(currentTranslations.dwaniTranslateInfo, "Original (regional):", transcribedText);
+            // In a real Dwani AI integration, you'd call its translation API here.
+            // e.g., const englishText = await dwaniTranslateToEnglish(transcribedText);
+            // For this simulation, we'll just log it. The AI flow will still receive the regional text.
+        }
+        
+        setChatInput(transcribedText);
         setIsListening(false);
+        // Automatically send message after voice input
+        handleSendMessage(transcribedText); 
       };
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error("Speech recognition error", event.error);
-        toast({ title: "Voice Error", description: currentTranslations.voiceError, variant: "destructive" });
+        toast({ title: currentTranslations.voiceError, description: event.error, variant: "destructive" });
         setIsListening(false);
       };
       recognitionInstance.onend = () => {
@@ -253,6 +168,7 @@ export function TelemedicineClient() {
 
     return () => {
       recognitionRef.current?.abort();
+      window.speechSynthesis?.cancel(); // Stop any speech on component unmount or language change
     };
   }, [selectedLanguage, toast, currentTranslations]);
 
@@ -261,28 +177,38 @@ export function TelemedicineClient() {
 
     const utterance = new SpeechSynthesisUtterance(text);
     
-    const voices = window.speechSynthesis.getVoices();
-    const targetVoice = voices.find(voice => voice.lang.startsWith(lang.split('-')[0])); 
+    // Attempt to find a voice that matches the full language code (e.g., 'hi-IN')
+    let targetVoice = window.speechSynthesis.getVoices().find(voice => voice.lang === lang);
     
+    // If not found, try matching just the language part (e.g., 'hi')
+    if (!targetVoice) {
+      targetVoice = window.speechSynthesis.getVoices().find(voice => voice.lang.startsWith(lang.split('-')[0]));
+    }
+        
     if (targetVoice) {
       utterance.voice = targetVoice;
     } else {
+       // Fallback to setting utterance.lang if no specific voice is found
+       // This lets the browser pick a default voice for that language if available
        utterance.lang = lang;
     }
-
+    
     window.speechSynthesis.cancel(); 
     window.speechSynthesis.speak(utterance);
   };
   
   useEffect(() => {
+    // Ensure voices are loaded
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.getVoices(); 
+      window.speechSynthesis.onvoiceschanged = () => {
+        // Voices loaded, good to go.
+      };
     }
   }, []);
 
 
-  const handleSendMessage = async (messageToSend?: string) => {
-    const currentMessage = typeof messageToSend === 'string' ? messageToSend : chatInput;
+  const handleSendMessage = async (messageContent?: string) => {
+    const currentMessage = typeof messageContent === 'string' ? messageContent : chatInput;
     if (!currentMessage.trim()) return;
     setIsChatLoading(true);
 
@@ -293,26 +219,35 @@ export function TelemedicineClient() {
       timestamp: new Date(),
     };
     setChatMessages(prev => [...prev, newUserMessage]);
-    if (typeof messageToSend !== 'string') {
+    if (typeof messageContent !== 'string') {
       setChatInput(""); 
     }
 
+    // Simulate Dwani AI internal translation step if input was regional and not English
+    let textForAI = currentMessage;
+    if (selectedLanguage !== "en-US") {
+        console.log(currentTranslations.dwaniTranslateInfo, "Original (regional) for AI:", currentMessage);
+        // For this demo, textForAI remains currentMessage.
+        // In a real Dwani integration: textForAI = await dwaniTranslateToEnglish(currentMessage);
+        // And the AI flow would be designed to expect English.
+    }
+    
     const historyForGenkit: GenkitChatMessage[] = chatMessages.map(msg => ({
       role: msg.sender === "user" ? "user" : "model",
       parts: [{ text: msg.text }],
     }));
     
     const inputForFlow: TelemedicineChatInput = {
-      userMessage: currentMessage,
+      userMessage: textForAI, // This would be the translated English text in a full Dwani integration
       chatHistory: historyForGenkit,
-      language: selectedLanguage.split('-')[0], 
+      language: selectedLanguage.split('-')[0], // Gemini is asked to respond in the user's selected language
     };
 
     try {
       const aiResponse: TelemedicineChatOutput = await telemedicineChat(inputForFlow);
       const newBotMessage: Message = {
         id: String(Date.now() + 1),
-        text: aiResponse.botResponse,
+        text: aiResponse.botResponse, // This response is already in the user's selected language
         sender: "bot",
         timestamp: new Date(),
       };
@@ -365,7 +300,7 @@ export function TelemedicineClient() {
         toast({ title: currentTranslations.speakNow });
       } catch (e) {
          console.error("Error starting speech recognition:", e);
-         toast({ title: "Voice Error", description: currentTranslations.voiceError, variant: "destructive" });
+         toast({ title: "Voice Error", description: (e as Error).message || currentTranslations.voiceError, variant: "destructive" });
          setIsListening(false);
       }
     } else {
@@ -426,7 +361,10 @@ export function TelemedicineClient() {
           <CardDescription>{currentTranslations.aiAssistantDescription}</CardDescription>
            <div className="pt-2 space-y-2">
             <div>
-              <Label htmlFor="language-select">{currentTranslations.language}</Label>
+              <Label htmlFor="language-select" className="flex items-center gap-1">
+                <Languages className="h-4 w-4"/>
+                {currentTranslations.language}
+              </Label>
               <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
                 <SelectTrigger id="language-select">
                   <SelectValue placeholder="Select language" />
@@ -518,5 +456,3 @@ export function TelemedicineClient() {
     </div>
   );
 }
-
-
