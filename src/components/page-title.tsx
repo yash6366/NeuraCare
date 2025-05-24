@@ -1,8 +1,10 @@
+
 import type { LucideIcon } from "lucide-react";
+// Note: Translations for titles/descriptions will be passed directly if needed from parent pages
 
 interface PageTitleProps {
-  title: string;
-  description?: string;
+  title: string; // Will now be the translated title passed from the page
+  description?: string; // Will now be the translated description passed from the page
   icon?: LucideIcon;
 }
 
@@ -19,3 +21,5 @@ export function PageTitle({ title, description, icon: Icon }: PageTitleProps) {
     </div>
   );
 }
+
+    

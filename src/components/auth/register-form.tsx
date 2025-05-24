@@ -12,11 +12,12 @@ import { User, KeyRound, Mail, UserPlus, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { registerUserWithCredentials } from "@/lib/actions/auth.actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
+import { useLanguage } from "@/contexts/language-context"; // Added
 
 export function RegisterForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const { translate } = useLanguage(); // Added
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -79,13 +80,13 @@ export function RegisterForm() {
         <div className="mx-auto mb-4">
           <UserPlus className="h-16 w-16 text-primary" />
         </div>
-        <CardTitle className="text-3xl font-bold">Create Account</CardTitle>
-        <CardDescription>Join SmartCare Hub today.</CardDescription>
+        <CardTitle className="text-3xl font-bold">{translate('register.title', 'Create Account')}</CardTitle>
+        <CardDescription>{translate('register.description', 'Join SmartCare Hub today.')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
+            <Label htmlFor="fullName">{translate('register.fullNameLabel', 'Full Name')}</Label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -101,7 +102,7 @@ export function RegisterForm() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{translate('register.emailLabel', 'Email')}</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -117,7 +118,7 @@ export function RegisterForm() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{translate('register.passwordLabel', 'Password')}</Label>
             <div className="relative">
               <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -134,7 +135,7 @@ export function RegisterForm() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">{translate('register.confirmPasswordLabel', 'Confirm Password')}</Label>
             <div className="relative">
               <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -150,22 +151,22 @@ export function RegisterForm() {
             </div>
           </div>
            <div className="space-y-2">
-            <Label htmlFor="role">Register as</Label>
+            <Label htmlFor="role">{translate('register.roleLabel', 'Register as')}</Label>
             <Select value={role} onValueChange={(value) => setRole(value as 'patient' | 'doctor' | 'admin')} disabled={isLoading}>
               <SelectTrigger id="role">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="patient">Patient</SelectItem>
-                <SelectItem value="doctor">Doctor</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="patient">{translate('register.role.patient','Patient')}</SelectItem>
+                <SelectItem value="doctor">{translate('register.role.doctor','Doctor')}</SelectItem>
+                <SelectItem value="admin">{translate('register.role.admin','Admin')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {role === 'patient' && (
             <div className="space-y-2">
-              <Label htmlFor="emergencyContactPhone">Emergency Contact Phone (Optional)</Label>
+              <Label htmlFor="emergencyContactPhone">{translate('register.emergencyContactLabel', 'Emergency Contact Phone (Optional)')}</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
@@ -182,15 +183,15 @@ export function RegisterForm() {
           )}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Registering..." : "Create Account"}
+            {isLoading ? "Registering..." : translate('register.button', 'Create Account')}
           </Button>
         </form>
       </CardContent>
       <CardFooter className="flex flex-col items-center space-y-2 pt-6">
         <div className="text-sm text-muted-foreground">
-          Already have an account?{" "}
+          {translate('register.loginLink').split('Log in')[0]}
           <Link href="/login" className="font-medium text-primary hover:underline">
-            Log in
+             {translate('register.loginLink').split('? ')[1] || 'Log in'}
           </Link>
         </div>
          <p className="px-8 text-center text-sm text-muted-foreground pt-2">
@@ -208,3 +209,5 @@ export function RegisterForm() {
     </Card>
   );
 }
+
+    

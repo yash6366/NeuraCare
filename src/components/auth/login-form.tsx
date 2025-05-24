@@ -10,13 +10,15 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, User, KeyRound, Hospital } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { loginUser } from "@/lib/auth"; // This now calls the server action internally
+import { loginUser } from "@/lib/auth"; 
+import { useLanguage } from "@/contexts/language-context"; // Added
 
 export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
-  const [email, setEmail] = useState("admin123@gmail.com"); // Default for demo
-  const [password, setPassword] = useState("Admin@123"); // Default for demo
+  const { translate } = useLanguage(); // Added
+  const [email, setEmail] = useState("admin123@gmail.com"); 
+  const [password, setPassword] = useState("Admin@123"); 
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,16 +30,11 @@ export function LoginForm() {
 
       if (user) {
         toast({
-          title: "Login Successful",
+          title: "Login Successful", // Consider translating toast messages too
           description: `Welcome back, ${user.name}! Redirecting...`,
         });
-        // The dashboard page will handle role-based redirection.
         router.push("/dashboard"); 
       } else {
-        // The server action handles specific error messages.
-        // For simplicity, we'll show a generic one here if user is null
-        // but specific error message from server action would be better.
-        // This part might need refinement if loginUser returns detailed error from server.
         toast({
           title: "Login Failed",
           description: "Invalid email or password. Please try again.",
@@ -61,13 +58,13 @@ export function LoginForm() {
         <div className="mx-auto mb-4">
           <Hospital className="h-16 w-16 text-primary" />
         </div>
-        <CardTitle className="text-3xl font-bold">SmartCare Hub Login</CardTitle>
-        <CardDescription>Access your intelligent healthcare companion.</CardDescription>
+        <CardTitle className="text-3xl font-bold">{translate('login.title', 'SmartCare Hub Login')}</CardTitle>
+        <CardDescription>{translate('login.description', 'Access your intelligent healthcare companion.')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{translate('login.emailLabel', 'Email')}</Label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -83,7 +80,7 @@ export function LoginForm() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{translate('login.passwordLabel', 'Password')}</Label>
             <div className="relative">
               <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
@@ -99,15 +96,15 @@ export function LoginForm() {
             </div>
           </div>
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoading ? "Logging in..." : translate('login.button', 'Login')}
           </Button>
         </form>
       </CardContent>
       <CardFooter className="flex flex-col items-center space-y-4 pt-6">
         <div className="text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
+          {translate('login.registerLink').split('Register here')[0]}
           <Link href="/register" className="font-medium text-primary hover:underline">
-            Register here
+            {translate('login.registerLink').split('? ')[1] || 'Register here'}
           </Link>
         </div>
         <div className="relative w-full my-2">
@@ -147,3 +144,4 @@ export function LoginForm() {
   );
 }
 
+    

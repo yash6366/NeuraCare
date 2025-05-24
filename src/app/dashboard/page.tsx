@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import { MainLayout } from "@/components/layout/main-layout";
 import { PageTitle } from "@/components/page-title";
 import { FeatureCard } from "@/components/dashboard/feature-card";
-import { getCurrentUser, type AppUser, type Doctor, type Patient } from "@/lib/auth"; // Adjusted imports
-import { getAllUsers } from "@/lib/actions/admin.actions"; // New server action
+import { getCurrentUser, type AppUser, type Doctor, type Patient } from "@/lib/auth"; 
+import { getAllUsers } from "@/lib/actions/admin.actions"; 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -19,28 +19,29 @@ import {
   CalendarDays,
   Video,
   Users,
-  BriefcaseMedical, // For Doctors list
-  UserCog, // For Patients list
+  BriefcaseMedical, 
+  UserCog, 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/language-context"; // Added
 
 
-const adminFeatures = [
+const adminFeaturesConfig = [
   {
-    title: "Symptom Checker Insights",
-    description: "View analytics from the symptom checker.",
+    titleKey: "symptomChecker.title",
+    descriptionKey: "symptomChecker.description", // Using a generic description, can be more specific
     href: "/symptom-checker",
     icon: HeartPulse,
   },
   {
-    title: "Appointment System Overview",
-    description: "Monitor overall appointment statistics.",
+    titleKey: "appointments.title",
+    descriptionKey: "appointments.description",
     href: "/appointments",
     icon: CalendarDays,
   },
   {
-    title: "Telemedicine Platform Status",
-    description: "Check the status of telemedicine services.",
+    titleKey: "telemedicine.title",
+    descriptionKey: "telemedicine.description",
     href: "/telemedicine",
     icon: Video,
   },
@@ -49,6 +50,7 @@ const adminFeatures = [
 export default function DashboardPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { translate } = useLanguage(); // Added
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [allUsers, setAllUsers] = useState<AppUser[]>([]);
@@ -65,7 +67,6 @@ export default function DashboardPage() {
       } else if (currentUser.role && currentUser.role === "patient") {
         router.replace("/dashboard/patient");
       } else if (currentUser.role && currentUser.role === "admin") {
-        // Admin stays here, fetch all users
         const fetchUsers = async () => {
           setIsLoadingUsers(true);
           const usersData = await getAllUsers();
@@ -84,7 +85,6 @@ export default function DashboardPage() {
         fetchUsers();
         setLoading(false);
       } else {
-        // Other unexpected roles, also redirect or handle
         console.warn("Unexpected user role or missing role:", currentUser?.role);
         router.replace("/login"); 
       }
@@ -121,16 +121,16 @@ export default function DashboardPage() {
   return (
     <MainLayout>
       <PageTitle 
-        title="Admin Dashboard - SmartCare Hub" 
-        description="System overview and management tools."
+        title={translate('dashboard.admin.title', 'Admin Dashboard - SmartCare Hub')}
+        description={translate('dashboard.admin.description', 'System overview and management tools.')}
         icon={LayoutDashboard}
       />
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-8">
-        {adminFeatures.map((feature) => (
+        {adminFeaturesConfig.map((feature) => (
           <FeatureCard
-            key={feature.title}
-            title={feature.title}
-            description={feature.description}
+            key={feature.titleKey}
+            title={translate(feature.titleKey)}
+            description={translate(feature.descriptionKey)}
             href={feature.href}
             icon={feature.icon}
           />
@@ -213,3 +213,5 @@ export default function DashboardPage() {
     </MainLayout>
   );
 }
+
+    

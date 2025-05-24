@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation"; // Added useRouter
+import { usePathname, useRouter } from "next/navigation"; 
 import {
   LayoutDashboard,
   HeartPulse,
@@ -12,66 +12,75 @@ import {
   MapPin,
   UserCircle,
   LogOut,
-  Stethoscope, // For Doctor
-  UserCheck, // For Patient
-  FileText, // For Medical Records
+  Stethoscope, 
+  UserCheck, 
+  FileText, 
 } from "lucide-react";
 import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarMenuBadge,
-  useSidebar, // Import useSidebar to check mobile state
+  useSidebar, 
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { logoutUser, getCurrentUser, type AppUser } from "@/lib/auth"; // Added AppUser type
+import { logoutUser, getCurrentUser, type AppUser } from "@/lib/auth"; 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/language-context"; // Added
 
 // Base features accessible to most roles if not overridden
-const baseMenuItems = [
-  { href: "/symptom-checker", label: "Symptom Checker", icon: HeartPulse, roles: ['admin', 'patient'] },
-  { href: "/appointments", label: "Appointments", icon: CalendarDays, badge: "3", roles: ['admin', 'doctor', 'patient'] },
-  { href: "/telemedicine", label: "Telemedicine", icon: Video, roles: ['admin', 'doctor', 'patient'] },
-  { href: "/medical-records", label: "Medical Records", icon: FileText, roles: ['patient'] },
-  { href: "/emergency", label: "Emergency", icon: AlertTriangle, roles: ['admin', 'patient'] }, // Doctors might not need this directly on sidebar
-  { href: "/find-care", label: "Find Care", icon: MapPin, roles: ['admin', 'patient'] },
+const baseMenuItemsConfig = [
+  { translationKey: 'sidebar.symptomChecker', href: "/symptom-checker", icon: HeartPulse, roles: ['admin', 'patient'] },
+  { translationKey: 'sidebar.appointments', href: "/appointments", icon: CalendarDays, badge: "3", roles: ['admin', 'doctor', 'patient'] },
+  { translationKey: 'sidebar.telemedicine', href: "/telemedicine", icon: Video, roles: ['admin', 'doctor', 'patient'] },
+  { translationKey: 'sidebar.medicalRecords', href: "/medical-records", icon: FileText, roles: ['patient'] },
+  { translationKey: 'sidebar.emergency', href: "/emergency", icon: AlertTriangle, roles: ['admin', 'patient'] }, 
+  { translationKey: 'sidebar.findCare', href: "/find-care", icon: MapPin, roles: ['admin', 'patient'] },
 ];
 
-const bottomMenuItems = [
-  { href: "/profile", label: "Profile", icon: UserCircle, roles: ['admin', 'doctor', 'patient'] },
-  // Logout is handled separately
+const bottomMenuItemsConfig = [
+  { translationKey: 'sidebar.profile', href: "/profile", icon: UserCircle, roles: ['admin', 'doctor', 'patient'] },
 ];
 
 export function SidebarNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { setOpenMobile } = useSidebar(); // To close mobile sidebar on nav
+  const { setOpenMobile } = useSidebar(); 
+  const { translate } = useLanguage(); // Added
   const [user, setUser] = useState<AppUser | null>(null);
-  const [dynamicMenuItems, setDynamicMenuItems] = useState(baseMenuItems);
+  const [dynamicMenuItems, setDynamicMenuItems] = useState<Array<typeof baseMenuItemsConfig[0] & {label: string}>>([]);
+  const [dynamicBottomMenuItems, setDynamicBottomMenuItems] = useState<Array<typeof bottomMenuItemsConfig[0] & {label: string}>>([]);
+
 
   useEffect(() => {
     const currentUser = getCurrentUser();
     setUser(currentUser);
 
-    if (currentUser) {
-      let dashboardLink = { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ['admin'] };
-      if (currentUser.role === 'doctor') {
-        dashboardLink = { href: "/dashboard/doctor", label: "Doctor Dashboard", icon: Stethoscope, roles: ['doctor'] };
-      } else if (currentUser.role === 'patient') {
-        dashboardLink = { href: "/dashboard/patient", label: "Patient Dashboard", icon: UserCheck, roles: ['patient'] };
-      }
-      
-      const filteredBaseItems = baseMenuItems.filter(item => item.roles.includes(currentUser.role));
-      setDynamicMenuItems([dashboardLink, ...filteredBaseItems]);
-    } else {
-      // Default for logged-out state (though usually redirected)
-      setDynamicMenuItems([{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ['admin'] }, ...baseMenuItems]);
+    let dashboardLinkConfig = { translationKey: 'sidebar.dashboard', href: "/dashboard", icon: LayoutDashboard, roles: ['admin'] };
+    if (currentUser?.role === 'doctor') {
+      dashboardLinkConfig = { translationKey: 'sidebar.doctorDashboard', href: "/dashboard/doctor", icon: Stethoscope, roles: ['doctor'] };
+    } else if (currentUser?.role === 'patient') {
+      dashboardLinkConfig = { translationKey: 'sidebar.patientDashboard', href: "/dashboard/patient", icon: UserCheck, roles: ['patient'] };
     }
-  }, [pathname]); // Re-run if path changes, e.g. after login
+    
+    const translatedDashboardLink = { ...dashboardLinkConfig, label: translate(dashboardLinkConfig.translationKey) };
+
+    const filteredBaseItems = baseMenuItemsConfig
+      .filter(item => currentUser?.role && item.roles.includes(currentUser.role))
+      .map(item => ({ ...item, label: translate(item.translationKey) }));
+    
+    setDynamicMenuItems([translatedDashboardLink, ...filteredBaseItems]);
+
+    const filteredBottomItems = bottomMenuItemsConfig
+      .filter(item => currentUser?.role && item.roles.includes(currentUser.role))
+      .map(item => ({ ...item, label: translate(item.translationKey) }));
+    setDynamicBottomMenuItems(filteredBottomItems);
+
+  }, [pathname, user?.role, translate]); // Added translate and user.role dependencies
 
   const handleLogout = () => {
     logoutUser();
-    if (typeof window !== "undefined" && window.innerWidth < 768) { // Check if mobile view for sidebar
+    if (typeof window !== "undefined" && window.innerWidth < 768) { 
         setOpenMobile(false);
     }
     router.push("/login");
@@ -83,12 +92,9 @@ export function SidebarNav() {
     }
   };
 
-  if (!user) { // Don't render sidebar nav if no user (e.g., on login page)
-      // Or show a loading state, but typically MainLayout won't be used on login page.
-      // For robustness, check if on a page that should have sidebar.
+  if (!user) { 
       if (pathname === '/login' || pathname === '/register' || pathname === '/') return null;
   }
-
 
   return (
     <>
@@ -102,16 +108,16 @@ export function SidebarNav() {
               >
                 <item.icon className={cn("h-5 w-5")} />
                 <span>{item.label}</span>
-                {item.badge && item.roles.includes(user?.role || '') && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
+                {(item as any).badge && item.roles.includes(user?.role || '') && <SidebarMenuBadge>{(item as any).badge}</SidebarMenuBadge>}
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
       
-      <div className="mt-auto"> {/* Pushes bottom items to the end */}
+      <div className="mt-auto"> 
         <SidebarMenu>
-          {bottomMenuItems.filter(item => item.roles.includes(user?.role || '')).map((item) => (
+          {dynamicBottomMenuItems.map((item) => (
             <SidebarMenuItem key={item.href} onClick={handleNavigation}>
               <Link href={item.href} passHref legacyBehavior>
                 <SidebarMenuButton
@@ -127,11 +133,11 @@ export function SidebarNav() {
           <SidebarMenuItem>
              <SidebarMenuButton
                 onClick={handleLogout}
-                tooltip={{ children: "Logout", side: "right", align: "center" }}
+                tooltip={{ children: translate('sidebar.logout', 'Logout'), side: "right", align: "center" }}
                 className="text-destructive focus:text-destructive hover:bg-destructive/10 focus:bg-destructive/10"
               >
                 <LogOut className="h-5 w-5" />
-                <span>Logout</span>
+                <span>{translate('sidebar.logout', 'Logout')}</span>
               </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -139,3 +145,5 @@ export function SidebarNav() {
     </>
   );
 }
+
+    

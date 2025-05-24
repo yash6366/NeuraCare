@@ -1,7 +1,9 @@
+
 import type {Metadata} from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { LanguageProvider } from '@/contexts/language-context'; // Added
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -14,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'SmartCare Hub',
+  title: 'SmartCare Hub', // This could also be dynamic later
   description: 'Your intelligent healthcare companion.',
 };
 
@@ -24,11 +26,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en"> {/* Default lang, will be updated by LanguageProvider */}
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-        <Toaster />
+        <LanguageProvider> {/* Added LanguageProvider */}
+          {children}
+          <Toaster />
+        </LanguageProvider>
       </body>
     </html>
   );
 }
+
+    
