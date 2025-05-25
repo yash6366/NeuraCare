@@ -55,11 +55,11 @@ const documentTextExtractionFlow = ai.defineFlow(
       const llmResponse = await documentTextExtractionPrompt(input);
       const responseText = llmResponse.output?.extractedText;
       
-      if (!responseText) {
-        console.warn('[documentTextExtractionFlow] LLM response text for PDF extraction was empty.');
+      if (!responseText || responseText.trim() === "" || responseText.trim().toLowerCase() === "no text found in document.") {
+        console.warn('[documentTextExtractionFlow] LLM response text for PDF extraction was empty or indicated no text found. Input language:', input.language);
         const defaultErrorMessage = input.language === 'hi-IN' ?
-          "मुझे क्षमा करें, मैं दस्तावेज़ से पाठ नहीं निकाल सका।" :
-          "I'm sorry, I couldn't extract text from the document.";
+          "मुझे क्षमा करें, मैं दस्तावेज़ से पाठ नहीं निकाल सका या दस्तावेज़ में कोई पाठ नहीं मिला।" :
+          "I'm sorry, I couldn't extract text from the document or no text was found in the document.";
         return { extractedText: defaultErrorMessage };
       }
       console.log('[documentTextExtractionFlow] LLM PDF text extraction success.');
@@ -73,3 +73,4 @@ const documentTextExtractionFlow = ai.defineFlow(
     }
   }
 );
+

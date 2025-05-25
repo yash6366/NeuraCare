@@ -17,14 +17,14 @@ const ChatMessageSchema = z.object({
   parts: z.array(z.object({ text: z.string() })),
 });
 
-const TelemedicineChatInputSchema = z.object({ // Removed export
+const TelemedicineChatInputSchema = z.object({ 
   userMessage: z.string().describe('The latest message from the user.'),
   chatHistory: z.array(ChatMessageSchema).optional().describe('The history of the conversation so far.'),
   language: z.string().optional().default('English').describe('The language for the conversation.'),
 });
 export type TelemedicineChatInput = z.infer<typeof TelemedicineChatInputSchema>;
 
-const TelemedicineChatOutputSchema = z.object({ // Removed export
+const TelemedicineChatOutputSchema = z.object({ 
   botResponse: z.string().describe('The AI assistant\'s response to the user.'),
 });
 export type TelemedicineChatOutput = z.infer<typeof TelemedicineChatOutputSchema>;
@@ -36,7 +36,7 @@ export async function telemedicineChat(input: TelemedicineChatInput): Promise<Te
 const telemedicineChatPrompt = ai.definePrompt({
   name: 'telemedicineChatPrompt',
   input: {schema: TelemedicineChatInputSchema},
-  output: {schema: TelemedicineChatOutputSchema},
+  output: {schema: TelemedicineChatOutputSchema}, // While output schema is defined, we use .text for direct chat.
   system: (input) => `You are "SmartCare AI Assistant", a friendly, empathetic, and knowledgeable AI designed to assist users within a telemedicine platform.
 Your primary goal is to be helpful and provide clear, concise information.
 You can answer general health-related questions, provide information about medical conditions (always with a disclaimer that you are not a doctor and users should consult professionals),
@@ -47,7 +47,7 @@ Do NOT provide medical diagnoses or treatment plans.
 You MUST understand and respond fluently in the following language: ${input.language || 'English'}.
 Adapt your vocabulary and sentence structure to be easily understandable for a general audience in the specified language.
 `,
-  prompt: (input) => input.userMessage,
+  prompt: (input) => input.userMessage, // Send only the current user message as the main prompt part
   config: {
     temperature: 0.75,
   },
@@ -62,11 +62,12 @@ const telemedicineChatFlow = ai.defineFlow(
   async (input) => {
     console.log('[telemedicineChatFlow] Received input:', JSON.stringify(input, null, 2));
     try {
-      const llmResponse = await telemedicineChatPrompt(input);
-      const responseText = llmResponse.text;
+      // The chatHistory from input will be automatically handled by Genkit when calling the prompt
+      const llmResponse = await telemedicineChatPrompt(input); 
+      const responseText = llmResponse.text; // For chat models, response is often in .text
       
-      if (!responseText) {
-        console.warn('[telemedicineChatFlow] LLM response text was empty. Input:', JSON.stringify(input, null, 2));
+      if (!responseText || responseText.trim() === "") {
+        console.warn('[telemedicineChatFlow] LLM response text was empty. Input:', JSON.stringify(input, null, 2), 'Input language:', input.language);
         const defaultErrorMessage = input.language === 'hi-IN' ?
           "मुझे क्षमा करें, मैं इसे संसाधित नहीं कर सका। क्या आप इसे फिर से कह सकते हैं?" :
           "I'm sorry, I couldn't process that. Could you try rephrasing?";
@@ -83,3 +84,4 @@ const telemedicineChatFlow = ai.defineFlow(
     }
   }
 );
+

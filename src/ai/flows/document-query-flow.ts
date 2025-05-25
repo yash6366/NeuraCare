@@ -63,8 +63,8 @@ const documentQueryFlow = ai.defineFlow(
       const llmResponse = await documentQueryPrompt(input);
       const responseText = llmResponse.output?.answer;
       
-      if (!responseText) {
-        console.warn('[documentQueryFlow] LLM response for document query was empty.');
+      if (!responseText || responseText.trim() === "") {
+        console.warn('[documentQueryFlow] LLM response for document query was empty. Input language:', input.language);
         const defaultErrorMessage = input.language === 'hi-IN' ?
           "मुझे क्षमा करें, मैं आपके प्रश्न का उत्तर दस्तावेज़ में नहीं ढूँढ़ सका।" :
           "I'm sorry, I couldn't find an answer to your query in the document.";
@@ -81,3 +81,4 @@ const documentQueryFlow = ai.defineFlow(
     }
   }
 );
+

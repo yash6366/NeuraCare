@@ -58,8 +58,8 @@ const documentSummarizationFlow = ai.defineFlow(
       const llmResponse = await documentSummarizationPrompt(input);
       const responseText = llmResponse.output?.summary;
       
-      if (!responseText) {
-        console.warn('[documentSummarizationFlow] LLM response for summary was empty.');
+      if (!responseText || responseText.trim() === "") {
+        console.warn('[documentSummarizationFlow] LLM response for summary was empty. Input language:', input.language);
         const defaultErrorMessage = input.language === 'hi-IN' ?
           "मुझे क्षमा करें, मैं पाठ का सारांश नहीं बना सका।" :
           "I'm sorry, I couldn't generate a summary for the text.";

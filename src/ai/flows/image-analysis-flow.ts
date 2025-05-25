@@ -64,8 +64,8 @@ const imageAnalysisFlow = ai.defineFlow(
       const llmResponse = await imageAnalysisPrompt(input);
       const responseText = llmResponse.output?.description;
       
-      if (!responseText) {
-        console.warn('[imageAnalysisFlow] LLM response text for image analysis was empty.');
+      if (!responseText || responseText.trim() === "") {
+        console.warn('[imageAnalysisFlow] LLM response text for image analysis was empty. Input language:', input.language);
         const defaultErrorMessage = input.language === 'hi-IN' ?
           "मुझे क्षमा करें, मैं छवि का विश्लेषण नहीं कर सका।" :
           "I'm sorry, I couldn't analyze the image.";
@@ -82,3 +82,4 @@ const imageAnalysisFlow = ai.defineFlow(
     }
   }
 );
+
