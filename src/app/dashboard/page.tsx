@@ -22,6 +22,7 @@ import {
   BriefcaseMedical, 
   UserCog, 
   Bot,
+  HelpCircle, // Added HelpCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/language-context";
@@ -35,10 +36,16 @@ const adminFeaturesConfig = [
     icon: HeartPulse,
   },
   {
-    titleKey: "aiChatAssistant.title", // Added AI Chat Assistant
+    titleKey: "aiChatAssistant.title", 
     descriptionKey: "aiChatAssistant.descriptionShort",
     href: "/ai-chat-assistant",
     icon: Bot,
+  },
+  {
+    titleKey: "healthInformation.title", // Added Health Information Hub
+    descriptionKey: "healthInformation.descriptionShort",
+    href: "/health-information",
+    icon: HelpCircle,
   },
   {
     titleKey: "appointments.title",
@@ -132,7 +139,7 @@ export default function DashboardPage() {
         description={translate('dashboard.admin.description', 'System overview and management tools.')}
         icon={LayoutDashboard}
       />
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 mb-8"> {/* Adjusted for 4 cards */}
+      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mb-8"> {/* Adjusted for 5 cards */}
         {adminFeaturesConfig.map((feature) => (
           <FeatureCard
             key={feature.titleKey}

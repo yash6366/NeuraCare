@@ -15,7 +15,8 @@ import {
   Stethoscope, 
   UserCheck, 
   FileText,
-  Bot, // Added Bot icon
+  Bot, 
+  HelpCircle, // Added HelpCircle icon
 } from "lucide-react";
 import {
   SidebarMenu,
@@ -32,7 +33,8 @@ import { useLanguage } from "@/contexts/language-context";
 // Base features accessible to most roles if not overridden
 const baseMenuItemsConfig = [
   { translationKey: 'sidebar.symptomChecker', href: "/symptom-checker", icon: HeartPulse, roles: ['admin', 'patient'] },
-  { translationKey: 'sidebar.aiChatAssistant', href: "/ai-chat-assistant", icon: Bot, roles: ['admin', 'patient'] }, // Added AI Chat Assistant
+  { translationKey: 'sidebar.aiChatAssistant', href: "/ai-chat-assistant", icon: Bot, roles: ['admin', 'patient'] },
+  { translationKey: 'sidebar.healthInformation', href: "/health-information", icon: HelpCircle, roles: ['admin', 'patient'] }, // Added Health Info Hub
   { translationKey: 'sidebar.appointments', href: "/appointments", icon: CalendarDays, badge: "3", roles: ['admin', 'doctor', 'patient'] },
   { translationKey: 'sidebar.telemedicine', href: "/telemedicine", icon: Video, roles: ['admin', 'doctor', 'patient'] },
   { translationKey: 'sidebar.medicalRecords', href: "/medical-records", icon: FileText, roles: ['patient'] },
