@@ -18,8 +18,8 @@ export const defaultLanguage: LanguageCode = 'en-US';
 export type TranslationSet = Record<string, string>;
 
 const enUSTranslations: TranslationSet = {
-    'app.name': 'VakCare', // Renamed
-    'login.title': 'VakCare Login', // Renamed
+    'app.name': 'VakCare', 
+    'login.title': 'VakCare Login', 
     'login.description': 'Access your intelligent healthcare companion.',
     'login.button': 'Login',
     'login.buttonLoading': 'Logging in...',
@@ -33,7 +33,7 @@ const enUSTranslations: TranslationSet = {
     'login.toast.errorTitle': 'Login Error',
     'login.toast.errorDescription': 'An unexpected error occurred. Please try again.',
     'register.title': 'Create Account',
-    'register.description': 'Join VakCare today.', // Renamed
+    'register.description': 'Join VakCare today.', 
     'register.button': 'Create Account',
     'register.buttonLoading': 'Registering...',
     'register.loginLink': 'Already have an account? Log in',
@@ -54,7 +54,7 @@ const enUSTranslations: TranslationSet = {
     'register.toast.passwordsDontMatch': 'Passwords do not match.',
     'register.toast.medicalIdRequired': 'Medical ID is required for doctors.',
     'register.toast.errorDescription': 'An error occurred. Please try again.',
-    'dashboard.admin.title': 'Admin Dashboard - VakCare', // Renamed
+    'dashboard.admin.title': 'Admin Dashboard - VakCare', 
     'dashboard.admin.description': 'System overview and management tools.',
     'dashboard.doctor.title': 'Doctor Dashboard',
     'dashboard.doctor.description': 'Manage your patients, appointments, and consultations.',
@@ -79,7 +79,7 @@ const enUSTranslations: TranslationSet = {
     'profile.emergencyContactPhoneLabel': 'Emergency Contact Phone',
     'profile.emergencyContactPhonePlaceholder': 'e.g., +1 987-654-3210',
     'profile.avatarAlt': 'User Avatar',
-    'profile.avatarUserFallback': 'VC', // VakCare
+    'profile.avatarUserFallback': 'VC', 
     'profile.role.admin': 'Administrator',
     'profile.role.doctor': 'Doctor',
     'profile.role.patient': 'Patient',
@@ -269,8 +269,8 @@ const enUSTranslations: TranslationSet = {
     'aiChatAssistant.documentQueryResponseContext': 'Answer based on the uploaded document.',
     'aiChatAssistant.extractFirstTitle': 'Extract Text First',
     'aiChatAssistant.extractFirstDescription': 'Please extract text from the document to enable summarization and querying features.',
-    'telemedicine.title': 'Doctor Chat', // Renamed from "Telemedicine Services" or "Verbal Consultation"
-    'telemedicine.description': 'Connect directly with registered doctors for text-based consultations.', // Updated description
+    'telemedicine.title': 'Doctor Chat', 
+    'telemedicine.description': 'Connect directly with registered doctors for text-based consultations.', 
     'telemedicine.chatPlaceholder': 'Type your message...',
     'telemedicine.sendButton': 'Send',
     'telemedicine.listening': 'Listening...',
@@ -278,9 +278,9 @@ const enUSTranslations: TranslationSet = {
     'telemedicine.speakNow': 'Speak now...',
     'telemedicine.voiceError': 'Voice input error. Please try again or type your message.',
     'telemedicine.voiceNotSupported': 'Voice input not supported by your browser.',
-    'telemedicine.autoPlaySpeech': 'Auto-play AI speech', // Kept for AI assistant if it were part of this page
+    'telemedicine.autoPlaySpeech': 'Auto-play AI speech', 
     'telemedicine.autoPlayDoctorSpeechLabel': 'Auto-play doctor speech',
-    'telemedicine.aiAssistantInitialGreeting': "Hello! I'm VakCare AI Assistant. How can I help you today? You can also ask me to analyze images or documents.", // Renamed
+    'telemedicine.aiAssistantInitialGreeting': "Hello! I'm VakCare AI Assistant. How can I help you today? You can also ask me to analyze images or documents.", 
     'telemedicine.chatWithDoctorTitle': 'Chat with Your Doctor',
     'telemedicine.chatWithDoctorDescription': 'Select a registered doctor to start a chat session.',
     'telemedicine.selectDoctorLabel': 'Select Doctor',
@@ -326,7 +326,7 @@ const enUSTranslations: TranslationSet = {
     'sidebar.symptomChecker': 'Symptom Checker',
     'sidebar.aiChatAssistant': 'AI Chat Assistant',
     'sidebar.appointments': 'Appointments',
-    'sidebar.telemedicine': 'Doctor Chat', // Changed from Telemedicine to Doctor Chat
+    'sidebar.telemedicine': 'Doctor Chat', 
     'sidebar.medicalRecords': 'Medical Records',
     'sidebar.emergency': 'Emergency',
     'sidebar.findCare': 'Find Care',
@@ -337,11 +337,11 @@ const enUSTranslations: TranslationSet = {
     'header.settings': 'Settings',
     'header.myAccount': 'My Account',
     'header.logout': 'Logout',
-    'header.userAvatarFallback': 'U', // Could be 'V' for VakCare if preferred
+    'header.userAvatarFallback': 'U', 
     'doctorDashboard.quickAccess.myAppointments.title': 'My Appointments',
     'doctorDashboard.quickAccess.myAppointments.description': 'View and manage your schedule.',
-    'doctorDashboard.quickAccess.telemedicine.title': 'Start Chat with Patient', // Changed from Telemedicine to Chat
-    'doctorDashboard.quickAccess.telemedicine.description': 'Initiate text consultations.', // Kept generic
+    'doctorDashboard.quickAccess.telemedicine.title': 'Start Chat with Patient', 
+    'doctorDashboard.quickAccess.telemedicine.description': 'Initiate text consultations.', 
     'doctorDashboard.quickAccess.accessButton': 'Access',
     'doctorDashboard.myPatients.title': 'My Patients',
     'doctorDashboard.myPatients.description': 'Overview of your assigned patients. Click to view their details.',
@@ -362,17 +362,19 @@ const enUSTranslations: TranslationSet = {
     'doctorDashboard.toast.previewNotSupported.title': 'Preview Not Supported',
     'doctorDashboard.toast.noPreviewAvailable.title': 'No Preview Available',
     'doctorDashboard.toast.notesSaved.title': 'Notes Saved (Simulated)',
-    'doctorDashboard.toast.notesSaved.description': 'In a real application, these notes would be saved to the database.',
+    'doctorDashboard.toast.notesSaved.description': 'In a real application, these notes for {patientName} would be saved to the database.',
     'doctorDashboard.patientDetailsDialog.title': 'Patient Details: {patientName}',
     'doctorDashboard.patientDetailsDialog.description': 'Viewing details for {patientEmail}.',
     'doctorDashboard.patientDetailsDialog.loading': 'Loading patient details...',
-    'doctorDashboard.patientDetailsDialog.patientAppointments.title': "Patient's Upcoming Appointments (Simulated)",
+    'doctorDashboard.patientDetailsDialog.patientAppointments.title': "Patient's Appointments (Simulated)",
     'doctorDashboard.patientDetailsDialog.upcomingAppointments.title': 'Simulated Upcoming Appointments',
     'doctorDashboard.patientDetailsDialog.upcomingAppointments.none': 'No upcoming appointments simulated.',
-    'doctorDashboard.simulatedAppointments.checkup': 'General Checkup',
-    'doctorDashboard.simulatedAppointments.followUp': 'Follow-up Visit',
+    'doctorDashboard.simulatedAppointments.checkup': 'General Checkup with {patientName}',
+    'doctorDashboard.simulatedAppointments.followUp': 'Follow-up for {patientName}',
+    'doctorDashboard.simulatedAppointments.consultation': "Consultation for {patientName}",
     'doctorDashboard.patientDetailsDialog.notes.title': "Doctor's Notes (Simulated)",
     'doctorDashboard.patientDetailsDialog.notes.label': 'Notes',
+    'doctorDashboard.patientDetailsDialog.notes.initialPlaceholder': "No notes for {patientName} yet. Start typing to add notes.",
     'doctorDashboard.patientDetailsDialog.notes.placeholder': 'Type your notes here...',
     'doctorDashboard.patientDetailsDialog.notes.saveButton': 'Save Notes (Simulated)',
     'doctorDashboard.patientDetailsDialog.medicalRecords.title': 'Medical Records',
@@ -383,7 +385,7 @@ const enUSTranslations: TranslationSet = {
     'doctorDashboard.chat.titleWithPatient': "Chatting with {patientName}",
     'doctorDashboard.chat.inputPlaceholder': "Type your message to the patient...",
     'doctorDashboard.chat.sendButton': "Send",
-    'doctorDashboard.chat.greetingFromPatient': "Hello Dr. {doctorName}, how can I help {patientName} today?",
+    'doctorDashboard.chat.greetingFromPatient': "Hello Dr. {doctorName}, {patientName} is here. How can I assist?",
     'doctorDashboard.chat.simulatedPatientReply': "Thank you for your message, Doctor. I understand.",
     'doctorDashboard.upcomingAppointments.title': "My Upcoming Appointments",
     'doctorDashboard.upcomingAppointments.description': "Your scheduled appointments. (Simulated data - would be fetched from DB in a full app)",
@@ -392,12 +394,15 @@ const enUSTranslations: TranslationSet = {
     'doctorDashboard.appointmentsTable.type': "Type",
     'doctorDashboard.appointmentsTable.dateTime': "Date & Time",
     'doctorDashboard.appointmentsTable.status': "Status",
+    'doctorDashboard.appointmentStatus.confirmed': "Confirmed",
+    'doctorDashboard.appointmentStatus.pending': "Pending",
+    'doctorDashboard.appointmentStatus.completed': "Completed",
 };
 
 const hiINTranslations: TranslationSet = {
-  ...enUSTranslations, // Start with English translations and override
-  'app.name': 'वाककेयर', // Renamed
-  'login.title': 'वाककेयर लॉग इन', // Renamed
+  ...enUSTranslations, 
+  'app.name': 'वाककेयर', 
+  'login.title': 'वाककेयर लॉग इन', 
   'login.description': 'अपने बुद्धिमान स्वास्थ्य साथी तक पहुँचें।',
   'login.button': 'लॉग इन करें',
   'login.buttonLoading': 'लॉग इन हो रहा है...',
@@ -411,7 +416,7 @@ const hiINTranslations: TranslationSet = {
   'login.toast.errorTitle': 'लॉगिन त्रुटि',
   'login.toast.errorDescription': 'एक अप्रत्याशित त्रुटि हुई। कृपया पुन: प्रयास करें।',
   'register.title': 'खाता बनाएं',
-  'register.description': 'आज ही वाककेयर से जुड़ें।', // Renamed
+  'register.description': 'आज ही वाककेयर से जुड़ें।', 
   'register.button': 'खाता बनाएं',
   'register.buttonLoading': 'पंजीकरण हो रहा है...',
   'register.loginLink': 'पहले से ही खाता है? लॉग इन करें',
@@ -432,7 +437,7 @@ const hiINTranslations: TranslationSet = {
   'register.toast.passwordsDontMatch': 'पासवर्ड मेल नहीं खाते।',
   'register.toast.medicalIdRequired': 'डॉक्टरों के लिए चिकित्सा आईडी आवश्यक है।',
   'register.toast.errorDescription': 'एक त्रुटि हुई। कृपया पुन: प्रयास करें।',
-  'dashboard.admin.title': 'एडमिन डैशबोर्ड - वाककेयर', // Renamed
+  'dashboard.admin.title': 'एडमिन डैशबोर्ड - वाककेयर', 
   'dashboard.admin.description': 'सिस्टम अवलोकन और प्रबंधन उपकरण।',
   'dashboard.doctor.title': 'डॉक्टर डैशबोर्ड',
   'dashboard.doctor.description': 'अपने मरीजों, नियुक्तियों और परामर्शों का प्रबंधन करें।',
@@ -457,7 +462,7 @@ const hiINTranslations: TranslationSet = {
   'profile.emergencyContactPhoneLabel': 'आपातकालीन संपर्क फ़ोन',
   'profile.emergencyContactPhonePlaceholder': 'उदा. +91 9876543210',
   'profile.avatarAlt': 'उपयोगकर्ता अवतार',
-  'profile.avatarUserFallback': 'VC', // Renamed
+  'profile.avatarUserFallback': 'VC', 
   'profile.role.admin': 'प्रशासक',
   'profile.role.doctor': 'चिकित्सक',
   'profile.role.patient': 'मरीज़',
@@ -658,7 +663,7 @@ const hiINTranslations: TranslationSet = {
   'telemedicine.voiceNotSupported': 'आपके ब्राउज़र द्वारा वॉइस इनपुट समर्थित नहीं है।',
   'telemedicine.autoPlaySpeech': 'एआई भाषण स्वतः चलाएं',
   'telemedicine.autoPlayDoctorSpeechLabel': 'डॉक्टर का भाषण स्वतः चलाएं',
-  'telemedicine.aiAssistantInitialGreeting': 'नमस्ते! मैं वाककेयर एआई सहायक हूँ। आज मैं आपकी कैसे मदद कर सकता हूँ? आप मुझसे छवियों या दस्तावेज़ों का विश्लेषण करने के लिए भी कह सकते हैं।', // Renamed
+  'telemedicine.aiAssistantInitialGreeting': 'नमस्ते! मैं वाककेयर एआई सहायक हूँ। आज मैं आपकी कैसे मदद कर सकता हूँ? आप मुझसे छवियों या दस्तावेज़ों का विश्लेषण करने के लिए भी कह सकते हैं।', 
   'telemedicine.chatWithDoctorTitle': 'अपने डॉक्टर से चैट करें',
   'telemedicine.chatWithDoctorDescription': 'चैट सत्र शुरू करने के लिए एक पंजीकृत डॉक्टर का चयन करें।',
   'telemedicine.selectDoctorLabel': 'डॉक्टर चुनें',
@@ -715,7 +720,7 @@ const hiINTranslations: TranslationSet = {
   'header.settings': 'सेटिंग्स',
   'header.myAccount': 'मेरा खाता',
   'header.logout': 'लॉग आउट करें',
-  'header.userAvatarFallback': 'U', // Renamed
+  'header.userAvatarFallback': 'U', 
   'doctorDashboard.quickAccess.myAppointments.title': 'मेरी नियुक्तियाँ',
   'doctorDashboard.quickAccess.myAppointments.description': 'अपना शेड्यूल देखें और प्रबंधित करें।',
   'doctorDashboard.quickAccess.telemedicine.title': 'रोगी के साथ चैट शुरू करें',
@@ -740,17 +745,19 @@ const hiINTranslations: TranslationSet = {
   'doctorDashboard.toast.previewNotSupported.title': 'पूर्वावलोकन समर्थित नहीं',
   'doctorDashboard.toast.noPreviewAvailable.title': 'कोई पूर्वावलोकन उपलब्ध नहीं',
   'doctorDashboard.toast.notesSaved.title': 'नोट्स सहेजे गए (नकली)',
-  'doctorDashboard.toast.notesSaved.description': 'वास्तविक एप्लिकेशन में, ये नोट्स डेटाबेस में सहेजे जाएंगे।',
+  'doctorDashboard.toast.notesSaved.description': 'वास्तविक एप्लिकेशन में, {patientName} के लिए ये नोट्स डेटाबेस में सहेजे जाएंगे।',
   'doctorDashboard.patientDetailsDialog.title': 'रोगी विवरण: {patientName}',
   'doctorDashboard.patientDetailsDialog.description': '{patientEmail} के लिए विवरण देखे जा रहे हैं।',
   'doctorDashboard.patientDetailsDialog.loading': 'रोगी विवरण लोड हो रहे हैं...',
-  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "रोगी की आगामी नियुक्तियां (नकली)",
+  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "रोगी की नियुक्तियां (नकली)",
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.title': 'नकली आगामी नियुक्तियाँ',
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.none': 'कोई आगामी नियुक्ति नकली नहीं है।',
-  'doctorDashboard.simulatedAppointments.checkup': 'सामान्य जांच',
-  'doctorDashboard.simulatedAppointments.followUp': 'फॉलो-अप मुलाकात',
+  'doctorDashboard.simulatedAppointments.checkup': '{patientName} के साथ सामान्य जांच',
+  'doctorDashboard.simulatedAppointments.followUp': '{patientName} के लिए अनुवर्ती',
+  'doctorDashboard.simulatedAppointments.consultation': "{patientName} के लिए परामर्श",
   'doctorDashboard.patientDetailsDialog.notes.title': "डॉक्टर के नोट्स (नकली)",
   'doctorDashboard.patientDetailsDialog.notes.label': 'नोट्स',
+  'doctorDashboard.patientDetailsDialog.notes.initialPlaceholder': "{patientName} के लिए अभी कोई नोट्स नहीं हैं। नोट्स जोड़ने के लिए टाइप करना शुरू करें।",
   'doctorDashboard.patientDetailsDialog.notes.placeholder': 'अपने नोट्स यहाँ लिखें...',
   'doctorDashboard.patientDetailsDialog.notes.saveButton': 'नोट्स सहेजें (नकली)',
   'doctorDashboard.patientDetailsDialog.medicalRecords.title': 'चिकित्सा रिकॉर्ड',
@@ -761,7 +768,7 @@ const hiINTranslations: TranslationSet = {
   'doctorDashboard.chat.titleWithPatient': "{patientName} के साथ चैट कर रहे हैं",
   'doctorDashboard.chat.inputPlaceholder': "रोगी को अपना संदेश लिखें...",
   'doctorDashboard.chat.sendButton': "भेजें",
-  'doctorDashboard.chat.greetingFromPatient': "नमस्ते डॉ. {doctorName}, आज मैं {patientName} की कैसे मदद कर सकता हूँ?",
+  'doctorDashboard.chat.greetingFromPatient': "नमस्ते डॉ. {doctorName}, {patientName} यहाँ है। मैं कैसे सहायता कर सकता हूँ?",
   'doctorDashboard.chat.simulatedPatientReply': "आपके संदेश के लिए धन्यवाद, डॉक्टर। मैं समझ गया।",
   'doctorDashboard.upcomingAppointments.title': "मेरी आगामी नियुक्तियां",
   'doctorDashboard.upcomingAppointments.description': "आपकी निर्धारित नियुक्तियां। (नकली डेटा - पूर्ण ऐप में डीबी से प्राप्त किया जाएगा)",
@@ -770,9 +777,11 @@ const hiINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "प्रकार",
   'doctorDashboard.appointmentsTable.dateTime': "दिनांक और समय",
   'doctorDashboard.appointmentsTable.status': "स्थिति",
+  'doctorDashboard.appointmentStatus.confirmed': "पुષ્ટ",
+  'doctorDashboard.appointmentStatus.pending': "प्रलंबित",
+  'doctorDashboard.appointmentStatus.completed': "पूर्ण",
 };
 
-// Helper to create placeholder translations for other languages
 const createPlaceholders = (baseTranslations: TranslationSet): TranslationSet => {
   const placeholders: TranslationSet = {};
   for (const key in baseTranslations) {
@@ -782,9 +791,9 @@ const createPlaceholders = (baseTranslations: TranslationSet): TranslationSet =>
 };
 
 const knINTranslations: TranslationSet = {
-  ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'ವಾಕ್‌ಕೇರ್', // Renamed
-  'login.title': 'ವಾಕ್‌ಕೇರ್ ಲಾಗಿನ್', // Renamed
+  ...createPlaceholders(enUSTranslations), 
+  'app.name': 'ವಾಕ್‌ಕೇರ್', 
+  'login.title': 'ವಾಕ್‌ಕೇರ್ ಲಾಗಿನ್', 
   'login.button': 'ಲಾಗಿನ್ ಮಾಡಿ',
   'sidebar.dashboard': 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
   'sidebar.profile': 'ಪ್ರೊಫೈಲ್',
@@ -928,17 +937,19 @@ const knINTranslations: TranslationSet = {
   'doctorDashboard.toast.previewNotSupported.title': 'ಮುನ್ನೋಟ ಬೆಂಬಲಿತವಾಗಿಲ್ಲ',
   'doctorDashboard.toast.noPreviewAvailable.title': 'ಯಾವುದೇ ಮುನ್ನೋಟ ಲಭ್ಯವಿಲ್ಲ',
   'doctorDashboard.toast.notesSaved.title': 'ಟಿಪ್ಪಣಿಗಳನ್ನು ಉಳಿಸಲಾಗಿದೆ (ಅನುಕರಿಸಲಾಗಿದೆ)',
-  'doctorDashboard.toast.notesSaved.description': 'ನೈಜ ಅಪ್ಲಿಕೇಶನ್‌ನಲ್ಲಿ, ಈ ಟಿಪ್ಪಣಿಗಳನ್ನು ಡೇಟಾಬೇಸ್‌ಗೆ ಉಳಿಸಲಾಗುತ್ತದೆ.',
+  'doctorDashboard.toast.notesSaved.description': 'ನೈಜ ಅಪ್ಲಿಕೇಶನ್‌ನಲ್ಲಿ, {patientName} ಗಾಗಿ ಈ ಟಿಪ್ಪಣಿಗಳನ್ನು ಡೇಟಾಬೇಸ್‌ಗೆ ಉಳಿಸಲಾಗುತ್ತದೆ.',
   'doctorDashboard.patientDetailsDialog.title': 'ರೋಗಿಯ ವಿವರಗಳು: {patientName}',
   'doctorDashboard.patientDetailsDialog.description': '{patientEmail} ಗಾಗಿ ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಲಾಗುತ್ತಿದೆ.',
   'doctorDashboard.patientDetailsDialog.loading': 'ರೋಗಿಯ ವಿವರಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ...',
-  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "ರೋಗಿಯ ಮುಂಬರುವ ನೇಮಕಾತಿಗಳು (ಅನುಕರಿಸಲಾಗಿದೆ)",
+  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "ರೋಗಿಯ ನೇಮಕಾತಿಗಳು (ಅನುಕರಿಸಲಾಗಿದೆ)",
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.title': 'ಅನುಕರಿಸಿದ ಮುಂಬರುವ ನೇಮಕಾತಿಗಳು',
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.none': 'ಯಾವುದೇ ಮುಂಬರುವ ನೇಮಕಾತಿಗಳನ್ನು ಅನುಕರಿಸಲಾಗಿಲ್ಲ.',
-  'doctorDashboard.simulatedAppointments.checkup': 'ಸಾಮಾನ್ಯ ತಪಾಸಣೆ',
-  'doctorDashboard.simulatedAppointments.followUp': 'ಮುಂದಿನ ಭೇಟಿ',
+  'doctorDashboard.simulatedAppointments.checkup': '{patientName} ಅವರೊಂದಿಗೆ ಸಾಮಾನ್ಯ ತಪಾಸಣೆ',
+  'doctorDashboard.simulatedAppointments.followUp': '{patientName} ಅವರಿಗೆ ಅನುಸರಣೆ',
+  'doctorDashboard.simulatedAppointments.consultation': "{patientName} ಅವರಿಗೆ ಸಮಾಲೋಚನೆ",
   'doctorDashboard.patientDetailsDialog.notes.title': "ವೈದ್ಯರ ಟಿಪ್ಪಣಿಗಳು (ಅನುಕರಿಸಲಾಗಿದೆ)",
   'doctorDashboard.patientDetailsDialog.notes.label': 'ಟಿಪ್ಪಣಿಗಳು',
+  'doctorDashboard.patientDetailsDialog.notes.initialPlaceholder': "{patientName} ಅವರಿಗೆ ಇನ್ನೂ ಯಾವುದೇ ಟಿಪ್ಪಣಿಗಳಿಲ್ಲ. ಟಿಪ್ಪಣಿಗಳನ್ನು ಸೇರಿಸಲು ಟೈಪ್ ಮಾಡಲು ಪ್ರಾರಂಭಿಸಿ.",
   'doctorDashboard.patientDetailsDialog.notes.placeholder': 'ನಿಮ್ಮ ಟಿಪ್ಪಣಿಗಳನ್ನು ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ...',
   'doctorDashboard.patientDetailsDialog.notes.saveButton': 'ಟಿಪ್ಪಣಿಗಳನ್ನು ಉಳಿಸಿ (ಅನುಕರಿಸಲಾಗಿದೆ)',
   'doctorDashboard.patientDetailsDialog.medicalRecords.title': 'ವೈದ್ಯಕೀಯ ದಾಖಲೆಗಳು',
@@ -949,7 +960,7 @@ const knINTranslations: TranslationSet = {
   'doctorDashboard.chat.titleWithPatient': "{patientName} ಅವರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಲಾಗುತ್ತಿದೆ",
   'doctorDashboard.chat.inputPlaceholder': "ರೋಗಿಗೆ ನಿಮ್ಮ ಸಂದೇಶವನ್ನು ಟೈಪ್ ಮಾಡಿ...",
   'doctorDashboard.chat.sendButton': "ಕಳುಹಿಸು",
-  'doctorDashboard.chat.greetingFromPatient': "ನಮಸ್ಕಾರ ಡಾ. {doctorName}, ಇಂದು ನಾನು {patientName} ಅವರಿಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
+  'doctorDashboard.chat.greetingFromPatient': "ನಮಸ್ಕಾರ ಡಾ. {doctorName}, {patientName} ಇಲ್ಲಿದ್ದಾರೆ. ನಾನು ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
   'doctorDashboard.chat.simulatedPatientReply': "ನಿಮ್ಮ ಸಂದೇಶಕ್ಕಾಗಿ ಧನ್ಯವಾದಗಳು, ಡಾಕ್ಟರ್. ನನಗೆ ಅರ್ಥವಾಯಿತು.",
   'doctorDashboard.upcomingAppointments.title': "ನನ್ನ ಮುಂಬರುವ ನೇಮಕಾತಿಗಳು",
   'doctorDashboard.upcomingAppointments.description': "ನಿಮ್ಮ ನಿಗದಿತ ನೇಮಕಾತಿಗಳು. (ಅನುಕರಿಸಿದ ಡೇಟಾ - ಪೂರ್ಣ ಅಪ್ಲಿಕೇಶನ್‌ನಲ್ಲಿ ಡಿಬಿಯಿಂದ ತರಲಾಗುತ್ತದೆ)",
@@ -958,29 +969,16 @@ const knINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "ಪ್ರಕಾರ",
   'doctorDashboard.appointmentsTable.dateTime': "ದಿನಾಂಕ ಮತ್ತು ಸಮಯ",
   'doctorDashboard.appointmentsTable.status': "ಸ್ಥಿತಿ",
-  'telemedicine.adminDoctorChatTitle': 'ವೈದ್ಯರೊಂದಿಗೆ ಸಂವಹನ ನಡೆಸಿ',
-  'telemedicine.adminDoctorChatDescription': 'ವೈಯಕ್ತಿಕ ವೈದ್ಯರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡಿ ಅಥವಾ ಎಲ್ಲರಿಗೂ ಸಂದೇಶಗಳನ್ನು ಪ್ರಸಾರ ಮಾಡಿ.',
-  'telemedicine.adminBroadcastModeLabel': 'ಎಲ್ಲಾ ವೈದ್ಯರಿಗೆ ಪ್ರಸಾರ ಮಾಡಿ',
-  'telemedicine.adminBroadcastModeActive': 'ಪ್ರಸಾರ ಮೋಡ್ ಸಕ್ರಿಯವಾಗಿದೆ. ಸಂದೇಶಗಳನ್ನು ಎಲ್ಲಾ ವೈದ್ಯರಿಗೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ (ಅನುಕರಿಸಲಾಗಿದೆ).',
-  'telemedicine.adminChatWithDoctorGreeting': 'ನೀವು ಈಗ ನಿರ್ವಾಹಕರಾಗಿ ಡಾ. {doctorName} ಅವರೊಂದಿಗೆ ಚಾಟ್ ಮಾಡುತ್ತಿದ್ದೀರಿ.',
-  'telemedicine.adminBroadcastingTitle': 'ಎಲ್ಲಾ ವೈದ್ಯರಿಗೆ ಪ್ರಸಾರ',
-  'telemedicine.typeBroadcastPlaceholder': 'ನಿಮ್ಮ ಪ್ರಸಾರ ಸಂದೇಶವನ್ನು ಟೈಪ್ ಮಾಡಿ...',
-  'telemedicine.broadcastLabel': 'ಪ್ರಸಾರ',
-  'telemedicine.adminBroadcastConfirmation': 'ಎಲ್ಲಾ ವೈದ್ಯರಿಗೆ ಪ್ರಸಾರ ಸಂದೇಶ ಕಳುಹಿಸಲಾಗಿದೆ (ಅನುಕರಿಸಲಾಗಿದೆ): "{messageText}"',
-  'telemedicine.selectDoctorPromptTitlePatient': 'ಒಬ್ಬ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ',
-  'telemedicine.selectDoctorPromptDescPatient': 'ನಿಮ್ಮ ಚಾಟ್ ಪ್ರಾರಂಭಿಸಲು ದಯವಿಟ್ಟು ಮೇಲಿನ ಪಟ್ಟಿಯಿಂದ ಒಬ್ಬ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ.',
-  'telemedicine.adminChatPromptTitle': 'ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ ಅಥವಾ ಪ್ರಸಾರ ಮಾಡಿ',
-  'telemedicine.adminChatPromptDesc': 'ದಯವಿಟ್ಟು ಒಬ್ಬರಿಗೊಬ್ಬರು ಚಾಟ್‌ಗಾಗಿ ಒಬ್ಬ ವೈದ್ಯರನ್ನು ಆಯ್ಕೆಮಾಡಿ, ಅಥವಾ ಎಲ್ಲರಿಗೂ ಸಂದೇಶ ಕಳುಹಿಸಲು "ಎಲ್ಲಾ ವೈದ್ಯರಿಗೆ ಪ್ರಸಾರ ಮಾಡಿ" ಮೋಡ್ ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.',
-  'register.medicalIdLabel': 'ವೈದ್ಯಕೀಯ ಐಡಿ',
-  'register.medicalIdPlaceholder': 'ನಿಮ್ಮ ವೈದ್ಯಕೀಯ ಐಡಿ ಸಂಖ್ಯೆ',
-  'register.toast.medicalIdRequired': 'ವೈದ್ಯರಿಗೆ ವೈದ್ಯಕೀಯ ಐಡಿ ಅಗತ್ಯವಿದೆ.',
-  'profile.avatarUserFallback': 'VC', // Renamed
+  'doctorDashboard.appointmentStatus.confirmed': "ದೃಢಪಡಿಸಲಾಗಿದೆ",
+  'doctorDashboard.appointmentStatus.pending': "ಇತ್ಯರ್ಥದಲ್ಲಿದೆ",
+  'doctorDashboard.appointmentStatus.completed': "ಪೂರ್ಣಗೊಂಡಿದೆ",
+  'profile.avatarUserFallback': 'VC', 
 };
 
 const teINTranslations: TranslationSet = {
-  ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'వాక్‌కేర్', // Renamed
-  'login.title': 'వాక్‌కేర్ లాగిన్', // Renamed
+  ...createPlaceholders(enUSTranslations), 
+  'app.name': 'వాక్‌కేర్', 
+  'login.title': 'వాక్‌కేర్ లాగిన్', 
   'login.button': 'లాగిన్ చేయండి',
   'sidebar.dashboard': 'డాష్‌బోర్డ్',
   'sidebar.profile': 'ప్రొఫైల్',
@@ -1124,17 +1122,19 @@ const teINTranslations: TranslationSet = {
   'doctorDashboard.toast.previewNotSupported.title': 'ముందుచూపుకు మద్దతు లేదు',
   'doctorDashboard.toast.noPreviewAvailable.title': 'ముందుచూపు అందుబాటులో లేదు',
   'doctorDashboard.toast.notesSaved.title': 'గమనికలు సేవ్ చేయబడ్డాయి (అనుకరించబడింది)',
-  'doctorDashboard.toast.notesSaved.description': 'నిజమైన అప్లికేషన్‌లో, ఈ గమనికలు డేటాబేస్‌కు సేవ్ చేయబడతాయి.',
+  'doctorDashboard.toast.notesSaved.description': 'నిజమైన అప్లికేషన్‌లో, {patientName} కోసం ఈ గమనికలు డేటాబేస్‌కు సేవ్ చేయబడతాయి.',
   'doctorDashboard.patientDetailsDialog.title': 'రోగి వివరాలు: {patientName}',
   'doctorDashboard.patientDetailsDialog.description': '{patientEmail} కోసం వివరాలను వీక్షిస్తున్నారు.',
   'doctorDashboard.patientDetailsDialog.loading': 'రోగి వివరాలు లోడ్ అవుతున్నాయి...',
-  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "రోగి రాబోయే నియామకాలు (అనుకరించబడింది)",
+  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "రోగి నియామకాలు (అనుకరించబడింది)",
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.title': 'అనుకరించిన రాబోయే నియామకాలు',
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.none': 'రాబోయే నియామకాలు ఏవీ అనుకరించబడలేదు.',
-  'doctorDashboard.simulatedAppointments.checkup': 'సాధారణ తనిఖీ',
-  'doctorDashboard.simulatedAppointments.followUp': 'తదుపరి సందర్శన',
+  'doctorDashboard.simulatedAppointments.checkup': '{patientName} తో సాధారణ తనిఖీ',
+  'doctorDashboard.simulatedAppointments.followUp': '{patientName} కోసం అనుసరణ',
+  'doctorDashboard.simulatedAppointments.consultation': "{patientName} కోసం సంప్రదింపులు",
   'doctorDashboard.patientDetailsDialog.notes.title': "డాక్టర్ గమనికలు (అనుకరించబడింది)",
   'doctorDashboard.patientDetailsDialog.notes.label': 'గమనికలు',
+  'doctorDashboard.patientDetailsDialog.notes.initialPlaceholder': "{patientName} కోసం ఇంకా గమనికలు లేవు. గమనికలను జోడించడానికి టైప్ చేయడం ప్రారంభించండి.",
   'doctorDashboard.patientDetailsDialog.notes.placeholder': 'మీ గమనికలను ఇక్కడ టైప్ చేయండి...',
   'doctorDashboard.patientDetailsDialog.notes.saveButton': 'గమనికలను సేవ్ చేయండి (అనుకరించబడింది)',
   'doctorDashboard.patientDetailsDialog.medicalRecords.title': 'వైద్య రికార్డులు',
@@ -1145,7 +1145,7 @@ const teINTranslations: TranslationSet = {
   'doctorDashboard.chat.titleWithPatient': "{patientName} తో చాట్ చేస్తున్నారు",
   'doctorDashboard.chat.inputPlaceholder': "రోగికి మీ సందేశాన్ని టైప్ చేయండి...",
   'doctorDashboard.chat.sendButton': "పంపండి",
-  'doctorDashboard.chat.greetingFromPatient': "నమస్కారం డాక్టర్ {doctorName}, ఈ రోజు నేను {patientName} కి ఎలా సహాయపడగలను?",
+  'doctorDashboard.chat.greetingFromPatient': "నమస్కారం డాక్టర్ {doctorName}, {patientName} ఇక్కడ ఉన్నారు. నేను ఎలా సహాయపడగలను?",
   'doctorDashboard.chat.simulatedPatientReply': "మీ సందేశానికి ధన్యవాదాలు, డాక్టర్. నాకు అర్థమైంది.",
   'doctorDashboard.upcomingAppointments.title': "నా రాబోయే నియామకాలు",
   'doctorDashboard.upcomingAppointments.description': "మీ షెడ్యూల్ చేసిన నియామకాలు. (అనుకరించిన డేటా - పూర్తి అనువర్తనంలో DB నుండి పొందబడుతుంది)",
@@ -1154,13 +1154,16 @@ const teINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "రకం",
   'doctorDashboard.appointmentsTable.dateTime': "తేదీ & సమయం",
   'doctorDashboard.appointmentsTable.status': "స్థితి",
-  'profile.avatarUserFallback': 'VC', // Renamed
+  'doctorDashboard.appointmentStatus.confirmed': "ధృవీకరించబడింది",
+  'doctorDashboard.appointmentStatus.pending': "పెండింగ్‌లో ఉంది",
+  'doctorDashboard.appointmentStatus.completed': "పూర్తయింది",
+  'profile.avatarUserFallback': 'VC', 
 };
 
 const taINTranslations: TranslationSet = {
-  ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'வாக்‌கேர்', // Renamed
-  'login.title': 'வாக்‌கேர் உள்நுழைவு', // Renamed
+  ...createPlaceholders(enUSTranslations), 
+  'app.name': 'வாக்‌கேர்', 
+  'login.title': 'வாக்‌கேர் உள்நுழைவு', 
   'login.button': 'உள்நுழையவும்',
   'sidebar.dashboard': ' டாஷ்போர்டு',
   'sidebar.profile': 'சுயவிவரம்',
@@ -1304,17 +1307,19 @@ const taINTranslations: TranslationSet = {
   'doctorDashboard.toast.previewNotSupported.title': 'முன்னோட்டம் ஆதரிக்கப்படவில்லை',
   'doctorDashboard.toast.noPreviewAvailable.title': 'முன்னோட்டம் எதுவும் கிடைக்கவில்லை',
   'doctorDashboard.toast.notesSaved.title': 'குறிப்புகள் சேமிக்கப்பட்டன (போலியானது)',
-  'doctorDashboard.toast.notesSaved.description': 'உண்மையான பயன்பாட்டில், இந்த குறிப்புகள் தரவுத்தளத்தில் சேமிக்கப்படும்.',
+  'doctorDashboard.toast.notesSaved.description': 'உண்மையான பயன்பாட்டில், {patientName} க்கான இந்த குறிப்புகள் தரவுத்தளத்தில் சேமிக்கப்படும்.',
   'doctorDashboard.patientDetailsDialog.title': 'நோயாளி விவரங்கள்: {patientName}',
   'doctorDashboard.patientDetailsDialog.description': '{patientEmail} க்கான விவரங்களைக் காண்கிறது.',
   'doctorDashboard.patientDetailsDialog.loading': 'நோயாளி விவரங்கள் ஏற்றப்படுகின்றன...',
-  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "நோயாளியின் வரவிருக்கும் சந்திப்புகள் (போலியானது)",
+  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "நோயாளியின் சந்திப்புகள் (போலியானது)",
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.title': 'போலியான வரவிருக்கும் சந்திப்புகள்',
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.none': 'வரவிருக்கும் சந்திப்புகள் எதுவும் போலியாக உருவாக்கப்படவில்லை.',
-  'doctorDashboard.simulatedAppointments.checkup': 'பொது பரிசோதனை',
-  'doctorDashboard.simulatedAppointments.followUp': 'பின்தொடர்தல் வருகை',
+  'doctorDashboard.simulatedAppointments.checkup': '{patientName} உடன் பொது பரிசோதனை',
+  'doctorDashboard.simulatedAppointments.followUp': '{patientName} க்கான பின்தொடர்தல்',
+  'doctorDashboard.simulatedAppointments.consultation': "{patientName} க்கான ஆலோசனை",
   'doctorDashboard.patientDetailsDialog.notes.title': "மருத்துவரின் குறிப்புகள் (போலியானது)",
   'doctorDashboard.patientDetailsDialog.notes.label': 'குறிப்புகள்',
+  'doctorDashboard.patientDetailsDialog.notes.initialPlaceholder': "{patientName} க்கு இன்னும் குறிப்புகள் இல்லை. குறிப்புகளைச் சேர்க்க தட்டச்சு செய்யத் தொடங்குங்கள்.",
   'doctorDashboard.patientDetailsDialog.notes.placeholder': 'உங்கள் குறிப்புகளை இங்கே தட்டச்சு செய்க...',
   'doctorDashboard.patientDetailsDialog.notes.saveButton': 'குறிப்புகளைச் சேமி (போலியானது)',
   'doctorDashboard.patientDetailsDialog.medicalRecords.title': 'மருத்துவ பதிவுகள்',
@@ -1325,7 +1330,7 @@ const taINTranslations: TranslationSet = {
   'doctorDashboard.chat.titleWithPatient': "{patientName} உடன் அரட்டை",
   'doctorDashboard.chat.inputPlaceholder': "நோயாளருக்கு உங்கள் செய்தியைத் தட்டச்சு செய்க...",
   'doctorDashboard.chat.sendButton': "அனுப்பு",
-  'doctorDashboard.chat.greetingFromPatient': "வணக்கம் டாக்டர் {doctorName}, இன்று {patientName} க்கு நான் எப்படி உதவ முடியும்?",
+  'doctorDashboard.chat.greetingFromPatient': "வணக்கம் டாக்டர் {doctorName}, {patientName} இங்கே இருக்கிறார். நான் எப்படி உதவ முடியும்?",
   'doctorDashboard.chat.simulatedPatientReply': "உங்கள் செய்திக்காக நன்றி, டாக்டர். எனக்கு புரிகிறது.",
   'doctorDashboard.upcomingAppointments.title': "எனது வரவிருக்கும் சந்திப்புகள்",
   'doctorDashboard.upcomingAppointments.description': "உங்கள் திட்டமிடப்பட்ட சந்திப்புகள். (போலியான தரவு - முழு பயன்பாட்டில் டிபியிலிருந்து பெறப்படும்)",
@@ -1334,13 +1339,16 @@ const taINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "வகை",
   'doctorDashboard.appointmentsTable.dateTime': "தேதி & நேரம்",
   'doctorDashboard.appointmentsTable.status': "நிலை",
-  'profile.avatarUserFallback': 'VC', // Renamed
+  'doctorDashboard.appointmentStatus.confirmed': "உறுதிப்படுத்தப்பட்டது",
+  'doctorDashboard.appointmentStatus.pending': "நிலுவையில்",
+  'doctorDashboard.appointmentStatus.completed': "முடிந்தது",
+  'profile.avatarUserFallback': 'VC', 
 };
 
 const bnINTranslations: TranslationSet = {
-  ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'ভ্যাককেয়ার', // Renamed
-  'login.title': 'ভ্যাককেয়ার লগইন', // Renamed
+  ...createPlaceholders(enUSTranslations), 
+  'app.name': 'ভ্যাককেয়ার', 
+  'login.title': 'ভ্যাককেয়ার লগইন', 
   'login.button': 'লগইন করুন',
   'sidebar.dashboard': 'ড্যাশবোর্ড',
   'sidebar.profile': 'প্রোফাইল',
@@ -1484,17 +1492,19 @@ const bnINTranslations: TranslationSet = {
   'doctorDashboard.toast.previewNotSupported.title': 'পূর্বরূপ সমর্থিত নয়',
   'doctorDashboard.toast.noPreviewAvailable.title': 'কোনো পূর্বরূপ উপলব্ধ নেই',
   'doctorDashboard.toast.notesSaved.title': 'নোট সংরক্ষিত (সিমুলেটেড)',
-  'doctorDashboard.toast.notesSaved.description': 'বাস্তব অ্যাপ্লিকেশনে, এই নোটগুলি ডাটাবেসে সংরক্ষিত হবে।',
+  'doctorDashboard.toast.notesSaved.description': 'বাস্তব অ্যাপ্লিকেশনে, {patientName} এর জন্য এই নোটগুলি ডাটাবেসে সংরক্ষিত হবে।',
   'doctorDashboard.patientDetailsDialog.title': 'রোগীর বিবরণ: {patientName}',
   'doctorDashboard.patientDetailsDialog.description': '{patientEmail} এর বিবরণ দেখা হচ্ছে।',
   'doctorDashboard.patientDetailsDialog.loading': 'রোগীর বিবরণ লোড হচ্ছে...',
-  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "রোগীর আসন্ন অ্যাপয়েন্টমেন্ট (সিমুলেটেড)",
+  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "রোগীর অ্যাপয়েন্টমেন্ট (সিমুলেটেড)",
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.title': 'সিমুলেটেড আসন্ন অ্যাপয়েন্টমেন্ট',
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.none': 'কোনো আসন্ন অ্যাপয়েন্টমেন্ট সিমুলেটেড নয়।',
-  'doctorDashboard.simulatedAppointments.checkup': 'সাধারণ পরীক্ষা',
-  'doctorDashboard.simulatedAppointments.followUp': 'পরবর্তী সাক্ষাৎ',
+  'doctorDashboard.simulatedAppointments.checkup': '{patientName} এর সাথে সাধারণ পরীক্ষা',
+  'doctorDashboard.simulatedAppointments.followUp': '{patientName} এর জন্য ফলো-আপ',
+  'doctorDashboard.simulatedAppointments.consultation': "{patientName} এর জন্য পরামর্শ",
   'doctorDashboard.patientDetailsDialog.notes.title': "ডাক্তারের নোট (সিমুলেটেড)",
   'doctorDashboard.patientDetailsDialog.notes.label': 'নোট',
+  'doctorDashboard.patientDetailsDialog.notes.initialPlaceholder': "{patientName} এর জন্য এখনো কোনো নোট নেই। নোট যোগ করতে টাইপ করা শুরু করুন।",
   'doctorDashboard.patientDetailsDialog.notes.placeholder': 'আপনার নোট এখানে টাইপ করুন...',
   'doctorDashboard.patientDetailsDialog.notes.saveButton': 'নোট সংরক্ষণ করুন (সিমুলেটেড)',
   'doctorDashboard.patientDetailsDialog.medicalRecords.title': 'মেডিকেল রেকর্ড',
@@ -1505,7 +1515,7 @@ const bnINTranslations: TranslationSet = {
   'doctorDashboard.chat.titleWithPatient': "{patientName} এর সাথে চ্যাট করা হচ্ছে",
   'doctorDashboard.chat.inputPlaceholder': "রোগীকে আপনার বার্তা টাইপ করুন...",
   'doctorDashboard.chat.sendButton': "প্রেরণ",
-  'doctorDashboard.chat.greetingFromPatient': "নমস্কার ডঃ {doctorName}, আজ আমি {patientName} কে কিভাবে সাহায্য করতে পারি?",
+  'doctorDashboard.chat.greetingFromPatient': "নমস্কার ডঃ {doctorName}, {patientName} এখানে আছেন। আমি কিভাবে সাহায্য করতে পারি?",
   'doctorDashboard.chat.simulatedPatientReply': "আপনার বার্তার জন্য ধন্যবাদ, ডাক্তার। আমি বুঝতে পেরেছি।",
   'doctorDashboard.upcomingAppointments.title': "আমার আসন্ন অ্যাপয়েন্টমেন্ট",
   'doctorDashboard.upcomingAppointments.description': "আপনার নির্ধারিত অ্যাপয়েন্টমেন্ট। (সিমুলেটেড ডেটা - সম্পূর্ণ অ্যাপে ডিবি থেকে আনা হবে)",
@@ -1514,13 +1524,16 @@ const bnINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "প্রকার",
   'doctorDashboard.appointmentsTable.dateTime': "তারিখ ও সময়",
   'doctorDashboard.appointmentsTable.status': "অবস্থা",
-  'profile.avatarUserFallback': 'VC', // Renamed
+  'doctorDashboard.appointmentStatus.confirmed': "নিশ্চিত",
+  'doctorDashboard.appointmentStatus.pending': "অমীমাংসিত",
+  'doctorDashboard.appointmentStatus.completed': "সম্পন্ন",
+  'profile.avatarUserFallback': 'VC', 
 };
 
 const mrINTranslations: TranslationSet = {
-  ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'वाककेअर', // Renamed
-  'login.title': 'वाककेअर लॉग इन', // Renamed
+  ...createPlaceholders(enUSTranslations), 
+  'app.name': 'वाककेअर', 
+  'login.title': 'वाककेअर लॉग इन', 
   'login.button': 'लॉग इन करा',
   'sidebar.dashboard': 'डॅशबोर्ड',
   'sidebar.profile': 'प्रोफाइल',
@@ -1664,17 +1677,19 @@ const mrINTranslations: TranslationSet = {
   'doctorDashboard.toast.previewNotSupported.title': 'पूर्वावलोकन समर्थित नाही',
   'doctorDashboard.toast.noPreviewAvailable.title': 'कोणतेही पूर्वावलोकन उपलब्ध नाही',
   'doctorDashboard.toast.notesSaved.title': 'नोंदी जतन केल्या (अनुकरणित)',
-  'doctorDashboard.toast.notesSaved.description': 'वास्तविक अनुप्रयोगात, या नोंदी डेटाबेसमध्ये जतन केल्या जातील.',
+  'doctorDashboard.toast.notesSaved.description': 'वास्तविक अनुप्रयोगात, {patientName} साठी या नोंदी डेटाबेसमध्ये जतन केल्या जातील.',
   'doctorDashboard.patientDetailsDialog.title': 'रुग्ण तपशील: {patientName}',
   'doctorDashboard.patientDetailsDialog.description': '{patientEmail} साठी तपशील पाहत आहात.',
   'doctorDashboard.patientDetailsDialog.loading': 'रुग्ण तपशील लोड करत आहे...',
-  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "रुग्णाच्या आगामी भेटी (अनुकरणित)",
+  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "रुग्णाच्या भेटी (अनुकरणित)",
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.title': 'अनुकरणित आगामी भेटी',
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.none': 'कोणत्याही आगामी भेटी अनुकरणित नाहीत.',
-  'doctorDashboard.simulatedAppointments.checkup': 'सामान्य तपासणी',
-  'doctorDashboard.simulatedAppointments.followUp': 'पाठपुरावा भेट',
+  'doctorDashboard.simulatedAppointments.checkup': '{patientName} सोबत सामान्य तपासणी',
+  'doctorDashboard.simulatedAppointments.followUp': '{patientName} साठी पाठपुरावा',
+  'doctorDashboard.simulatedAppointments.consultation': "{patientName} साठी सल्ला",
   'doctorDashboard.patientDetailsDialog.notes.title': "डॉक्टरांच्या नोंदी (अनुकरणित)",
   'doctorDashboard.patientDetailsDialog.notes.label': 'नोंदी',
+  'doctorDashboard.patientDetailsDialog.notes.initialPlaceholder': "{patientName} साठी अद्याप कोणत्याही नोंदी नाहीत. नोंदी जोडण्यासाठी टाइप करणे सुरू करा.",
   'doctorDashboard.patientDetailsDialog.notes.placeholder': 'तुमच्या नोंदी येथे टाइप करा...',
   'doctorDashboard.patientDetailsDialog.notes.saveButton': 'नोंदी जतन करा (अनुकरणित)',
   'doctorDashboard.patientDetailsDialog.medicalRecords.title': 'वैद्यकीय नोंदी',
@@ -1685,7 +1700,7 @@ const mrINTranslations: TranslationSet = {
   'doctorDashboard.chat.titleWithPatient': "{patientName} शी चॅट करत आहे",
   'doctorDashboard.chat.inputPlaceholder': "रुग्णाला तुमचा संदेश टाइप करा...",
   'doctorDashboard.chat.sendButton': "पाठवा",
-  'doctorDashboard.chat.greetingFromPatient': "नमस्कार डॉ. {doctorName}, आज मी {patientName} ला कशी मदत करू शकेन?",
+  'doctorDashboard.chat.greetingFromPatient': "नमस्कार डॉ. {doctorName}, {patientName} येथे आहेत. मी कशी मदत करू शकेन?",
   'doctorDashboard.chat.simulatedPatientReply': "तुमच्या संदेशाबद्दल धन्यवाद, डॉक्टर. मला समजले.",
   'doctorDashboard.upcomingAppointments.title': "माझ्या आगामी भेटी",
   'doctorDashboard.upcomingAppointments.description': "तुमच्या नियोजित भेटी. (अनुकरणित डेटा - पूर्ण अॅपमध्ये डीबीमधून आणला जाईल)",
@@ -1694,13 +1709,16 @@ const mrINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "प्रकार",
   'doctorDashboard.appointmentsTable.dateTime': "तारीख आणि वेळ",
   'doctorDashboard.appointmentsTable.status': "स्थिती",
-  'profile.avatarUserFallback': 'VC', // Renamed
+  'doctorDashboard.appointmentStatus.confirmed': "पुष्टी केली",
+  'doctorDashboard.appointmentStatus.pending': "प्रलंबित",
+  'doctorDashboard.appointmentStatus.completed': "पूर्ण झाले",
+  'profile.avatarUserFallback': 'VC', 
 };
 
 const guINTranslations: TranslationSet = {
-  ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'વાકકેર', // Renamed
-  'login.title': 'વાકકેર લોગિન', // Renamed
+  ...createPlaceholders(enUSTranslations), 
+  'app.name': 'વાકકેર', 
+  'login.title': 'વાકકેર લોગિન', 
   'login.button': 'લૉગિન કરો',
   'sidebar.dashboard': 'ડેશબોર્ડ',
   'sidebar.profile': 'પ્રોફાઇલ',
@@ -1844,17 +1862,19 @@ const guINTranslations: TranslationSet = {
   'doctorDashboard.toast.previewNotSupported.title': 'પૂર્વદર્શન સમર્થિત નથી',
   'doctorDashboard.toast.noPreviewAvailable.title': 'કોઈ પૂર્વદર્શન ઉપલબ્ધ નથી',
   'doctorDashboard.toast.notesSaved.title': 'નોંધો સાચવવામાં આવી (અનુકરણિત)',
-  'doctorDashboard.toast.notesSaved.description': 'વાસ્તવિક એપ્લિકેશનમાં, આ નોંધો ડેટાબેઝમાં સાચવવામાં આવશે.',
+  'doctorDashboard.toast.notesSaved.description': 'વાસ્તવિક એપ્લિકેશનમાં, {patientName} માટે આ નોંધો ડેટાબેઝમાં સાચવવામાં આવશે.',
   'doctorDashboard.patientDetailsDialog.title': 'દર્દીની વિગતો: {patientName}',
   'doctorDashboard.patientDetailsDialog.description': '{patientEmail} માટે વિગતો જોઈ રહ્યાં છીએ.',
   'doctorDashboard.patientDetailsDialog.loading': 'દર્દીની વિગતો લોડ થઈ રહી છે...',
-  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "દર્દીની આગામી મુલાકાતો (અનુકરણિત)",
+  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "દર્દીની મુલાકાતો (અનુકરણિત)",
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.title': 'અનુકરણિત આગામી મુલાકાતો',
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.none': 'કોઈ આગામી મુલાકાત અનુકરણિત નથી.',
-  'doctorDashboard.simulatedAppointments.checkup': 'સામાન્ય તપાસ',
-  'doctorDashboard.simulatedAppointments.followUp': 'ફૉલો-અપ મુલાકાત',
+  'doctorDashboard.simulatedAppointments.checkup': '{patientName} સાથે સામાન્ય તપાસ',
+  'doctorDashboard.simulatedAppointments.followUp': '{patientName} માટે ફૉલો-અપ',
+  'doctorDashboard.simulatedAppointments.consultation': "{patientName} માટે પરામર્શ",
   'doctorDashboard.patientDetailsDialog.notes.title': "ડૉક્ટરની નોંધો (અનુકરણિત)",
   'doctorDashboard.patientDetailsDialog.notes.label': 'નોંધો',
+  'doctorDashboard.patientDetailsDialog.notes.initialPlaceholder': "{patientName} માટે હજુ કોઈ નોંધ નથી. નોંધ ઉમેરવા માટે ટાઈપ કરવાનું શરૂ કરો.",
   'doctorDashboard.patientDetailsDialog.notes.placeholder': 'તમારી નોંધો અહીં લખો...',
   'doctorDashboard.patientDetailsDialog.notes.saveButton': 'નોંધો સાચવો (અનુકરણિત)',
   'doctorDashboard.patientDetailsDialog.medicalRecords.title': 'તબીબી રેકોર્ડ્સ',
@@ -1865,7 +1885,7 @@ const guINTranslations: TranslationSet = {
   'doctorDashboard.chat.titleWithPatient': "{patientName} સાથે ચેટ કરી રહ્યા છીએ",
   'doctorDashboard.chat.inputPlaceholder': "દર્દીને તમારો સંદેશ લખો...",
   'doctorDashboard.chat.sendButton': "મોકલો",
-  'doctorDashboard.chat.greetingFromPatient': "નમસ્તે ડૉ. {doctorName}, આજે હું {patientName} ને કેવી રીતે મદદ કરી શકું?",
+  'doctorDashboard.chat.greetingFromPatient': "નમસ્તે ડૉ. {doctorName}, {patientName} અહીં છે. હું કેવી રીતે મદદ કરી શકું?",
   'doctorDashboard.chat.simulatedPatientReply': "તમારા સંદેશ બદલ આભાર, ડૉક્ટર. હું સમજું છું.",
   'doctorDashboard.upcomingAppointments.title': "મારી આગામી મુલાકાતો",
   'doctorDashboard.upcomingAppointments.description': "તમારી નિર્ધારિત મુલાકાતો. (અનુકરણિત ડેટા - સંપૂર્ણ એપ્લિકેશનમાં ડીબીમાંથી મેળવવામાં આવશે)",
@@ -1874,13 +1894,16 @@ const guINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "પ્રકાર",
   'doctorDashboard.appointmentsTable.dateTime': "તારીખ અને સમય",
   'doctorDashboard.appointmentsTable.status': "સ્થિતિ",
-  'profile.avatarUserFallback': 'VC', // Renamed
+  'doctorDashboard.appointmentStatus.confirmed': "પુષ્ટિ થયેલ",
+  'doctorDashboard.appointmentStatus.pending': "બાકી",
+  'doctorDashboard.appointmentStatus.completed': "પૂર્ણ",
+  'profile.avatarUserFallback': 'VC', 
 };
 
 const urINTranslations: TranslationSet = {
-  ...createPlaceholders(enUSTranslations), // Start with English placeholders
-  'app.name': 'واک کیئر', // Renamed
-  'login.title': 'واک کیئر لاگ ان', // Renamed
+  ...createPlaceholders(enUSTranslations), 
+  'app.name': 'واک کیئر', 
+  'login.title': 'واک کیئر لاگ ان', 
   'login.button': 'لاگ ان کریں',
   'sidebar.dashboard': 'ڈیش بورڈ',
   'sidebar.profile': 'پروفائل',
@@ -2024,17 +2047,19 @@ const urINTranslations: TranslationSet = {
   'doctorDashboard.toast.previewNotSupported.title': 'پیش نظارہ معاونت یافتہ نہیں ہے',
   'doctorDashboard.toast.noPreviewAvailable.title': 'کوئی پیش نظارہ دستیاب نہیں ہے',
   'doctorDashboard.toast.notesSaved.title': 'نوٹس محفوظ کیے گئے (نقلی)',
-  'doctorDashboard.toast.notesSaved.description': 'حقیقی ایپلیکیشن میں، یہ نوٹس ڈیٹا بیس میں محفوظ کیے جائیں گے۔',
+  'doctorDashboard.toast.notesSaved.description': 'حقیقی ایپلیکیشن میں، {patientName} کے لیے یہ نوٹس ڈیٹا بیس میں محفوظ کیے جائیں گے۔',
   'doctorDashboard.patientDetailsDialog.title': 'مریض کی تفصیلات: {patientName}',
   'doctorDashboard.patientDetailsDialog.description': '{patientEmail} کی تفصیلات دیکھی جا رہی ہیں۔',
   'doctorDashboard.patientDetailsDialog.loading': 'مریض کی تفصیلات لوڈ ہو رہی ہیں۔۔۔',
-  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "مریض کی آنے والی ملاقاتیں (نقلی)",
+  'doctorDashboard.patientDetailsDialog.patientAppointments.title': "مریض کی ملاقاتیں (نقلی)",
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.title': 'نقلی آنے والی ملاقاتیں',
   'doctorDashboard.patientDetailsDialog.upcomingAppointments.none': 'کوئی آنے والی ملاقات نقلی نہیں ہے۔',
-  'doctorDashboard.simulatedAppointments.checkup': 'عام معائنہ',
-  'doctorDashboard.simulatedAppointments.followUp': 'فالو اپ ملاقات',
+  'doctorDashboard.simulatedAppointments.checkup': '{patientName} کے ساتھ عام معائنہ',
+  'doctorDashboard.simulatedAppointments.followUp': '{patientName} کے لیے فالو اپ',
+  'doctorDashboard.simulatedAppointments.consultation': "{patientName} کے لیے مشاورت",
   'doctorDashboard.patientDetailsDialog.notes.title': "ڈاکٹر کے نوٹس (نقلی)",
   'doctorDashboard.patientDetailsDialog.notes.label': 'نوٹس',
+  'doctorDashboard.patientDetailsDialog.notes.initialPlaceholder': "{patientName} کے لیے ابھی تک کوئی نوٹس نہیں ہیں۔ نوٹس شامل کرنے کے لیے ٹائپ کرنا شروع کریں۔",
   'doctorDashboard.patientDetailsDialog.notes.placeholder': 'اپنے نوٹس یہاں ٹائپ کریں۔۔۔',
   'doctorDashboard.patientDetailsDialog.notes.saveButton': 'نوٹس محفوظ کریں (نقلی)',
   'doctorDashboard.patientDetailsDialog.medicalRecords.title': 'طبی ریکارڈز',
@@ -2045,7 +2070,7 @@ const urINTranslations: TranslationSet = {
   'doctorDashboard.chat.titleWithPatient': "{patientName} کے ساتھ چیٹ کر رہے ہیں",
   'doctorDashboard.chat.inputPlaceholder': "مریض کو اپنا پیغام ٹائپ کریں...",
   'doctorDashboard.chat.sendButton': "بھیجیں",
-  'doctorDashboard.chat.greetingFromPatient': "ہیلو ڈاکٹر {doctorName}، آج میں {patientName} کی کیسے مدد کر سکتا ہوں؟",
+  'doctorDashboard.chat.greetingFromPatient': "ہیلو ڈاکٹر {doctorName}، {patientName} یہاں ہیں۔ میں کیسے مدد کر سکتا ہوں؟",
   'doctorDashboard.chat.simulatedPatientReply': "آپ کے پیغام کا شکریہ، ڈاکٹر۔ میں سمجھ گیا۔",
   'doctorDashboard.upcomingAppointments.title': "میری آنے والی ملاقاتیں",
   'doctorDashboard.upcomingAppointments.description': "آپ کی طے شدہ ملاقاتیں۔ (نقلی ڈیٹا - مکمل ایپ میں ڈی بی سے حاصل کیا جائے گا)",
@@ -2054,7 +2079,10 @@ const urINTranslations: TranslationSet = {
   'doctorDashboard.appointmentsTable.type': "قسم",
   'doctorDashboard.appointmentsTable.dateTime': "تاریخ اور وقت",
   'doctorDashboard.appointmentsTable.status': "حیثیت",
-  'profile.avatarUserFallback': 'VC', // Renamed
+  'doctorDashboard.appointmentStatus.confirmed': "تصدیق شدہ",
+  'doctorDashboard.appointmentStatus.pending': "زیر التواء",
+  'doctorDashboard.appointmentStatus.completed': "مکمل",
+  'profile.avatarUserFallback': 'VC', 
 };
 
 export const translationsData: Record<LanguageCode, TranslationSet> = {
@@ -2068,3 +2096,4 @@ export const translationsData: Record<LanguageCode, TranslationSet> = {
   'gu-IN': guINTranslations,
   'ur-IN': urINTranslations,
 };
+

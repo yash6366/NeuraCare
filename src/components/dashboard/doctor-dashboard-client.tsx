@@ -27,7 +27,7 @@ import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
-import { format, addDays, addWeeks, addHours } from "date-fns";
+import { format, addDays, addWeeks, addHours, subDays } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -40,7 +40,7 @@ interface SimulatedAppointmentForDoctor {
   patientName: string;
   appointmentType: string;
   dateTime: Date;
-  status: "Confirmed" | "Pending";
+  status: "Confirmed" | "Pending" | "Completed";
 }
 
 interface ChatMessage {
@@ -60,7 +60,7 @@ export function DoctorDashboardClient() {
   const [isLoadingPatients, setIsLoadingPatients] = useState(false);
 
   const [selectedPatientRecords, setSelectedPatientRecords] = useState<MedicalRecordClientType[] | null>(null);
-  const [simulatedAppointments, setSimulatedAppointments] = useState<SimulatedAppointmentForDoctor[]>([]);
+  const [patientSpecificSimulatedAppointments, setPatientSpecificSimulatedAppointments] = useState<SimulatedAppointmentForDoctor[]>([]);
   const [doctorNotes, setDoctorNotes] = useState("");
   const [isPatientDetailsDialogOpen, setIsPatientDetailsDialogOpen] = useState(false);
   const [isLoadingPatientDetails, setIsLoadingPatientDetails] = useState(false);
@@ -124,9 +124,10 @@ export function DoctorDashboardClient() {
   const generateSimulatedAppointmentsForPatientDialog = (patientName: string): SimulatedAppointmentForDoctor[] => {
     const now = new Date();
     return [
-      { id: 'appt1', patientName: patientName, appointmentType: translate('doctorDashboard.simulatedAppointments.checkup', "General Checkup"), dateTime: addDays(now, 7), status: 'Confirmed' },
-      { id: 'appt2', patientName: patientName, appointmentType: translate('doctorDashboard.simulatedAppointments.followUp', "Follow-up Visit"), dateTime: addWeeks(now, 3), status: 'Confirmed' },
-    ];
+      { id: `patientAppt1-${patientName.replace(/\s/g, '')}`, patientName: patientName, appointmentType: translate('doctorDashboard.simulatedAppointments.checkup', "General Checkup with {patientName}").replace('{patientName}', patientName), dateTime: subDays(now, 14), status: 'Completed' },
+      { id: `patientAppt2-${patientName.replace(/\s/g, '')}`, patientName: patientName, appointmentType: translate('doctorDashboard.simulatedAppointments.followUp', "Follow-up for {patientName}").replace('{patientName}', patientName), dateTime: addDays(now, 7), status: 'Confirmed' },
+      { id: `patientAppt3-${patientName.replace(/\s/g, '')}`, patientName: patientName, appointmentType: translate('doctorDashboard.simulatedAppointments.consultation', "Consultation for {patientName}").replace('{patientName}', patientName), dateTime: addWeeks(now, 2), status: 'Pending' },
+    ].sort((a,b) => a.dateTime.getTime() - b.dateTime.getTime());
   };
 
   const handleViewPatientDetails = async (patient: Patient) => {
@@ -142,13 +143,13 @@ export function DoctorDashboardClient() {
     setIsPatientDetailsDialogOpen(true);
     setIsLoadingPatientDetails(true);
     setSelectedPatientRecords(null);
-    setDoctorNotes(""); 
-    setSimulatedAppointments(generateSimulatedAppointmentsForPatientDialog(patient.name));
-    setPatientChatMessages([ // Initial greeting for chat
+    setDoctorNotes(translate('doctorDashboard.patientDetailsDialog.notes.initialPlaceholder', "No notes for {patientName} yet. Start typing to add notes.").replace('{patientName}', patient.name));
+    setPatientSpecificSimulatedAppointments(generateSimulatedAppointmentsForPatientDialog(patient.name));
+    setPatientChatMessages([ 
       {
         id: String(Date.now()),
-        text: translate('doctorDashboard.chat.greetingFromPatient', "Hello Dr. {doctorName}, how can I help {patientName} today?").replace('{doctorName}', doctor.name).replace('{patientName}', patient.name),
-        sender: "patient", // Simulated initial message from patient perspective
+        text: translate('doctorDashboard.chat.greetingFromPatient', "Hello Dr. {doctorName}, {patientName} is here. How can I assist?").replace('{doctorName}', doctor.name).replace('{patientName}', patient.name),
+        sender: "patient", 
         timestamp: new Date(),
       }
     ]);
@@ -192,7 +193,7 @@ export function DoctorDashboardClient() {
   const handleSaveNotes = () => {
     toast({
         title: translate('doctorDashboard.toast.notesSaved.title', "Notes Saved (Simulated)"),
-        description: translate('doctorDashboard.toast.notesSaved.description', "In a real application, these notes would be saved to the database."),
+        description: translate('doctorDashboard.toast.notesSaved.description', "In a real application, these notes for {patientName} would be saved to the database.").replace('{patientName}', selectedPatientForDetails?.name || 'the patient'),
     });
   };
 
@@ -287,7 +288,7 @@ export function DoctorDashboardClient() {
                     <TableCell>{appt.appointmentType}</TableCell>
                     <TableCell>{format(appt.dateTime, "PPpp")}</TableCell>
                     <TableCell>
-                      <Badge variant={appt.status === "Confirmed" ? "default" : "secondary"}>{appt.status}</Badge>
+                      <Badge variant={appt.status === "Confirmed" ? "default" : "secondary"}>{translate(`doctorDashboard.appointmentStatus.${appt.status.toLowerCase()}`, appt.status)}</Badge>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -383,16 +384,16 @@ export function DoctorDashboardClient() {
                           <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-lg">
                               <Clock className="h-5 w-5 text-blue-600" />
-                              {translate('doctorDashboard.patientDetailsDialog.patientAppointments.title', "Patient's Upcoming Appointments (Simulated)")}
+                              {translate('doctorDashboard.patientDetailsDialog.patientAppointments.title', "Patient's Appointments (Simulated)")}
                             </CardTitle>
                           </CardHeader>
                           <CardContent>
-                            {simulatedAppointments.length > 0 ? (
+                            {patientSpecificSimulatedAppointments.length > 0 ? (
                               <ul className="space-y-2 text-sm">
-                                {simulatedAppointments.map(appt => (
+                                {patientSpecificSimulatedAppointments.map(appt => (
                                   <li key={appt.id} className="p-2 border rounded-md bg-blue-500/5">
                                     <p className="font-medium text-blue-700">{appt.appointmentType}</p>
-                                    <p className="text-xs text-muted-foreground">{format(appt.dateTime, "PPpp")}</p>
+                                    <p className="text-xs text-muted-foreground">{format(appt.dateTime, "PPpp")} - <Badge variant={appt.status === 'Completed' ? 'outline' : appt.status === 'Confirmed' ? 'default' : 'secondary'}>{translate(`doctorDashboard.appointmentStatus.${appt.status.toLowerCase()}`, appt.status)}</Badge></p>
                                   </li>
                                 ))}
                               </ul>
