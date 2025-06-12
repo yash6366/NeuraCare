@@ -41,7 +41,7 @@ export async function voiceSymptomChecker(input: VoiceSymptomCheckerInput): Prom
 
 const prompt = ai.definePrompt({
   name: 'voiceSymptomCheckerPrompt',
-  model: 'googleai/gemini-1.5-pro-latest', // Updated to use Gemini 1.5 Pro
+  model: 'googleai/gemini-1.5-flash-latest', // Reverted to Flash model
   input: {schema: VoiceSymptomCheckerInputSchema},
   output: {schema: VoiceSymptomCheckerOutputSchema},
   prompt: (input) => `You are an AI-powered symptom checker, drawing upon a comprehensive understanding of medical knowledge. Your goal is to analyze the described symptoms and provide *distinct, medically-informed, and relevant* potential insights, including possible conditions and comprehensive, actionable suggestions for management.
@@ -66,7 +66,7 @@ All text in your response, including condition names, explanations, suggestions,
 Structure your entire response as a single JSON object adhering to the defined output schema.
 `,
   config: {
-    temperature: 0.4, // Slightly lower temperature for more medically grounded, less speculative responses
+    temperature: 0.5, // Adjusted temperature for Flash model
   },
 });
 
@@ -130,7 +130,7 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
       if (lang === 'hi-IN') {
         errorDisclaimer = "क्षमा करें, AI आपके लक्षणों का ठीक से विश्लेषण नहीं कर सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक पार्सिंग (त्रुटि) प्रतिक्रिया है।";
         errorConditionName = "AI प्रतिसाद पार्सिंग त्रुटि";
-        errorExplanation = "AI ने अपेक्षित संरचित प्रतिक्रिया नहीं दी या प्रतिक्रिया अधूरी थी (जैसे 'एनालिसिस' फ़ील्ड गायब था)। यह एक API समस्या या अप्रत्याशित AI आउटपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।";
+        errorExplanation = "AI ने अपेक्षित संरचित प्रतिक्रिया नहीं दी या प्रतिक्रिया अधूरी थी (जैसे 'एनालिसिस' फ़ील्ड गायब था)। यह एक API समस्या या अप्रत्याशિત AI आउटपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।";
       } else {
         errorDisclaimer = "Sorry, the AI could not properly analyze your symptoms. Please consult a healthcare professional. This is a parsing (error) response.";
         errorConditionName = "AI Response Parsing Error";
