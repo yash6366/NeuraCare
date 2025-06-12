@@ -35,8 +35,8 @@ export async function telemedicineChat(input: TelemedicineChatInput): Promise<Te
 
 const telemedicineChatPrompt = ai.definePrompt({
   name: 'telemedicineChatPrompt',
+  model: 'googleai/gemini-1.5-pro-latest',
   input: {schema: TelemedicineChatInputSchema},
-  // Removed output schema here as we are using llmResponse.text for direct chat
   system: (input) => `You are "SmartCare AI Assistant", a friendly, empathetic, and knowledgeable AI designed to assist users within a telemedicine platform.
 Your primary goal is to be helpful and provide clear, concise information.
 You can answer general health-related questions, provide information about medical conditions (always with a disclaimer that you are not a doctor and users should consult professionals),
@@ -47,7 +47,7 @@ Do NOT provide medical diagnoses or treatment plans.
 You MUST understand and respond fluently in the following language: ${input.language || 'English'}.
 Adapt your vocabulary and sentence structure to be easily understandable for a general audience in the specified language.
 `,
-  prompt: (input) => input.userMessage, // Send only the current user message as the main prompt part
+  prompt: (input) => input.userMessage, 
   config: {
     temperature: 0.75,
   },
@@ -57,14 +57,12 @@ const telemedicineChatFlow = ai.defineFlow(
   {
     name: 'telemedicineChatFlow',
     inputSchema: TelemedicineChatInputSchema,
-    outputSchema: TelemedicineChatOutputSchema, // The flow itself still has an output schema for the client
+    outputSchema: TelemedicineChatOutputSchema, 
   },
   async (input) => {
     console.log('[telemedicineChatFlow] Received input:', JSON.stringify(input, null, 2));
     try {
-      // The chatHistory from input will be automatically handled by Genkit when calling the prompt
       const llmResponse = await telemedicineChatPrompt(input);
-      // For chat models where no explicit output schema is defined on the prompt, response is often in .text
       const responseText = llmResponse.text;
 
       if (!responseText || responseText.trim() === "") {
@@ -77,11 +75,11 @@ const telemedicineChatFlow = ai.defineFlow(
       console.log('[telemedicineChatFlow] LLM response success. Response text length:', responseText.length);
       return { botResponse: responseText };
     } catch (error: any) {
-      console.error('[telemedicineChatFlow] Error during execution:', error);
+      console.error('[telemedicineChatFlow] Error during execution:', error.message);
       if (error.cause) {
         console.error('[telemedicineChatFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
       }
-      if (error.details) { // This is often where Google API errors are nested
+      if (error.details) { 
         console.error('[telemedicineChatFlow] Error Details:', JSON.stringify(error.details, null, 2));
       }
       if (error.stack) {

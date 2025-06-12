@@ -30,6 +30,7 @@ export async function summarizeDocumentText(input: SummarizeDocumentTextInput): 
 
 const documentSummarizationPrompt = ai.definePrompt({
   name: 'documentSummarizationPrompt',
+  model: 'googleai/gemini-1.5-pro-latest',
   input: {schema: SummarizeDocumentTextInputSchema},
   output: {schema: SummarizeDocumentTextOutputSchema},
   prompt: (input) => `Please provide a concise summary of the following text. The summary should be in ${input.language || 'English'}.
@@ -85,4 +86,3 @@ const documentSummarizationFlow = ai.defineFlow(
     }
   }
 );
-

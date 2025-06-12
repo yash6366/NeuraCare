@@ -39,6 +39,7 @@ export async function processVoiceCommand(input: ProcessVoiceCommandInput): Prom
 
 const prompt = ai.definePrompt({
   name: 'processVoiceCommandPrompt',
+  model: 'googleai/gemini-1.5-pro-latest',
   input: {schema: ProcessVoiceCommandInputSchema},
   output: {schema: ProcessVoiceCommandOutputSchema},
   prompt: `You are a helpful assistant that extracts information from voice commands to help manage appointments.
@@ -92,4 +93,3 @@ const processVoiceCommandFlow = ai.defineFlow(
     }
   }
 );
-

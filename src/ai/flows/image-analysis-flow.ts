@@ -33,6 +33,7 @@ export async function analyzeImage(input: AnalyzeImageInput): Promise<AnalyzeIma
 
 const imageAnalysisPrompt = ai.definePrompt({
   name: 'imageAnalysisPrompt',
+  model: 'googleai/gemini-1.5-pro-latest',
   input: {schema: AnalyzeImageInputSchema},
   output: {schema: AnalyzeImageOutputSchema},
   prompt: (input) => {
@@ -91,4 +92,3 @@ const imageAnalysisFlow = ai.defineFlow(
     }
   }
 );
-

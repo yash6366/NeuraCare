@@ -32,6 +32,7 @@ export async function extractTextFromDocument(input: ExtractTextFromDocumentInpu
 
 const documentTextExtractionPrompt = ai.definePrompt({
   name: 'documentTextExtractionPrompt',
+  model: 'googleai/gemini-1.5-pro-latest',
   input: {schema: ExtractTextFromDocumentInputSchema},
   output: {schema: ExtractTextFromDocumentOutputSchema},
   prompt: (input) => [
@@ -82,4 +83,3 @@ const documentTextExtractionFlow = ai.defineFlow(
     }
   }
 );
-
