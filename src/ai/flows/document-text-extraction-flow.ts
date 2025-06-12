@@ -64,8 +64,17 @@ const documentTextExtractionFlow = ai.defineFlow(
       }
       console.log('[documentTextExtractionFlow] LLM PDF text extraction success.');
       return { extractedText: responseText };
-    } catch (error) {
-      console.error('[documentTextExtractionFlow] Error during PDF text extraction:', error);
+    } catch (error: any) {
+      console.error('[documentTextExtractionFlow] Error during PDF text extraction:', error.message);
+      if (error.cause) {
+        console.error('[documentTextExtractionFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
+      }
+      if (error.details) { 
+        console.error('[documentTextExtractionFlow] Error Details:', JSON.stringify(error.details, null, 2));
+      }
+      if (error.stack) {
+        console.error('[documentTextExtractionFlow] Error Stack:', error.stack);
+      }
       const defaultErrorMessage = input.language === 'hi-IN' ?
         "मुझे क्षमा करें, दस्तावेज़ से पाठ निकालते समय एक तकनीकी समस्या हुई।" :
         "I'm sorry, a technical error occurred during document text extraction.";

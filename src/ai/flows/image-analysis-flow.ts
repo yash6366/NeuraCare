@@ -73,8 +73,17 @@ const imageAnalysisFlow = ai.defineFlow(
       }
       console.log('[imageAnalysisFlow] LLM image analysis success.');
       return { description: responseText };
-    } catch (error) {
-      console.error('[imageAnalysisFlow] Error during image analysis:', error);
+    } catch (error: any) {
+      console.error('[imageAnalysisFlow] Error during image analysis:', error.message);
+      if (error.cause) {
+        console.error('[imageAnalysisFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
+      }
+      if (error.details) { 
+        console.error('[imageAnalysisFlow] Error Details:', JSON.stringify(error.details, null, 2));
+      }
+      if (error.stack) {
+        console.error('[imageAnalysisFlow] Error Stack:', error.stack);
+      }
       const defaultErrorMessage = input.language === 'hi-IN' ?
         "मुझे क्षमा करें, छवि विश्लेषण के दौरान एक तकनीकी समस्या हुई है।" :
         "I'm sorry, a technical error occurred during image analysis.";

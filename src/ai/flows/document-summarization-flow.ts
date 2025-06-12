@@ -67,8 +67,17 @@ const documentSummarizationFlow = ai.defineFlow(
       }
       console.log('[documentSummarizationFlow] LLM text summarization success.');
       return { summary: responseText };
-    } catch (error) {
-      console.error('[documentSummarizationFlow] Error during text summarization:', error);
+    } catch (error: any) {
+      console.error('[documentSummarizationFlow] Error during text summarization:', error.message);
+      if (error.cause) {
+        console.error('[documentSummarizationFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
+      }
+      if (error.details) { 
+        console.error('[documentSummarizationFlow] Error Details:', JSON.stringify(error.details, null, 2));
+      }
+      if (error.stack) {
+        console.error('[documentSummarizationFlow] Error Stack:', error.stack);
+      }
       const defaultErrorMessage = input.language === 'hi-IN' ?
         "मुझे क्षमा करें, पाठ का सारांश बनाते समय एक तकनीकी समस्या हुई।" :
         "I'm sorry, a technical error occurred during text summarization.";

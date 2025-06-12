@@ -79,8 +79,17 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     let llmResponse;
     try {
       llmResponse = await prompt(input);
-    } catch (error) {
-      console.error('[voiceSymptomCheckerFlow] Error calling LLM prompt:', error);
+    } catch (error: any) {
+      console.error('[voiceSymptomCheckerFlow] Error calling LLM prompt:', error.message);
+      if (error.cause) {
+        console.error('[voiceSymptomCheckerFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
+      }
+      if (error.details) { 
+        console.error('[voiceSymptomCheckerFlow] Error Details:', JSON.stringify(error.details, null, 2));
+      }
+      if (error.stack) {
+        console.error('[voiceSymptomCheckerFlow] Error Stack:', error.stack);
+      }
       const lang = input.language || 'English';
       let errorDisclaimer = "";
       let errorConditionName = "";
@@ -117,7 +126,7 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
       let errorExplanation = ""; 
 
       if (lang === 'hi-IN') {
-        errorDisclaimer = "क्षमा करें, AI आपके लक्षणों का ठीक से विश्लेषण नहीं कर सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक पार्सिंग (त्रुटि) प्रतिक्रिया है।";
+        errorDisclaimer = "क्षमा करें, AI आपके लक्षणों का ठीक से विश्लेषण नहीं कर सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक पार्सING (त्रुटि) प्रतिक्रिया है।";
         errorConditionName = "AI प्रतिसाद पार्सिंग त्रुटि";
         errorExplanation = "AI ने अपेक्षित संरचित प्रतिक्रिया नहीं दी या प्रतिक्रिया अधूरी थी। यह एक API समस्या या अप्रत्याशित AI आउटपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।";
       } else {

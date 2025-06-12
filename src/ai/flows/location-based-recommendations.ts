@@ -154,8 +154,17 @@ const locationBasedRecommendationsFlow = ai.defineFlow(
       }
       console.warn("[locationBasedRecommendationsFlow] LLM response did not yield a parsable output or tool was not called as expected. Raw text:", llmResponse.text, "Parsed output:", JSON.stringify(llmResponse.output, null, 2));
       return { results: [] }; // Fallback to empty results
-    } catch (error) {
-      console.error('[locationBasedRecommendationsFlow] Error during execution:', error);
+    } catch (error: any) {
+      console.error('[locationBasedRecommendationsFlow] Error during execution:', error.message);
+      if (error.cause) {
+        console.error('[locationBasedRecommendationsFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
+      }
+      if (error.details) { 
+        console.error('[locationBasedRecommendationsFlow] Error Details:', JSON.stringify(error.details, null, 2));
+      }
+      if (error.stack) {
+        console.error('[locationBasedRecommendationsFlow] Error Stack:', error.stack);
+      }
       return { results: [] }; // Default error response
     }
   }

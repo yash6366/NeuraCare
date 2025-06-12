@@ -73,8 +73,17 @@ const documentQueryFlow = ai.defineFlow(
       }
       console.log('[documentQueryFlow] LLM document query success.');
       return { answer: responseText };
-    } catch (error) {
-      console.error('[documentQueryFlow] Error during document query:', error);
+    } catch (error: any) {
+      console.error('[documentQueryFlow] Error during document query:', error.message);
+      if (error.cause) {
+        console.error('[documentQueryFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
+      }
+      if (error.details) { 
+        console.error('[documentQueryFlow] Error Details:', JSON.stringify(error.details, null, 2));
+      }
+      if (error.stack) {
+        console.error('[documentQueryFlow] Error Stack:', error.stack);
+      }
       const defaultErrorMessage = input.language === 'hi-IN' ?
         "मुझे क्षमा करें, दस्तावेज़ से प्रश्न का उत्तर देते समय एक तकनीकी समस्या हुई।" :
         "I'm sorry, a technical error occurred while answering the query from the document.";
