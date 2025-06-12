@@ -17,14 +17,14 @@ const ChatMessageSchema = z.object({
   parts: z.array(z.object({ text: z.string() })),
 });
 
-const TelemedicineChatInputSchema = z.object({ 
+const TelemedicineChatInputSchema = z.object({
   userMessage: z.string().describe('The latest message from the user.'),
   chatHistory: z.array(ChatMessageSchema).optional().describe('The history of the conversation so far.'),
   language: z.string().optional().default('English').describe('The language for the conversation.'),
 });
 export type TelemedicineChatInput = z.infer<typeof TelemedicineChatInputSchema>;
 
-const TelemedicineChatOutputSchema = z.object({ 
+const TelemedicineChatOutputSchema = z.object({
   botResponse: z.string().describe('The AI assistant\'s response to the user.'),
 });
 export type TelemedicineChatOutput = z.infer<typeof TelemedicineChatOutputSchema>;
@@ -36,7 +36,7 @@ export async function telemedicineChat(input: TelemedicineChatInput): Promise<Te
 const telemedicineChatPrompt = ai.definePrompt({
   name: 'telemedicineChatPrompt',
   input: {schema: TelemedicineChatInputSchema},
-  output: {schema: TelemedicineChatOutputSchema}, // While output schema is defined, we use .text for direct chat.
+  // Removed output schema here as we are using llmResponse.text for direct chat
   system: (input) => `You are "SmartCare AI Assistant", a friendly, empathetic, and knowledgeable AI designed to assist users within a telemedicine platform.
 Your primary goal is to be helpful and provide clear, concise information.
 You can answer general health-related questions, provide information about medical conditions (always with a disclaimer that you are not a doctor and users should consult professionals),
@@ -57,17 +57,18 @@ const telemedicineChatFlow = ai.defineFlow(
   {
     name: 'telemedicineChatFlow',
     inputSchema: TelemedicineChatInputSchema,
-    outputSchema: TelemedicineChatOutputSchema,
+    outputSchema: TelemedicineChatOutputSchema, // The flow itself still has an output schema for the client
   },
   async (input) => {
     console.log('[telemedicineChatFlow] Received input:', JSON.stringify(input, null, 2));
     try {
       // The chatHistory from input will be automatically handled by Genkit when calling the prompt
-      const llmResponse = await telemedicineChatPrompt(input); 
-      const responseText = llmResponse.text; // For chat models, response is often in .text
-      
+      const llmResponse = await telemedicineChatPrompt(input);
+      // For chat models where no explicit output schema is defined on the prompt, response is often in .text
+      const responseText = llmResponse.text;
+
       if (!responseText || responseText.trim() === "") {
-        console.warn('[telemedicineChatFlow] LLM response text was empty. Input:', JSON.stringify(input, null, 2), 'Input language:', input.language);
+        console.warn('[telemedicineChatFlow] LLM response text was empty. Input:', JSON.stringify(input, null, 2), 'Input language:', input.language, 'Raw LLM Response object:', JSON.stringify(llmResponse, null, 2));
         const defaultErrorMessage = input.language === 'hi-IN' ?
           "मुझे क्षमा करें, मैं इसे संसाधित नहीं कर सका। क्या आप इसे फिर से कह सकते हैं?" :
           "I'm sorry, I couldn't process that. Could you try rephrasing?";
@@ -75,8 +76,17 @@ const telemedicineChatFlow = ai.defineFlow(
       }
       console.log('[telemedicineChatFlow] LLM response success. Response text length:', responseText.length);
       return { botResponse: responseText };
-    } catch (error) {
+    } catch (error: any) {
       console.error('[telemedicineChatFlow] Error during execution:', error);
+      if (error.cause) {
+        console.error('[telemedicineChatFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
+      }
+      if (error.details) { // This is often where Google API errors are nested
+        console.error('[telemedicineChatFlow] Error Details:', JSON.stringify(error.details, null, 2));
+      }
+      if (error.stack) {
+        console.error('[telemedicineChatFlow] Error Stack:', error.stack);
+      }
       const defaultErrorMessage = input.language === 'hi-IN' ?
         "मुझे क्षमा करें, एक तकनीकी समस्या हुई है।" :
         "I'm sorry, a technical error occurred.";
@@ -84,4 +94,3 @@ const telemedicineChatFlow = ai.defineFlow(
     }
   }
 );
-
