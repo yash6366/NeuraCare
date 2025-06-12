@@ -41,31 +41,32 @@ export async function voiceSymptomChecker(input: VoiceSymptomCheckerInput): Prom
 
 const prompt = ai.definePrompt({
   name: 'voiceSymptomCheckerPrompt',
-  model: 'googleai/gemini-1.5-flash-latest', // Explicitly using a capable model
+  model: 'googleai/gemini-1.5-pro-latest', // Updated to use Gemini 1.5 Pro
   input: {schema: VoiceSymptomCheckerInputSchema},
   output: {schema: VoiceSymptomCheckerOutputSchema},
-  prompt: (input) => `You are an AI-powered symptom checker. Your goal is to analyze the described symptoms and provide *distinct and relevant* potential insights, including possible conditions and comprehensive, actionable suggestions for management.
+  prompt: (input) => `You are an AI-powered symptom checker, drawing upon a comprehensive understanding of medical knowledge. Your goal is to analyze the described symptoms and provide *distinct, medically-informed, and relevant* potential insights, including possible conditions and comprehensive, actionable suggestions for management.
+When suggesting conditions or explanations, ensure they are grounded in established medical information.
 You MUST respond in the language specified: ${input.language || 'English'}.
 
 The patient describes their symptoms as: "{{{symptoms}}}"
 
-Carefully analyze ONLY these specific symptoms. Based SOLELY on these symptoms, provide the following:
+Carefully analyze ONLY these specific symptoms. Based SOLELY on these symptoms and your medical knowledge, provide the following:
 1.  An array named 'analysis' where each element represents a possible medical insight. Each element must be an object adhering to the 'SuggestedConditionSchema'.
-    *   If the provided symptoms clearly suggest specific medical conditions, list them. The 'conditionName' should be the medical condition. The explanation *must detail how the user's provided symptoms specifically link to this condition*.
-    *   If the symptoms are very general (e.g., 'hair fall', 'mild fatigue', 'occasional headache') and do not strongly indicate a specific medical condition, then for the 'conditionName', use a general category like "General Symptom Review: [The User's Main Symptom(s)]". For example, if the user says "I feel tired", use "General Symptom Review: Feeling Tired". The 'explanation' for this general review *must be specific to the user's described general symptom(s)*, discussing common non-serious causes, relevant lifestyle factors for *that symptom*, and general advice on when to see a doctor for *that symptom*. The suggestions (allopathic, Ayurvedic, home remedies) for this general review entry must also be *specifically tailored to the user's described general symptom(s)*, not generic health advice. Do not use boilerplate explanations or suggestions. Confidence for such general reviews can be moderate (e.g., 0.5).
+    *   If the provided symptoms clearly suggest specific medical conditions, list them. The 'conditionName' should be the medical condition. The explanation *must detail how the user's provided symptoms specifically link to this condition, supported by medical reasoning*.
+    *   If the symptoms are very general (e.g., 'hair fall', 'mild fatigue', 'occasional headache') and do not strongly indicate a specific medical condition, then for the 'conditionName', use a general category like "General Symptom Review: [The User's Main Symptom(s)]". For example, if the user says "I feel tired", use "General Symptom Review: Feeling Tired". The 'explanation' for this general review *must be specific to the user's described general symptom(s)*, discussing common non-serious causes, relevant lifestyle factors for *that symptom*, and general advice on when to see a doctor for *that symptom*, all based on general medical knowledge. The suggestions (allopathic, Ayurvedic, home remedies) for this general review entry must also be *specifically tailored to the user's described general symptom(s)*, not generic health advice. Do not use boilerplate explanations or suggestions. Confidence for such general reviews can be moderate (e.g., 0.5).
     *   Ensure the 'analysis' array contains at least one entry. If no specific conditions are found, it MUST contain a "General Symptom Review" entry tailored to the provided symptoms.
     *   For ALL entries in the 'analysis' array, provide 2-3 distinct and actionable suggestions for each of these categories if appropriate: 'allopathicSuggestions', 'ayurvedicSuggestions', and 'homeRemedies'. These are general suggestions, not prescriptions. If suggestions for a category are not relevant or readily available, an empty array [] is the correct response for that suggestion field. Do not omit the field.
-    *   **Crucially, if different sets of symptoms are provided in separate requests, strive to generate different and relevant insights. Avoid repeating the same conditions or general advice unless the symptoms are genuinely very similar.** Be discerning and link your analysis directly to the unique aspects of the current symptom input.
+    *   **Crucially, if different sets of symptoms are provided in separate requests, strive to generate different and relevant insights. Avoid repeating the same conditions or general advice unless the symptoms are genuinely very similar.** Be discerning and link your analysis directly to the unique aspects of the current symptom input, drawing from a broad medical knowledge base.
 2.  A 'disclaimer' string: This must be a clear statement emphasizing that this information is not a medical diagnosis, not a substitute for professional medical advice, and that the user should consult a qualified healthcare professional for any health concerns or before making any decisions related to their health. This disclaimer is mandatory and must be in the specified language.
 
 When providing suggestions, ensure they are general, actionable, and not prescriptive. For example, instead of "Take 500mg Paracetamol", suggest "Over-the-counter pain relievers may help. Consider consulting a pharmacist."
 
-Strive for accuracy and relevance based strictly on the input symptoms.
+Strive for accuracy and relevance based strictly on the input symptoms and sound medical principles.
 All text in your response, including condition names, explanations, suggestions, and the disclaimer, MUST be in the specified language: ${input.language || 'English'}.
 Structure your entire response as a single JSON object adhering to the defined output schema.
 `,
   config: {
-    temperature: 0.5, // Moderate temperature for a balance of creativity and consistency
+    temperature: 0.4, // Slightly lower temperature for more medically grounded, less speculative responses
   },
 });
 
@@ -151,7 +152,6 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
       };
     }
     
-    // Ensure analysis is always an array, even if AI fails to provide it as such but gives disclaimer
     if (!Array.isArray(output.analysis)) {
         console.warn(`[voiceSymptomCheckerFlow] AI output.analysis was not an array for symptoms: "${input.symptoms}". Forcing to empty array. LLM response text: ${llmResponse.text}`);
         output.analysis = [];
@@ -159,7 +159,6 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
 
     if (output.analysis && output.analysis.length === 0) {
         console.log(`[voiceSymptomCheckerFlow] AI returned a valid response with a disclaimer but an empty analysis array for symptoms: "${input.symptoms}" in language: ${input.language || 'English'}. LLM response text: ${llmResponse.text}. Parsed LLM output: ${JSON.stringify(output, null, 2)}`);
-        // Adding a default General Symptom Review if analysis is empty, per prompt instructions
         const generalSymptomReviewText = input.language === 'hi-IN' ? 
             `सामान्य लक्षण समीक्षा: ${input.symptoms}` : 
             `General Symptom Review: ${input.symptoms}`;
@@ -169,7 +168,7 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
         
         output.analysis.push({
             conditionName: generalSymptomReviewText,
-            confidence: 0.3, // Low confidence as it's a fallback
+            confidence: 0.3,
             explanation: generalExplanationText,
             allopathicSuggestions: [],
             ayurvedicSuggestions: [],
