@@ -35,7 +35,7 @@ export async function telemedicineChat(input: TelemedicineChatInput): Promise<Te
 
 const telemedicineChatPrompt = ai.definePrompt({
   name: 'telemedicineChatPrompt',
-  model: 'googleai/gemini-1.5-flash-latest', // Reverted to Flash
+  model: 'googleai/gemini-1.5-flash-latest', // Explicitly set to Flash model
   input: {schema: TelemedicineChatInputSchema},
   // No output schema for direct text chat prompt
   system: (input) => `You are "SmartCare AI Assistant", a friendly, empathetic, and knowledgeable AI designed to assist users within a telemedicine platform.
