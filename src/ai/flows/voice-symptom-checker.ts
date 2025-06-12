@@ -41,7 +41,7 @@ export async function voiceSymptomChecker(input: VoiceSymptomCheckerInput): Prom
 
 const prompt = ai.definePrompt({
   name: 'voiceSymptomCheckerPrompt',
-  model: 'googleai/gemini-1.5-flash-latest', // Reverted to Flash model
+  model: 'googleai/gemini-1.5-flash-latest', // Confirmed: Using Flash model for potentially better free-tier limits
   input: {schema: VoiceSymptomCheckerInputSchema},
   output: {schema: VoiceSymptomCheckerOutputSchema},
   prompt: (input) => `You are an AI-powered symptom checker, drawing upon a comprehensive understanding of medical knowledge. Your goal is to analyze the described symptoms and provide *distinct, medically-informed, and relevant* potential insights, including possible conditions and comprehensive, actionable suggestions for management.
@@ -66,7 +66,7 @@ All text in your response, including condition names, explanations, suggestions,
 Structure your entire response as a single JSON object adhering to the defined output schema.
 `,
   config: {
-    temperature: 0.5, // Adjusted temperature for Flash model
+    temperature: 0.5, 
   },
 });
 
@@ -179,4 +179,3 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     return output;
   }
 );
-
