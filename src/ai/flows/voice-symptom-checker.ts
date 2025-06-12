@@ -52,7 +52,7 @@ The patient describes their symptoms as: "{{{symptoms}}}"
 Carefully analyze ONLY these specific symptoms. Based SOLELY on these symptoms, provide the following:
 1.  An array named 'analysis' where each element represents a possible medical insight. Each element must be an object adhering to the 'SuggestedConditionSchema'.
     *   If the provided symptoms clearly suggest specific medical conditions, list them. The 'conditionName' should be the medical condition. The explanation must detail why symptoms link to it.
-    *   If the symptoms are very general (e.g., 'hair fall', 'mild fatigue', 'occasional headache') and do not strongly indicate a specific medical condition, then for the 'conditionName', use a general category like "General Symptom Review: [Main Symptom, e.g., Hair Fall]". The 'explanation' for this general review must discuss common non-serious causes, relevant lifestyle factors, and general advice on when to see a doctor for the described general symptom(s). Confidence for such general reviews can be moderate (e.g., 0.5).
+    *   If the symptoms are very general (e.g., 'hair fall', 'mild fatigue', 'occasional headache') and do not strongly indicate a specific medical condition, then for the 'conditionName', use a general category like "General Symptom Review: [The User's Main Symptom(s)]". For example, if the user says "I feel tired", use "General Symptom Review: Feeling Tired". The 'explanation' for this general review *must be specific to the user's described general symptom(s)*, discussing common non-serious causes, relevant lifestyle factors for *that symptom*, and general advice on when to see a doctor for *that symptom*. Do not use boilerplate explanations. Confidence for such general reviews can be moderate (e.g., 0.5).
     *   Ensure the 'analysis' array contains at least one entry. If no specific conditions are found, it MUST contain a "General Symptom Review" entry.
     *   For ALL entries in the 'analysis' array, provide 2-3 distinct and actionable suggestions for each of these categories if appropriate: 'allopathicSuggestions', 'ayurvedicSuggestions', and 'homeRemedies'. These are general suggestions, not prescriptions. If suggestions for a category are not relevant or readily available, an empty array [] is the correct response for that suggestion field. Do not omit the field.
 2.  A 'disclaimer' string: This must be a clear statement emphasizing that this information is not a medical diagnosis, not a substitute for professional medical advice, and that the user should consult a qualified healthcare professional for any health concerns or before making any decisions related to their health. This disclaimer is mandatory and must be in the specified language.
@@ -75,7 +75,7 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     outputSchema: VoiceSymptomCheckerOutputSchema,
   },
   async (input) => {
-    console.log(`[voiceSymptomCheckerFlow] Received input: Symptoms - "${input.symptoms}", Language - "${input.language || 'English'}"`);
+    console.log(`[voiceSymptomCheckerFlow] Received input: ${JSON.stringify(input, null, 2)}`);
     let llmResponse;
     try {
       llmResponse = await prompt(input);
@@ -150,3 +150,4 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     return output;
   }
 );
+

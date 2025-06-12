@@ -59,13 +59,13 @@ const imageAnalysisFlow = ai.defineFlow(
     outputSchema: AnalyzeImageOutputSchema,
   },
   async (input) => {
-    console.log('[imageAnalysisFlow] Received input for image analysis.');
+    console.log(`[imageAnalysisFlow] Received input: ${JSON.stringify(input, null, 2)}`);
     try {
       const llmResponse = await imageAnalysisPrompt(input);
       const responseText = llmResponse.output?.description;
       
       if (!responseText || responseText.trim() === "") {
-        console.warn('[imageAnalysisFlow] LLM response text for image analysis was empty. Input language:', input.language);
+        console.warn(`[imageAnalysisFlow] LLM response text for image analysis was empty. Input language: ${input.language}. Raw LLM response: ${llmResponse.text}`);
         const defaultErrorMessage = input.language === 'hi-IN' ?
           "मुझे क्षमा करें, मैं छवि का विश्लेषण नहीं कर सका।" :
           "I'm sorry, I couldn't analyze the image.";

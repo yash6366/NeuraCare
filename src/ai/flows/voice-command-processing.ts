@@ -67,6 +67,7 @@ const processVoiceCommandFlow = ai.defineFlow(
     outputSchema: ProcessVoiceCommandOutputSchema,
   },
   async (input) => {
+    console.log(`[processVoiceCommandFlow] Received input: ${JSON.stringify(input, null, 2)}`);
     try {
       const llmResponse = await prompt(input);
       if (llmResponse.output) {
@@ -82,3 +83,4 @@ const processVoiceCommandFlow = ai.defineFlow(
     }
   }
 );
+

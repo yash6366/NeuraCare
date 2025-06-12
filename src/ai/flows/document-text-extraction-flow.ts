@@ -50,13 +50,13 @@ const documentTextExtractionFlow = ai.defineFlow(
     outputSchema: ExtractTextFromDocumentOutputSchema,
   },
   async (input) => {
-    console.log('[documentTextExtractionFlow] Received input for PDF text extraction.');
+    console.log(`[documentTextExtractionFlow] Received input: ${JSON.stringify({ language: input.language, pdfDataUriLength: input.pdfDataUri.length }, null, 2)}`);
     try {
       const llmResponse = await documentTextExtractionPrompt(input);
       const responseText = llmResponse.output?.extractedText;
       
       if (!responseText || responseText.trim() === "" || responseText.trim().toLowerCase() === "no text found in document.") {
-        console.warn('[documentTextExtractionFlow] LLM response text for PDF extraction was empty or indicated no text found. Input language:', input.language);
+        console.warn(`[documentTextExtractionFlow] LLM response text for PDF extraction was empty or indicated no text found. Input language: ${input.language}. Raw LLM response: ${llmResponse.text}`);
         const defaultErrorMessage = input.language === 'hi-IN' ?
           "मुझे क्षमा करें, मैं दस्तावेज़ से पाठ नहीं निकाल सका या दस्तावेज़ में कोई पाठ नहीं मिला।" :
           "I'm sorry, I couldn't extract text from the document or no text was found in the document.";

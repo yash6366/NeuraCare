@@ -34,7 +34,8 @@ const documentQueryPrompt = ai.definePrompt({
   input: {schema: QueryDocumentTextInputSchema},
   output: {schema: QueryDocumentTextOutputSchema},
   prompt: (input) => `You are a helpful AI assistant. Your task is to answer the user's question based *only* on the provided document text.
-Do not use any external knowledge. If the answer cannot be found in the document text, state that the information is not available in the provided text.
+Do not use any external knowledge or information not present in the document text.
+If the answer cannot be found in the document text, explicitly state that the information is not available in the provided text.
 Respond in the following language: ${input.language || 'English'}.
 
 Document Text:
@@ -58,13 +59,13 @@ const documentQueryFlow = ai.defineFlow(
     outputSchema: QueryDocumentTextOutputSchema,
   },
   async (input) => {
-    console.log('[documentQueryFlow] Received input for document query.');
+    console.log(`[documentQueryFlow] Received input: ${JSON.stringify(input, null, 2)}`);
     try {
       const llmResponse = await documentQueryPrompt(input);
       const responseText = llmResponse.output?.answer;
       
       if (!responseText || responseText.trim() === "") {
-        console.warn('[documentQueryFlow] LLM response for document query was empty. Input language:', input.language);
+        console.warn(`[documentQueryFlow] LLM response for document query was empty. Input language: ${input.language}. Raw LLM response: ${llmResponse.text}`);
         const defaultErrorMessage = input.language === 'hi-IN' ?
           "मुझे क्षमा करें, मैं आपके प्रश्न का उत्तर दस्तावेज़ में नहीं ढूँढ़ सका।" :
           "I'm sorry, I couldn't find an answer to your query in the document.";

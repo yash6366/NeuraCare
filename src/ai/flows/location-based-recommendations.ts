@@ -46,7 +46,7 @@ const findNearbyHealthcareTool = ai.defineTool(
     outputSchema: LocationBasedRecommendationsOutputSchema,
   },
   async (input) => {
-    console.log(`[findNearbyHealthcareTool] Called with input:`, input);
+    console.log(`[findNearbyHealthcareTool] Called with input: ${JSON.stringify(input, null, 2)}`);
     // In a real implementation, you would use input.latitude, input.longitude, 
     // input.recommendationType, input.specialty and the GOOGLE_MAPS_API_KEY 
     // from process.env to call the Google Maps Places API.
@@ -146,12 +146,13 @@ const locationBasedRecommendationsFlow = ai.defineFlow(
     outputSchema: LocationBasedRecommendationsOutputSchema,
   },
   async (input) => {
+    console.log(`[locationBasedRecommendationsFlow] Received input: ${JSON.stringify(input, null, 2)}`);
     try {
       const llmResponse = await locationBasedRecommendationsPrompt(input);
       if (llmResponse.output) {
           return llmResponse.output;
       }
-      console.warn("[locationBasedRecommendationsFlow] LLM response did not yield a parsable output or tool was not called as expected. Raw text:", llmResponse.text);
+      console.warn("[locationBasedRecommendationsFlow] LLM response did not yield a parsable output or tool was not called as expected. Raw text:", llmResponse.text, "Parsed output:", JSON.stringify(llmResponse.output, null, 2));
       return { results: [] }; // Fallback to empty results
     } catch (error) {
       console.error('[locationBasedRecommendationsFlow] Error during execution:', error);
@@ -159,3 +160,4 @@ const locationBasedRecommendationsFlow = ai.defineFlow(
     }
   }
 );
+
