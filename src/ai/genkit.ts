@@ -5,8 +5,9 @@ import {googleAI} from '@genkit-ai/googleai';
 
 export const ai = genkit({
   plugins: [
-    googleAI(),
+    googleAI({apiKey: process.env.GEMINI_API_KEY}), // Explicitly use GEMINI_API_KEY
     // groq({apiKey: process.env.GROQ_API_KEY}), // Reverted
   ],
   model: 'googleai/gemini-1.5-flash-latest', // Default global model remains Gemini
 });
+
