@@ -340,7 +340,11 @@ export function AppointmentsClient() {
                   </Select>
                 </div>
               </div>
-              <Button type="submit" className="w-full" disabled={isBooking || (availableDoctors.length === 0 && !isLoadingDoctors) }>
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isBooking || isLoadingDoctors || (availableDoctors.length === 0 && !isLoadingDoctors)}
+              >
                 {isBooking ? (<><Activity className="mr-2 h-4 w-4 animate-spin" /> {translate('appointments.buttons.requesting', "Requesting...")}</>) : translate('appointments.buttons.requestAppointment', "Request Appointment")}
               </Button>
             </form>

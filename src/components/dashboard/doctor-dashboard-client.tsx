@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentUser, type Doctor as DoctorUser } from "@/lib/auth";
 import { getAssignedPatients } from "@/lib/actions/doctor.actions";
@@ -32,8 +32,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/contexts/language-context";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Added Tabs
-import { Input } from "@/components/ui/input"; // Added Input
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; 
+import { Input } from "@/components/ui/input"; 
 
 interface SimulatedAppointmentForDoctor {
   id: string;
@@ -130,7 +130,14 @@ export function DoctorDashboardClient() {
   };
 
   const handleViewPatientDetails = async (patient: Patient) => {
-    if (!doctor) return;
+    if (!doctor) {
+        toast({
+            title: "Doctor Not Loaded",
+            description: "Doctor details are not available yet. Please wait or refresh.",
+            variant: "destructive"
+        });
+        return;
+    }
     setSelectedPatientForDetails(patient);
     setIsPatientDetailsDialogOpen(true);
     setIsLoadingPatientDetails(true);
@@ -328,7 +335,7 @@ export function DoctorDashboardClient() {
                     <TableCell>{patient.email}</TableCell>
                     <TableCell className="hidden md:table-cell">{patient.emergencyContactPhone || "N/A"}</TableCell>
                     <TableCell className="text-right space-x-2">
-                       <Button variant="outline" size="sm" onClick={() => handleViewPatientDetails(patient)}> {/* Updated to open dialog for chat */}
+                       <Button variant="outline" size="sm" onClick={() => handleViewPatientDetails(patient)}> 
                         <MessageSquarePlus className="mr-1 h-4 w-4" /> {translate('doctorDashboard.actions.chatOrDetails', "Chat / Details")}
                       </Button>
                     </TableCell>
@@ -493,7 +500,7 @@ export function DoctorDashboardClient() {
                             )}
                           </div>
                         ))}
-                        {isSendingPatientChatMessage && msg.sender === 'patient' && (
+                        {isSendingPatientChatMessage && ( 
                            <div className="flex items-end gap-2 justify-start">
                              <Avatar className="h-8 w-8">
                                 <AvatarImage src={`https://placehold.co/40x40.png?text=${selectedPatientForDetails.name.charAt(0)}`} alt={selectedPatientForDetails.name} data-ai-hint="person user"/>
@@ -539,3 +546,4 @@ export function DoctorDashboardClient() {
     </div>
   );
 }
+
