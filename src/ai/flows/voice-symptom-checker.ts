@@ -23,10 +23,10 @@ export type VoiceSymptomCheckerInput = z.infer<typeof VoiceSymptomCheckerInputSc
 const SuggestedConditionSchema = z.object({
   conditionName: z.string().describe('The name of the possible medical condition, or a general category like "General Symptom Review: [Symptom]" if symptoms are too vague for specific conditions. Must be in the specified language.'),
   confidence: z.number().min(0).max(1).describe('The confidence level for this condition (0-1). If general review, confidence can be moderate (e.g., 0.5).'),
-  explanation: z.string().describe('A detailed explanation. If a specific condition, explain why it might be relevant based on symptoms. If a general review, discuss common causes, lifestyle factors, or when to see a doctor for the described symptoms. This should be in the specified language.'),
-  allopathicSuggestions: z.array(z.string()).optional().describe('An array of 2-3 distinct and actionable allopathic (modern medicine) suggestions or advice. These are general suggestions, not prescriptions. Focus on general approaches, types of treatments, or when to see a doctor. Provide in the specified language. If not applicable, return an empty array.'),
-  ayurvedicSuggestions: z.array(z.string()).optional().describe('An array of 2-3 distinct and actionable Ayurvedic remedies or lifestyle advice. These are general suggestions, not prescriptions. Provide in the specified language. If not applicable, return an empty array.'),
-  homeRemedies: z.array(z.string()).optional().describe('An array of 2-3 distinct and actionable common home remedies or self-care tips. These are general suggestions, not medical advice. Provide in the specified language. If not applicable, return an empty array.'),
+  explanation: z.string().describe('A detailed explanation. If a specific condition, explain *how the provided user symptoms* link to it. If a general review, discuss common causes, lifestyle factors, or when to see a doctor for the *user\'s described general symptoms*. This should be in the specified language.'),
+  allopathicSuggestions: z.array(z.string()).optional().describe('An array of 2-3 distinct and actionable allopathic (modern medicine) suggestions or advice *relevant to the condition or general symptom*. These are general suggestions, not prescriptions. Provide in the specified language. If not applicable, return an empty array.'),
+  ayurvedicSuggestions: z.array(z.string()).optional().describe('An array of 2-3 distinct and actionable Ayurvedic remedies or lifestyle advice *relevant to the condition or general symptom*. These are general suggestions, not prescriptions. Provide in the specified language. If not applicable, return an empty array.'),
+  homeRemedies: z.array(z.string()).optional().describe('An array of 2-3 distinct and actionable common home remedies or self-care tips *relevant to the condition or general symptom*. These are general suggestions, not medical advice. Provide in the specified language. If not applicable, return an empty array.'),
 });
 
 const VoiceSymptomCheckerOutputSchema = z.object({
@@ -44,17 +44,18 @@ const prompt = ai.definePrompt({
   model: 'googleai/gemini-1.5-flash-latest', // Explicitly using a capable model
   input: {schema: VoiceSymptomCheckerInputSchema},
   output: {schema: VoiceSymptomCheckerOutputSchema},
-  prompt: (input) => `You are an AI-powered symptom checker. Your goal is to analyze the described symptoms and provide potential insights, including possible conditions and comprehensive, actionable suggestions for management.
+  prompt: (input) => `You are an AI-powered symptom checker. Your goal is to analyze the described symptoms and provide *distinct and relevant* potential insights, including possible conditions and comprehensive, actionable suggestions for management.
 You MUST respond in the language specified: ${input.language || 'English'}.
 
 The patient describes their symptoms as: "{{{symptoms}}}"
 
 Carefully analyze ONLY these specific symptoms. Based SOLELY on these symptoms, provide the following:
 1.  An array named 'analysis' where each element represents a possible medical insight. Each element must be an object adhering to the 'SuggestedConditionSchema'.
-    *   If the provided symptoms clearly suggest specific medical conditions, list them. The 'conditionName' should be the medical condition. The explanation must detail why symptoms link to it.
-    *   If the symptoms are very general (e.g., 'hair fall', 'mild fatigue', 'occasional headache') and do not strongly indicate a specific medical condition, then for the 'conditionName', use a general category like "General Symptom Review: [The User's Main Symptom(s)]". For example, if the user says "I feel tired", use "General Symptom Review: Feeling Tired". The 'explanation' for this general review *must be specific to the user's described general symptom(s)*, discussing common non-serious causes, relevant lifestyle factors for *that symptom*, and general advice on when to see a doctor for *that symptom*. Do not use boilerplate explanations. Confidence for such general reviews can be moderate (e.g., 0.5).
-    *   Ensure the 'analysis' array contains at least one entry. If no specific conditions are found, it MUST contain a "General Symptom Review" entry.
+    *   If the provided symptoms clearly suggest specific medical conditions, list them. The 'conditionName' should be the medical condition. The explanation *must detail how the user's provided symptoms specifically link to this condition*.
+    *   If the symptoms are very general (e.g., 'hair fall', 'mild fatigue', 'occasional headache') and do not strongly indicate a specific medical condition, then for the 'conditionName', use a general category like "General Symptom Review: [The User's Main Symptom(s)]". For example, if the user says "I feel tired", use "General Symptom Review: Feeling Tired". The 'explanation' for this general review *must be specific to the user's described general symptom(s)*, discussing common non-serious causes, relevant lifestyle factors for *that symptom*, and general advice on when to see a doctor for *that symptom*. The suggestions (allopathic, Ayurvedic, home remedies) for this general review entry must also be *specifically tailored to the user's described general symptom(s)*, not generic health advice. Do not use boilerplate explanations or suggestions. Confidence for such general reviews can be moderate (e.g., 0.5).
+    *   Ensure the 'analysis' array contains at least one entry. If no specific conditions are found, it MUST contain a "General Symptom Review" entry tailored to the provided symptoms.
     *   For ALL entries in the 'analysis' array, provide 2-3 distinct and actionable suggestions for each of these categories if appropriate: 'allopathicSuggestions', 'ayurvedicSuggestions', and 'homeRemedies'. These are general suggestions, not prescriptions. If suggestions for a category are not relevant or readily available, an empty array [] is the correct response for that suggestion field. Do not omit the field.
+    *   **Crucially, if different sets of symptoms are provided in separate requests, strive to generate different and relevant insights. Avoid repeating the same conditions or general advice unless the symptoms are genuinely very similar.** Be discerning and link your analysis directly to the unique aspects of the current symptom input.
 2.  A 'disclaimer' string: This must be a clear statement emphasizing that this information is not a medical diagnosis, not a substitute for professional medical advice, and that the user should consult a qualified healthcare professional for any health concerns or before making any decisions related to their health. This disclaimer is mandatory and must be in the specified language.
 
 When providing suggestions, ensure they are general, actionable, and not prescriptive. For example, instead of "Take 500mg Paracetamol", suggest "Over-the-counter pain relievers may help. Consider consulting a pharmacist."
@@ -119,23 +120,23 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     
     const output = llmResponse.output;
 
-    if (!output || !output.disclaimer) { 
+    if (!output || !output.disclaimer || !output.analysis) { 
       const lang = input.language || 'English';
       let errorDisclaimer = "";
       let errorConditionName = ""; 
       let errorExplanation = ""; 
 
       if (lang === 'hi-IN') {
-        errorDisclaimer = "क्षमा करें, AI आपके लक्षणों का ठीक से विश्लेषण नहीं कर सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक पार्सING (त्रुटि) प्रतिक्रिया है।";
+        errorDisclaimer = "क्षमा करें, AI आपके लक्षणों का ठीक से विश्लेषण नहीं कर सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक पार्सिंग (त्रुटि) प्रतिक्रिया है।";
         errorConditionName = "AI प्रतिसाद पार्सिंग त्रुटि";
-        errorExplanation = "AI ने अपेक्षित संरचित प्रतिक्रिया नहीं दी या प्रतिक्रिया अधूरी थी। यह एक API समस्या या अप्रत्याशित AI आउटपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।";
+        errorExplanation = "AI ने अपेक्षित संरचित प्रतिक्रिया नहीं दी या प्रतिक्रिया अधूरी थी (जैसे 'एनालिसिस' फ़ील्ड गायब था)। यह एक API समस्या या अप्रत्याशित AI आउटपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।";
       } else {
         errorDisclaimer = "Sorry, the AI could not properly analyze your symptoms. Please consult a healthcare professional. This is a parsing (error) response.";
         errorConditionName = "AI Response Parsing Error";
-        errorExplanation = "The AI did not return the expected structured response or the response was incomplete. This might be due to an API issue or an unexpected AI output. Please try again or clarify your symptoms.";
+        errorExplanation = "The AI did not return the expected structured response or the response was incomplete (e.g., missing 'analysis' field). This might be due to an API issue or an unexpected AI output. Please try again or clarify your symptoms.";
       }
       
-      console.warn(`[voiceSymptomCheckerFlow] Fallback triggered due to missing output or disclaimer. Language: ${lang}. Input symptoms: "${input.symptoms}". Raw LLM response text: ${llmResponse.text}. Parsed LLM output object: ${JSON.stringify(llmResponse.output, null, 2)}`);
+      console.warn(`[voiceSymptomCheckerFlow] Fallback triggered due to missing output, disclaimer, or analysis array. Language: ${lang}. Input symptoms: "${input.symptoms}". Raw LLM response text: ${llmResponse.text}. Parsed LLM output object: ${JSON.stringify(llmResponse.output, null, 2)}`);
 
       return {
         analysis: [{ 
@@ -150,10 +151,30 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
       };
     }
     
+    // Ensure analysis is always an array, even if AI fails to provide it as such but gives disclaimer
+    if (!Array.isArray(output.analysis)) {
+        console.warn(`[voiceSymptomCheckerFlow] AI output.analysis was not an array for symptoms: "${input.symptoms}". Forcing to empty array. LLM response text: ${llmResponse.text}`);
+        output.analysis = [];
+    }
+
     if (output.analysis && output.analysis.length === 0) {
         console.log(`[voiceSymptomCheckerFlow] AI returned a valid response with a disclaimer but an empty analysis array for symptoms: "${input.symptoms}" in language: ${input.language || 'English'}. LLM response text: ${llmResponse.text}. Parsed LLM output: ${JSON.stringify(output, null, 2)}`);
-        // Even if analysis is empty, if disclaimer is present, it's a valid response from the AI.
-        // The UI should handle displaying this gracefully (e.g., "No specific conditions identified...").
+        // Adding a default General Symptom Review if analysis is empty, per prompt instructions
+        const generalSymptomReviewText = input.language === 'hi-IN' ? 
+            `सामान्य लक्षण समीक्षा: ${input.symptoms}` : 
+            `General Symptom Review: ${input.symptoms}`;
+        const generalExplanationText = input.language === 'hi-IN' ? 
+            `आपके द्वारा बताए गए लक्षणों (${input.symptoms}) के लिए कोई विशिष्ट स्थिति तुरंत पहचानी नहीं गई। सामान्य सलाह के लिए कृपया स्वास्थ्य सेवा प्रदाता से परामर्श करें।` :
+            `No specific condition was immediately identified for the symptoms you described (${input.symptoms}). Please consult a healthcare provider for general advice.`;
+        
+        output.analysis.push({
+            conditionName: generalSymptomReviewText,
+            confidence: 0.3, // Low confidence as it's a fallback
+            explanation: generalExplanationText,
+            allopathicSuggestions: [],
+            ayurvedicSuggestions: [],
+            homeRemedies: [],
+        });
     }
     console.log(`[voiceSymptomCheckerFlow] Successfully processed symptoms: "${input.symptoms}". Analysis items: ${output.analysis?.length || 0}.`);
     return output;
