@@ -35,8 +35,9 @@ export async function telemedicineChat(input: TelemedicineChatInput): Promise<Te
 
 const telemedicineChatPrompt = ai.definePrompt({
   name: 'telemedicineChatPrompt',
-  model: 'googleai/gemini-1.5-pro-latest',
+  model: 'googleai/gemini-1.5-flash-latest', // Reverted to Flash
   input: {schema: TelemedicineChatInputSchema},
+  // No output schema for direct text chat prompt
   system: (input) => `You are "SmartCare AI Assistant", a friendly, empathetic, and knowledgeable AI designed to assist users within a telemedicine platform.
 Your primary goal is to be helpful and provide clear, concise information.
 You can answer general health-related questions, provide information about medical conditions (always with a disclaimer that you are not a doctor and users should consult professionals),
@@ -63,7 +64,7 @@ const telemedicineChatFlow = ai.defineFlow(
     console.log('[telemedicineChatFlow] Received input:', JSON.stringify(input, null, 2));
     try {
       const llmResponse = await telemedicineChatPrompt(input);
-      const responseText = llmResponse.text;
+      const responseText = llmResponse.text; // For chat, we expect direct text output
 
       if (!responseText || responseText.trim() === "") {
         console.warn('[telemedicineChatFlow] LLM response text was empty. Input:', JSON.stringify(input, null, 2), 'Input language:', input.language, 'Raw LLM Response object:', JSON.stringify(llmResponse, null, 2));

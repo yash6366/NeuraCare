@@ -31,7 +31,7 @@ export async function queryDocumentText(input: QueryDocumentTextInput): Promise<
 
 const documentQueryPrompt = ai.definePrompt({
   name: 'documentQueryPrompt',
-  model: 'googleai/gemini-1.5-pro-latest',
+  model: 'googleai/gemini-1.5-flash-latest', // Reverted to Flash
   input: {schema: QueryDocumentTextInputSchema},
   output: {schema: QueryDocumentTextOutputSchema},
   prompt: (input) => `You are a helpful AI assistant. Your task is to answer the user's question based *only* on the provided document text.

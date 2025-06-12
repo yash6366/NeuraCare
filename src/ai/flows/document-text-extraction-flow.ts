@@ -32,7 +32,7 @@ export async function extractTextFromDocument(input: ExtractTextFromDocumentInpu
 
 const documentTextExtractionPrompt = ai.definePrompt({
   name: 'documentTextExtractionPrompt',
-  model: 'googleai/gemini-1.5-pro-latest',
+  model: 'googleai/gemini-1.5-flash-latest', // Reverted to Flash
   input: {schema: ExtractTextFromDocumentInputSchema},
   output: {schema: ExtractTextFromDocumentOutputSchema},
   prompt: (input) => [
