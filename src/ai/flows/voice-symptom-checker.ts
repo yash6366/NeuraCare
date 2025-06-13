@@ -41,7 +41,7 @@ export async function voiceSymptomChecker(input: VoiceSymptomCheckerInput): Prom
 
 const prompt = ai.definePrompt({
   name: 'voiceSymptomCheckerPrompt',
-  model: 'googleai/gemini-1.5-flash-latest', // Confirmed: Using Flash model for potentially better free-tier limits
+  model: 'googleai/gemini-1.5-flash-latest',
   input: {schema: VoiceSymptomCheckerInputSchema},
   output: {schema: VoiceSymptomCheckerOutputSchema},
   prompt: (input) => `You are an AI-powered symptom checker, drawing upon a comprehensive understanding of medical knowledge. Your goal is to analyze the described symptoms and provide *distinct, medically-informed, and relevant* potential insights, including possible conditions and comprehensive, actionable suggestions for management.
@@ -63,7 +63,22 @@ When providing suggestions, ensure they are general, actionable, and not prescri
 
 Strive for accuracy and relevance based strictly on the input symptoms and sound medical principles.
 All text in your response, including condition names, explanations, suggestions, and the disclaimer, MUST be in the specified language: ${input.language || 'English'}.
-Structure your entire response as a single JSON object adhering to the defined output schema.
+
+Example of the JSON structure you should return:
+{
+  "analysis": [
+    {
+      "conditionName": "Example Condition Name (in ${input.language || 'English'})",
+      "confidence": 0.8,
+      "explanation": "Detailed explanation linking symptoms to this condition (in ${input.language || 'English'}).",
+      "allopathicSuggestions": ["Suggestion 1 (allopathic)", "Suggestion 2 (allopathic)"],
+      "ayurvedicSuggestions": ["Suggestion 1 (Ayurvedic)"],
+      "homeRemedies": ["Remedy 1", "Remedy 2"]
+    }
+  ],
+  "disclaimer": "Mandatory disclaimer text (in ${input.language || 'English'})."
+}
+Ensure your entire response is ONLY this JSON object. Do not include any text before or after the JSON object.
 `,
   config: {
     temperature: 0.5, 
@@ -76,35 +91,24 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
     inputSchema: VoiceSymptomCheckerInputSchema,
     outputSchema: VoiceSymptomCheckerOutputSchema,
   },
-  async (input) => {
+  async (input): Promise<VoiceSymptomCheckerOutput> => {
     console.log(`[voiceSymptomCheckerFlow] Received input: ${JSON.stringify(input, null, 2)}`);
+    const lang = input.language || 'English';
     let llmResponse;
-    try {
-      llmResponse = await prompt(input);
-    } catch (error: any) {
-      console.error('[voiceSymptomCheckerFlow] Error calling LLM prompt:', error.message);
-      if (error.cause) {
-        console.error('[voiceSymptomCheckerFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
-      }
-      if (error.details) { 
-        console.error('[voiceSymptomCheckerFlow] Error Details:', JSON.stringify(error.details, null, 2));
-      }
-      if (error.stack) {
-        console.error('[voiceSymptomCheckerFlow] Error Stack:', error.stack);
-      }
-      const lang = input.language || 'English';
+
+    const createErrorResponse = (message: string, conditionNamePrefix: string, explanationPrefix: string): VoiceSymptomCheckerOutput => {
       let errorDisclaimer = "";
       let errorConditionName = "";
       let errorExplanation = "";
 
       if (lang === 'hi-IN') {
-        errorDisclaimer = "क्षमा करें, AI आपके लक्षणों का ठीक से विश्लेषण नहीं कर सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक API त्रुटि प्रतिक्रिया है।";
-        errorConditionName = "AI API त्रुटि";
-        errorExplanation = `AI से संवाद करते समय एक त्रुटि हुई: ${(error as Error).message}. कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।`;
+        errorDisclaimer = `क्षमा करें, AI आपके लक्षणों का ठीक से विश्लेषण नहीं कर सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। (${message})`;
+        errorConditionName = `${conditionNamePrefix}: AI त्रुटि`;
+        errorExplanation = `${explanationPrefix}: AI से संवाद करते समय एक त्रुटि हुई: ${message}. कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।`;
       } else {
-        errorDisclaimer = "Sorry, the AI could not properly analyze your symptoms. Please consult a healthcare professional. This is an API error response.";
-        errorConditionName = "AI API Error";
-        errorExplanation = `An error occurred while communicating with the AI: ${(error as Error).message}. Please try again or clarify your symptoms.`;
+        errorDisclaimer = `Sorry, the AI could not properly analyze your symptoms. Please consult a healthcare professional. (${message})`;
+        errorConditionName = `${conditionNamePrefix}: AI Error`;
+        errorExplanation = `${explanationPrefix}: An error occurred while communicating with the AI: ${message}. Please try again or clarify your symptoms.`;
       }
       return {
         analysis: [{
@@ -117,56 +121,65 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
         }],
         disclaimer: errorDisclaimer,
       };
+    };
+
+    try {
+      llmResponse = await prompt(input);
+    } catch (error: any) {
+      console.error('[voiceSymptomCheckerFlow] Error calling LLM prompt:', error.message);
+      if (error.cause) console.error('[voiceSymptomCheckerFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
+      if (error.details) console.error('[voiceSymptomCheckerFlow] Error Details:', JSON.stringify(error.details, null, 2));
+      if (error.stack) console.error('[voiceSymptomCheckerFlow] Error Stack:', error.stack);
+      return createErrorResponse((error as Error).message, "LLM Call", "Error during LLM call");
     }
     
-    const output = llmResponse.output;
+    let parsedOutput = llmResponse.output;
 
-    if (!output || !output.disclaimer || !output.analysis) { 
-      const lang = input.language || 'English';
-      let errorDisclaimer = "";
-      let errorConditionName = ""; 
-      let errorExplanation = ""; 
-
-      if (lang === 'hi-IN') {
-        errorDisclaimer = "क्षमा करें, AI आपके लक्षणों का ठीक से विश्लेषण नहीं कर सका। कृपया किसी स्वास्थ्य पेशेवर से सलाह लें। यह एक पार्सिंग (त्रुटि) प्रतिक्रिया है।";
-        errorConditionName = "AI प्रतिसाद पार्सिंग त्रुटि";
-        errorExplanation = "AI ने अपेक्षित संरचित प्रतिक्रिया नहीं दी या प्रतिक्रिया अधूरी थी (जैसे 'एनालिसिस' फ़ील्ड गायब था)। यह एक API समस्या या अप्रत्याशિત AI आउटपुट के कारण हो सकता है। कृपया पुनः प्रयास करें या अपने लक्षणों को स्पष्ट करें।";
-      } else {
-        errorDisclaimer = "Sorry, the AI could not properly analyze your symptoms. Please consult a healthcare professional. This is a parsing (error) response.";
-        errorConditionName = "AI Response Parsing Error";
-        errorExplanation = "The AI did not return the expected structured response or the response was incomplete (e.g., missing 'analysis' field). This might be due to an API issue or an unexpected AI output. Please try again or clarify your symptoms.";
+    if (!parsedOutput && llmResponse.text) {
+      console.log(`[voiceSymptomCheckerFlow] Genkit parsing failed for symptoms: "${input.symptoms}". Attempting manual JSON.parse of raw LLM text.`);
+      try {
+        const manuallyParsed = JSON.parse(llmResponse.text);
+        if (manuallyParsed && typeof manuallyParsed.disclaimer === 'string' && Array.isArray(manuallyParsed.analysis)) {
+           // Basic structural check for analysis items
+          if (manuallyParsed.analysis.every((item: any) => item && typeof item.conditionName === 'string' && typeof item.confidence === 'number' && typeof item.explanation === 'string')) {
+            console.log("[voiceSymptomCheckerFlow] Manual JSON.parse and basic validation successful. Using manually parsed data.");
+            parsedOutput = manuallyParsed as VoiceSymptomCheckerOutput;
+          } else {
+            console.warn("[voiceSymptomCheckerFlow] Manual JSON.parse succeeded, but analysis items lack required structure or types.");
+            parsedOutput = null; // Invalidate if structure is incorrect
+          }
+        } else {
+           console.warn("[voiceSymptomCheckerFlow] Manual JSON.parse succeeded, but object lacks essential 'disclaimer' or 'analysis' (as array) fields.");
+           parsedOutput = null; // Invalidate if top-level structure is incorrect
+        }
+      } catch (parseError: any) {
+        console.warn(`[voiceSymptomCheckerFlow] Manual JSON.parse of raw LLM text also failed for symptoms "${input.symptoms}": ${parseError.message}. Raw text (first 500 chars): ${llmResponse.text.substring(0,500)}`);
+        // `parsedOutput` remains null, will be caught by the next check
       }
-      
-      console.warn(`[voiceSymptomCheckerFlow] Fallback triggered due to missing output, disclaimer, or analysis array. Language: ${lang}. Input symptoms: "${input.symptoms}". Raw LLM response text: ${llmResponse.text}. Parsed LLM output object: ${JSON.stringify(llmResponse.output, null, 2)}`);
+    }
 
-      return {
-        analysis: [{ 
-            conditionName: errorConditionName,
-            confidence: 0,
-            explanation: errorExplanation,
-            allopathicSuggestions: [],
-            ayurvedicSuggestions: [],
-            homeRemedies: []
-        }],
-        disclaimer: errorDisclaimer,
-      };
+    if (!parsedOutput || !parsedOutput.disclaimer || !parsedOutput.analysis) { 
+      const source = llmResponse.output ? "Genkit-parsed" : "manually-parsed (or failed attempt)";
+      const warningMessage = `Fallback triggered. Output source: ${source}. Missing output, disclaimer, or analysis array. Language: ${lang}. Input symptoms: "${input.symptoms}". Raw LLM response text (first 500 chars): ${llmResponse.text?.substring(0,500)}. Parsed/attempted LLM output object: ${JSON.stringify(parsedOutput, null, 2)}`;
+      console.warn(`[voiceSymptomCheckerFlow] ${warningMessage}`);
+      return createErrorResponse("AI did not return expected structured response or it was incomplete.", "Parsing", "Response Parsing Error");
     }
     
-    if (!Array.isArray(output.analysis)) {
+    if (!Array.isArray(parsedOutput.analysis)) {
         console.warn(`[voiceSymptomCheckerFlow] AI output.analysis was not an array for symptoms: "${input.symptoms}". Forcing to empty array. LLM response text: ${llmResponse.text}`);
-        output.analysis = [];
+        parsedOutput.analysis = []; // Ensure analysis is an array if it somehow passed previous checks but wasn't one.
     }
 
-    if (output.analysis && output.analysis.length === 0) {
-        console.log(`[voiceSymptomCheckerFlow] AI returned a valid response with a disclaimer but an empty analysis array for symptoms: "${input.symptoms}" in language: ${input.language || 'English'}. LLM response text: ${llmResponse.text}. Parsed LLM output: ${JSON.stringify(output, null, 2)}`);
-        const generalSymptomReviewText = input.language === 'hi-IN' ? 
+    if (parsedOutput.analysis.length === 0) {
+        console.log(`[voiceSymptomCheckerFlow] AI returned a valid response with a disclaimer but an empty analysis array for symptoms: "${input.symptoms}" in language: ${lang}. LLM response text: ${llmResponse.text}. Parsed LLM output: ${JSON.stringify(parsedOutput, null, 2)}`);
+        const generalSymptomReviewText = lang === 'hi-IN' ? 
             `सामान्य लक्षण समीक्षा: ${input.symptoms}` : 
             `General Symptom Review: ${input.symptoms}`;
-        const generalExplanationText = input.language === 'hi-IN' ? 
+        const generalExplanationText = lang === 'hi-IN' ? 
             `आपके द्वारा बताए गए लक्षणों (${input.symptoms}) के लिए कोई विशिष्ट स्थिति तुरंत पहचानी नहीं गई। सामान्य सलाह के लिए कृपया स्वास्थ्य सेवा प्रदाता से परामर्श करें।` :
             `No specific condition was immediately identified for the symptoms you described (${input.symptoms}). Please consult a healthcare provider for general advice.`;
         
-        output.analysis.push({
+        parsedOutput.analysis.push({
             conditionName: generalSymptomReviewText,
             confidence: 0.3,
             explanation: generalExplanationText,
@@ -175,7 +188,7 @@ const voiceSymptomCheckerFlow = ai.defineFlow(
             homeRemedies: [],
         });
     }
-    console.log(`[voiceSymptomCheckerFlow] Successfully processed symptoms: "${input.symptoms}". Analysis items: ${output.analysis?.length || 0}.`);
-    return output;
+    console.log(`[voiceSymptomCheckerFlow] Successfully processed symptoms: "${input.symptoms}". Analysis items: ${parsedOutput.analysis?.length || 0}.`);
+    return parsedOutput;
   }
 );
