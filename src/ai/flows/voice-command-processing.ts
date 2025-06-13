@@ -39,6 +39,7 @@ export async function processVoiceCommand(input: ProcessVoiceCommandInput): Prom
 
 const prompt = ai.definePrompt({
   name: 'processVoiceCommandPrompt',
+  model: 'googleai/gemini-1.5-flash-latest', // Explicitly set model
   input: {schema: ProcessVoiceCommandInputSchema},
   output: {schema: ProcessVoiceCommandOutputSchema},
   prompt: `You are a helpful assistant that extracts information from voice commands to help manage appointments.
@@ -77,10 +78,18 @@ const processVoiceCommandFlow = ai.defineFlow(
         // Return a default "OTHER" intent if parsing fails
         return { intent: 'OTHER' as const };
       }
-    } catch (error) {
-      console.error('[processVoiceCommandFlow] Error during execution:', error);
+    } catch (error: any) {
+      console.error('[processVoiceCommandFlow] Error during execution:', error.message);
+      if (error.cause) {
+        console.error('[processVoiceCommandFlow] Error Cause:', JSON.stringify(error.cause, null, 2));
+      }
+      if (error.details) { 
+        console.error('[processVoiceCommandFlow] Error Details:', JSON.stringify(error.details, null, 2));
+      }
+      if (error.stack) {
+        console.error('[processVoiceCommandFlow] Error Stack:', error.stack);
+      }
       return { intent: 'OTHER' as const }; // Default error response
     }
   }
 );
-
