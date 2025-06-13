@@ -5,6 +5,8 @@ This is a NextJS starter for VakCare in Firebase Studio.
 
 To get started, take a look at src/app/page.tsx.
 
+*This project was prototyped and assisted by the App Prototyper in Firebase Studio, your friendly AI coding partner!*
+
 ## Development
 
 1.  **Install Dependencies**:
@@ -35,14 +37,14 @@ To deploy this project to Vercel:
     *   Vercel should automatically detect it as a Next.js project.
 3.  **Configure Environment Variables**: This is a crucial step. In your Vercel project settings, navigate to "Settings > Environment Variables" and add the following:
     *   `GEMINI_API_KEY`: Your API key for Google AI Studio (Gemini). (e.g., `AIzaSy...`)
-    *   `MONGODB_URI`: Your MongoDB connection string.
-    *   `MONGODB_DB_NAME`: (Optional) Your MongoDB database name (defaults to `smartcare_hub` if not set).
+    *   `MONGODB_URI`: Your MongoDB connection string (e.g., `mongodb+srv://user:pass@cluster.mongodb.net/yourDbName?retryWrites=true&w=majority`).
+    *   `MONGODB_DB_NAME`: (Optional) Your MongoDB database name (defaults to `smartcare_hub` if not set in the connection string or this variable).
     *   `TWILIO_ACCOUNT_SID_ACTUAL`: Your actual Twilio Account SID (starts with `AC`).
-    *   `TWILIO_API_KEY_SID`: Your Twilio API Key SID.
+    *   `TWILIO_API_KEY_SID`: Your Twilio API Key SID (starts with `SK`).
     *   `TWILIO_API_KEY_SECRET`: Your Twilio API Key Secret.
-    *   `TWILIO_PHONE_NUMBER`: Your Twilio phone number for sending SMS.
-    *   `EMERGENCY_CONTACT_PHONE`: The primary phone number for SOS alerts (e.g., a specific emergency service number or a family member's number).
-    *   `GOOGLE_MAPS_API_KEY`: Your Google Maps API Key for location services.
+    *   `TWILIO_PHONE_NUMBER`: Your Twilio phone number for sending SMS (e.g., `+1234567890`).
+    *   `EMERGENCY_CONTACT_PHONE`: The primary phone number for SOS alerts (e.g., a specific emergency service number or a family member's number, like `+19876543210`).
+    *   `GOOGLE_MAPS_API_KEY`: Your Google Maps API Key for location services. (e.g., `AIzaSy...`)
     *   **Note**: For security, ensure these are set with the appropriate environments (Production, Preview, Development) in Vercel.
 4.  **Build and Deploy**:
     *   Vercel will typically use `npm run build` as the build command and `.next` as the output directory. These settings are usually correctly inferred for Next.js projects. The `vercel.json` file included in this project specifies `nextjs` as the framework.
@@ -68,4 +70,4 @@ This project uses the `@genkit-ai/next` plugin. This plugin automatically expose
     }
     ```
     Consult Vercel's documentation for the most up-to-date glob patterns for functions.
-
+```
