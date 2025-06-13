@@ -22,7 +22,7 @@ import {
   BriefcaseMedical, 
   UserCog, 
   Bot,
-  HelpCircle, // Added HelpCircle
+  HelpCircle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/language-context";
@@ -42,7 +42,7 @@ const adminFeaturesConfig = [
     icon: Bot,
   },
   {
-    titleKey: "healthInformation.title", // Added Health Information Hub
+    titleKey: "healthInformation.title", 
     descriptionKey: "healthInformation.descriptionShort",
     href: "/health-information",
     icon: HelpCircle,
@@ -55,7 +55,7 @@ const adminFeaturesConfig = [
   },
   {
     titleKey: "telemedicine.title",
-    descriptionKey: "telemedicine.description",
+    descriptionKey: "telemedicine.descriptionAdminCard", // Updated key
     href: "/telemedicine",
     icon: Video,
   },
@@ -139,7 +139,7 @@ export default function DashboardPage() {
         description={translate('dashboard.admin.description', 'System overview and management tools.')}
         icon={LayoutDashboard}
       />
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mb-8"> {/* Adjusted for 5 cards */}
+      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mb-8">
         {adminFeaturesConfig.map((feature) => (
           <FeatureCard
             key={feature.titleKey}
@@ -227,4 +227,3 @@ export default function DashboardPage() {
     </MainLayout>
   );
 }
-
