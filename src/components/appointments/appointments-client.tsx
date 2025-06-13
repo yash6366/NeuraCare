@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Clock, User, Edit, Trash2, Mic, Send, ListChecks, PlusCircle, CheckCircle, XCircle, Stethoscope, Activity } from "lucide-react";
+import { CalendarIcon, Clock, User, Edit, Trash2, Mic, Send, ListChecks, PlusCircle, CheckCircle, XCircle, Stethoscope, Activity, StopCircle } from "lucide-react";
 import { format, addDays } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { processVoiceCommand, type ProcessVoiceCommandOutput } from "@/ai/flows/voice-command-processing";
@@ -19,6 +19,7 @@ import { getAllUsers } from "@/lib/actions/admin.actions";
 import type { Doctor as DoctorType } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
+import type { LanguageCode } from "@/contexts/language-context";
 
 interface Appointment {
   id: string;
@@ -33,7 +34,7 @@ interface Appointment {
 export function AppointmentsClient() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [activeTab, setActiveTab] = useState("upcoming");
-  const { translate } = useLanguage();
+  const { language, translate } = useLanguage();
   const { toast } = useToast();
 
   // Form state for booking
@@ -47,6 +48,9 @@ export function AppointmentsClient() {
   // Voice command state
   const [voiceCommand, setVoiceCommand] = useState("");
   const [isProcessingVoice, setIsProcessingVoice] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+
 
   const [availableDoctors, setAvailableDoctors] = useState<DoctorType[]>([]);
   const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
@@ -60,7 +64,7 @@ export function AppointmentsClient() {
     setAppointments(generateInitialAppointments());
     setSelectedDate(new Date());
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [translate]); // Added translate to dependency array for mock data
+  }, [translate]); 
 
   useEffect(() => {
     if (activeTab === "book" && availableDoctors.length === 0) {
@@ -87,6 +91,34 @@ export function AppointmentsClient() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, toast, translate]);
+
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.continuous = false;
+      recognitionInstance.interimResults = false;
+      recognitionInstance.lang = language;
+
+      recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
+        let transcribedText = event.results[0][0].transcript;
+        setVoiceCommand(transcribedText);
+      };
+      recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
+        console.error("Speech recognition error for appointments:", event.error);
+        toast({ title: translate('appointments.toast.voiceError.title', "Voice Command Error"), description: event.error as string, variant: "destructive" });
+        setIsListening(false);
+      };
+      recognitionInstance.onend = () => {
+        setIsListening(false);
+      };
+      recognitionRef.current = recognitionInstance;
+    } else {
+      console.warn("SpeechRecognition API not supported for appointments.");
+      toast({ title: translate('symptomChecker.voiceNotSupported', 'Voice input not supported by your browser.'), variant: "destructive" });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language, toast, translate]);
 
 
   const handleBookAppointment = (e: React.FormEvent) => {
@@ -123,7 +155,6 @@ export function AppointmentsClient() {
       });
       setAppointmentType("");
       setPatientName("");
-      // Keep selectedDate and Time as is for potential quick re-booking? Or reset? Let's reset for now.
       setSelectedDate(new Date());
       setSelectedTime("09:00");
       setSelectedDoctorId(null); 
@@ -155,17 +186,38 @@ export function AppointmentsClient() {
           setSelectedDate(date);
           setSelectedTime(format(date, "HH:mm"));
         }
-        // Voice command cannot yet select doctor. User must select manually.
         setActiveTab("book"); 
       } else if (result.intent === "CANCEL_APPOINTMENT" && result.confirmationNumber) {
         toast({ title: translate('appointments.toast.cancelIntent.title', "Cancellation Intent"), description: translate('appointments.toast.cancelIntent.description', "Attempting to cancel appointment {confirmationNumber}. (Simulated)").replace('{confirmationNumber}',result.confirmationNumber ) });
       }
-      setVoiceCommand("");
+      // Do not clear voiceCommand here, user might want to see it or AI might not populate all fields.
     } catch (error) {
       console.error("Error processing voice command:", error);
       toast({ title: translate('appointments.toast.voiceError.title', "Voice Command Error"), description: translate('appointments.toast.voiceError.description', "Could not process the voice command."), variant: "destructive" });
     } finally {
       setIsProcessingVoice(false);
+    }
+  };
+
+  const handleVoiceInputActivation = () => {
+    if (recognitionRef.current) {
+      if (isListening) {
+        recognitionRef.current.stop();
+        setIsListening(false);
+      } else {
+        try {
+          recognitionRef.current.lang = language;
+          recognitionRef.current.start();
+          setIsListening(true);
+          toast({ title: translate('symptomChecker.speakNow', 'Speak now...') });
+        } catch (e) {
+          console.error("Error starting speech recognition for appointments:", e);
+          toast({ title: translate('appointments.toast.voiceError.title', "Voice Command Error"), description: (e as Error).message || 'Could not start voice input.', variant: "destructive" });
+          setIsListening(false);
+        }
+      }
+    } else {
+      toast({ title: translate('symptomChecker.voiceNotSupported', 'Voice input not supported by your browser.'), variant: "destructive" });
     }
   };
 
@@ -234,20 +286,21 @@ export function AppointmentsClient() {
               <div className="flex gap-2 mt-2">
                 <Input 
                   id="voiceCommand"
-                  placeholder={translate('appointments.voiceCommand.placeholder', "e.g., 'Book a checkup for John Doe next Tuesday at 3 PM'")}
+                  placeholder={isListening ? translate('symptomChecker.listening', 'Listening...') : translate('appointments.voiceCommand.placeholder', "e.g., 'Book a checkup for John Doe next Tuesday at 3 PM'")}
                   value={voiceCommand}
                   onChange={(e) => setVoiceCommand(e.target.value)}
-                  disabled={isProcessingVoice}
+                  disabled={isProcessingVoice || isListening}
                   className="flex-grow"
                 />
-                <Button onClick={handleVoiceInput} variant="outline" size="icon" disabled={isProcessingVoice} aria-label={translate('appointments.voiceCommand.micLabel', "Use Microphone")}>
-                  <Mic className="h-5 w-5"/>
+                <Button onClick={handleVoiceInputActivation} variant="outline" size="icon" disabled={isProcessingVoice} aria-label={isListening ? translate('symptomChecker.stopListening', 'Stop Listening') : translate('appointments.voiceCommand.micLabel', "Use Microphone")}>
+                  {isListening ? <StopCircle className="h-5 w-5 text-destructive animate-pulse" /> : <Mic className="h-5 w-5"/> }
                 </Button>
-                <Button onClick={handleProcessVoiceCommand} disabled={isProcessingVoice}>
-                  <Send className="mr-2 h-4 w-4" /> {isProcessingVoice ? translate('appointments.voiceCommand.processingButton', "Processing...") : translate('appointments.voiceCommand.processButton', "Process")}
+                <Button onClick={handleProcessVoiceCommand} disabled={isProcessingVoice || isListening || !voiceCommand.trim()}>
+                  {isProcessingVoice ? <Activity className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+                  {isProcessingVoice ? translate('appointments.voiceCommand.processingButton', "Processing...") : translate('appointments.voiceCommand.processButton', "Process")}
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">{translate('appointments.voiceCommand.note', "Simulates voice input processing. Type your command.")}</p>
+              <p className="text-xs text-muted-foreground mt-1">{translate('appointments.voiceCommand.note', "Use the microphone or type your command. Press 'Process' to submit.")}</p>
             </div>
 
             <form onSubmit={handleBookAppointment} className="space-y-6">
@@ -309,7 +362,6 @@ export function AppointmentsClient() {
                       <Button
                         variant={"outline"}
                         className="w-full justify-start text-left font-normal"
-                        disabled={!selectedDate}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {selectedDate ? format(selectedDate, "PPP") : <span>{translate('appointments.form.pickDatePlaceholder', "Pick a date")}</span>}
@@ -376,8 +428,10 @@ export function AppointmentsClient() {
   );
 }
 
-function handleVoiceInput() {
-  // Placeholder for actual voice input logic
-  alert("Voice input simulation: In a real app, this would activate the microphone and use Speech-to-Text.");
-}
+
+// This function was removed as its logic is now integrated into handleVoiceInputActivation
+// function handleVoiceInput() {
+//   // Placeholder for actual voice input logic
+//   alert("Voice input simulation: In a real app, this would activate the microphone and use Speech-to-Text.");
+// }
 
