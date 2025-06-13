@@ -271,6 +271,7 @@ export function AiChatAssistantClient() {
         });
         setSelectedImage(null);
         setSelectedImagePreview(null);
+        setImageQuery(""); // Clear query if file is too large
         if (imageInputRef.current) imageInputRef.current.value = "";
         return;
       }
@@ -704,7 +705,7 @@ export function AiChatAssistantClient() {
             {selectedImagePreview && (
               <div className="mt-2 border rounded-md p-2 flex flex-col items-center">
                 <Image src={selectedImagePreview} alt="Selected preview" width={150} height={150} className="rounded-md object-contain max-h-[150px]" data-ai-hint="uploaded image"/>
-                <Button variant="link" size="sm" className="text-xs text-destructive mt-1" onClick={() => {setSelectedImage(null); setSelectedImagePreview(null); if(imageInputRef.current) imageInputRef.current.value = "";}}>
+                <Button variant="link" size="sm" className="text-xs text-destructive mt-1" onClick={() => {setSelectedImage(null); setSelectedImagePreview(null); setImageQuery(""); if(imageInputRef.current) imageInputRef.current.value = "";}}>
                   {translate('aiChatAssistant.removeImageButton', 'Remove Image')}
                 </Button>
               </div>
@@ -789,5 +790,3 @@ export function AiChatAssistantClient() {
   );
 }
 
-
-    
